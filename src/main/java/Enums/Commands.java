@@ -11,16 +11,27 @@ public enum Commands {
 
     public static Commands convert(String text) {
         switch (text) {
-            case "/START": return START;
+            case "/START":
+                return START;
             case "/USD":
+            case "USD":
+            case "ДОЛЛАР":
                 return USD;
             case "/EURO":
+            case "EURO":
+            case "ЕВРО":
                 return EURO;
             case "/GBP":
+            case "POUND":
+            case "ФУНТ":
                 return GBP;
             case "/RUB":
+            case "RUBLE":
+            case "РУБЛЬ":
                 return RUB;
-            case "/HELP": return HELP;
+            case "/HELP":
+            case "HELP":
+                return HELP;
             default:
                 return NOT_CURRENCY;
         }

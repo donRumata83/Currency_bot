@@ -22,12 +22,12 @@ class CurrencyDB {
     }
 
     private String getMessage(Currency currency) {
-        StringBuilder stringBuilder;
-        stringBuilder = new StringBuilder(currency.getName());
-        stringBuilder.append("/n").append(String.format("Межбанк: покупка %f , продажа %f ",currency.getMb_ask(),currency.getMb_bid()));
-        stringBuilder.append("/n").append(String.format("Средний курс в банках: покупка %f , продажа %f ",currency.getBank_ask(),currency.getBank_bid()));
-        stringBuilder.append("/n").append(String.format("НБУ: покупка %f , продажа %f ",currency.getNbu_ask(),currency.getNbu_bid()));
-        stringBuilder.append("/n").append(String.format("Аукцион: покупка %f , продажа %f ",currency.getAuc_ask(),currency.getAuc_bid()));
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(currency.getName());
+        stringBuilder.append("\n").append(String.format("Межбанк: покупка %f , продажа %f ",currency.getMb_ask(),currency.getMb_bid()));
+        stringBuilder.append("\n").append(String.format("Средний курс в банках: покупка %f , продажа %f ",currency.getBank_ask(),currency.getBank_bid()));
+        stringBuilder.append("\n").append(String.format("НБУ: покупка %f , продажа %f ",currency.getNbu_ask(),currency.getNbu_bid()));
+        stringBuilder.append("\n").append(String.format("Аукцион: покупка %f , продажа %f ",currency.getAuc_ask(),currency.getAuc_bid()));
         return stringBuilder.toString();
     }
 

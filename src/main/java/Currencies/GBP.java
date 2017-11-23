@@ -1,5 +1,7 @@
 package Currencies;
 
 public class GBP extends Currency{
-    private String name = "Британский фунт стерлингов";
+    public GBP() {
+        this.name = "Британский фунт стерлингов";
+    }
 }
