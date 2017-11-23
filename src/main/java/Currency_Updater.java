@@ -13,20 +13,20 @@ public class Currency_Updater {
 
     }
 
-    public USD getUSD() {
+    USD getUSD() {
         return this.usd;
     }
 
 
-    public EURO getEuro() {
+    EURO getEuro() {
         return this.euro;
     }
 
-    public RUB getRub() {
+    RUB getRub() {
         return this.rub;
     }
 
-    public GBP getGbp() {
+    GBP getGbp() {
         return this.gbp;
     }
 }

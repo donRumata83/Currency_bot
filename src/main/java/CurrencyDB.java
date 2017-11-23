@@ -1,8 +1,10 @@
 import Currencies.*;
-import com.sun.javafx.binding.StringFormatter;
 
 
-public class CurrencyDB {
+
+
+
+class CurrencyDB {
     private Currency_Updater currency_updater;
 
     private USD usd;
@@ -10,7 +12,7 @@ public class CurrencyDB {
     private RUB rub;
     private GBP gbp;
 
-    public CurrencyDB(Currency_Updater currency_updater) {
+    CurrencyDB(Currency_Updater currency_updater) {
         this.currency_updater = currency_updater;
         this.getActualCurrencies();
     }
@@ -23,23 +25,29 @@ public class CurrencyDB {
 
     }
 
-    private String getMessage (Currency currency) {
-        return "";
+    private String getMessage(Currency currency) {
+        StringBuilder stringBuilder;
+        stringBuilder = new StringBuilder(currency.getName());
+        stringBuilder.append("/n").append(String.format("Межбанк: покупка %f , продажа %f ",currency.getMb_ask(),currency.getMb_bid()));
+        stringBuilder.append("/n").append(String.format("Средний курс в банках: покупка %f , продажа %f ",currency.getBank_ask(),currency.getBank_bid()));
+        stringBuilder.append("/n").append(String.format("НБУ: покупка %f , продажа %f ",currency.getNbu_ask(),currency.getNbu_bid()));
+        stringBuilder.append("/n").append(String.format("Аукцион: покупка %f , продажа %f ",currency.getAuc_ask(),currency.getAuc_bid()));
+        return stringBuilder.toString();
     }
 
-    public String getUSD() {
+    String getUSD() {
         return getMessage(usd);
     }
 
-    public String getEuro() {
+    String getEuro() {
         return getMessage(euro);
     }
 
-    public String getRub() {
+    String getRub() {
         return getMessage(rub);
     }
 
-    public String getGbp() {
+    String getGbp() {
         return getMessage(gbp);
     }
 }

@@ -36,17 +36,7 @@ public class Currency_Bot extends TelegramLongPollingBot{
     public void onUpdateReceived(Update update) {
         Message message = update.getMessage();
         if (message != null && message.hasText()) {
-            switch (message.getText().trim().toUpperCase()) {
-                case Currency_Type.USD : sendMsg(message, currencyDB.getUSD());
-                break;
-                case Currency_Type.EURO: sendMsg(message, currencyDB.getEuro());
-                break;
-                case Currency_Type.RUB: sendMsg(message, currencyDB.getRub());
-                break;
-                case Currency_Type.GBP: sendMsg(message, currencyDB.getGbp());
-                break;
-                default: sendMsg(message, "Не знаю такой валюты.");
-            }
+            sendMsg(message, messageCheck(message));
         }
 
     }
@@ -66,6 +56,20 @@ public class Currency_Bot extends TelegramLongPollingBot{
             sendMessage(sendMessage);
         } catch (TelegramApiException e) {
             e.printStackTrace();
+        }
+    }
+
+    private String messageCheck(Message message){
+        switch (message.getText().trim().toUpperCase()) {
+            case Currency_Type.USD : return currencyDB.getUSD();
+                break;
+            case Currency_Type.EURO: return currencyDB.getEuro();
+                break;
+            case Currency_Type.RUB: return currencyDB.getRub();
+                break;
+            case Currency_Type.GBP: return currencyDB.getGbp();
+                break;
+            default: return  "Не знаю такой валюты.";
         }
     }
 }

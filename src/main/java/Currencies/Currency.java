@@ -1,6 +1,8 @@
 package Currencies;
 
 public class Currency {
+    private String name;
+
     private float nbu_ask = 0;
     private float nbu_bid = 0;
 
@@ -75,5 +77,13 @@ public class Currency {
 
     public void setAuc_bid(float auc_bid) {
         this.auc_bid = auc_bid;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
