@@ -5,12 +5,22 @@ import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import Enums.Currency_Type;
+import Enums.Commands;
 
 public class Currency_Bot extends TelegramLongPollingBot{
     private static final String TOKEN = "398060505:AAH3ZDikwgbPuiyTSgsE9ppaaiwRBgul6ao";
     private static final String BOT_NAME = "UACurrencyBot";
     private CurrencyDB currencyDB;
+
+    private String helpComand = "\"Это бот для получения актуальных курсов валют\" +\n" +
+            "                    \"Вы можете использовать такие команды:\" +\n" +
+            "                    \"/USD - для получения курса доллара\" +\n" +
+            "                    \"/EURO - для получения курса евро\" +\n" +
+            "                    \"/RUB - для получения курса рубля\" +\n" +
+            "                    \"/GBP - для получения курса фунта стерлингов\";";
+
+    private String greetingCommand = "Добрый день, я бот который знает все о валютах. " +
+            "Курс какой валюты вы хотели бы узнать?";
 
     public static void main(String[] args) {
         ApiContextInitializer.init();
@@ -23,7 +33,7 @@ public class Currency_Bot extends TelegramLongPollingBot{
 
     }
 
-    public Currency_Bot(CurrencyDB currencyDB) {
+    private Currency_Bot(CurrencyDB currencyDB) {
         this.currencyDB = currencyDB;
     }
 
@@ -60,16 +70,14 @@ public class Currency_Bot extends TelegramLongPollingBot{
     }
 
     private String messageCheck(Message message){
-        switch (message.getText().trim().toUpperCase()) {
-            case Currency_Type.USD : return currencyDB.getUSD();
-                break;
-            case Currency_Type.EURO: return currencyDB.getEuro();
-                break;
-            case Currency_Type.RUB: return currencyDB.getRub();
-                break;
-            case Currency_Type.GBP: return currencyDB.getGbp();
-                break;
-            default: return  "Не знаю такой валюты.";
+        switch (Commands.convert(message.getText().trim().toUpperCase())) {
+            case START: return greetingCommand;
+            case HELP: return helpComand;
+            case USD : return currencyDB.getUSD();
+            case EURO: return currencyDB.getEuro();
+            case RUB: return currencyDB.getRub();
+            case GBP: return currencyDB.getGbp();
+            default: return "Неизвестная валюта.";
         }
     }
 }

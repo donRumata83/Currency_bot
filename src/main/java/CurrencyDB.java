@@ -1,9 +1,5 @@
 import Currencies.*;
 
-
-
-
-
 class CurrencyDB {
     private Currency_Updater currency_updater;
 

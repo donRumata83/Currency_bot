@@ -4,10 +4,10 @@ import Currencies.RUB;
 import Currencies.USD;
 
 public class Currency_Updater {
-    private USD usd;
-    private EURO euro;
-    private RUB rub;
-    private GBP gbp;
+    private USD usd = new USD();
+    private EURO euro = new EURO();
+    private RUB rub = new RUB();
+    private GBP gbp = new GBP();
 
     public void getActualCurrencies() {
 
@@ -16,7 +16,6 @@ public class Currency_Updater {
     USD getUSD() {
         return this.usd;
     }
-
 
     EURO getEuro() {
         return this.euro;
