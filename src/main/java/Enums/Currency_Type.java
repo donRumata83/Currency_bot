@@ -1,7 +1,7 @@
 package Enums;
 
-public enum Currency {
-    USD,
+public enum Currency_Type {
+    USD ,
     EURO,
     GBP,
     RUB;
