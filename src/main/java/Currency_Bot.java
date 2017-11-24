@@ -7,10 +7,11 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import Enums.Commands;
 
-public class Currency_Bot extends TelegramLongPollingBot{
+public class Currency_Bot extends TelegramLongPollingBot {
     private static final String TOKEN = "398060505:AAH3ZDikwgbPuiyTSgsE9ppaaiwRBgul6ao";
     private static final String BOT_NAME = "UACurrencyBot";
-    private CurrencyDB currencyDB;
+    private Text_transformer texttransformer;
+    private static long counter = 0;
 
     private String helpComand = "\"Это бот для получения актуальных курсов валют\" +\n" +
             "                    \"Вы можете использовать такие команды:\" +\n" +
@@ -25,17 +26,17 @@ public class Currency_Bot extends TelegramLongPollingBot{
     public static void main(String[] args) {
         ApiContextInitializer.init();
         TelegramBotsApi botapi = new TelegramBotsApi();
-        Currency_Updater updater = new Currency_Updater();
+        Currency_DB updater = new Currency_DB();
         try {
-            botapi.registerBot(new Currency_Bot(new CurrencyDB(updater)));
+            botapi.registerBot(new Currency_Bot(new Text_transformer(updater)));
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
 
     }
 
-    private Currency_Bot(CurrencyDB currencyDB) {
-        this.currencyDB = currencyDB;
+    private Currency_Bot(Text_transformer texttransformer) {
+        this.texttransformer = texttransformer;
     }
 
     @Override
@@ -70,15 +71,26 @@ public class Currency_Bot extends TelegramLongPollingBot{
         }
     }
 
-    private String messageCheck(Message message){
+    private String messageCheck(Message message) {
         switch (Commands.convert(message.getText().trim().toUpperCase())) {
-            case START: return greetingCommand;
-            case HELP: return helpComand;
-            case USD : return currencyDB.getUSD();
-            case EURO: return currencyDB.getEuro();
-            case RUB: return currencyDB.getRub();
-            case GBP: return currencyDB.getGbp();
-            default: return "Неизвестная валюта.";
+            case START: {
+                counter++;
+                return greetingCommand;
+            }
+            case HELP:
+                return helpComand;
+            case USD:
+                return texttransformer.getUSD();
+            case EURO:
+                return texttransformer.getEuro();
+            case RUB:
+                return texttransformer.getRub();
+            case GBP:
+                return texttransformer.getGbp();
+            case STAT:
+                return "Юзеров: " + counter;
+            default:
+                return "Неизвестная валюта.";
         }
     }
 }

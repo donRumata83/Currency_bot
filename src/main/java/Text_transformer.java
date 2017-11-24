@@ -1,7 +1,7 @@
 import Currencies.*;
 
-class CurrencyDB {
-    private Currency_Updater currency_updater;
+class Text_transformer {
+    private Currency_DB currency_DB;
 
     private USD usd;
     private EURO euro;
@@ -10,20 +10,21 @@ class CurrencyDB {
 
     private String format = "покупка %.3f , продажа %.3f";
 
-    CurrencyDB(Currency_Updater currency_updater) {
-        this.currency_updater = currency_updater;
+    Text_transformer(Currency_DB currency_DB) {
+        this.currency_DB = currency_DB;
         this.getActualCurrencies();
     }
 
     private void getActualCurrencies() {
-        this.usd = currency_updater.getUSD();
-        this.euro = currency_updater.getEuro();
-        this.rub = currency_updater.getRub();
-        this.gbp = currency_updater.getGbp();
+        this.usd = currency_DB.getUSD();
+        this.euro = currency_DB.getEuro();
+        this.rub = currency_DB.getRub();
+        this.gbp = currency_DB.getGbp();
 
     }
 
     private String getMessage(Currency currency) {
+        getActualCurrencies();
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(currency.getName());
         stringBuilder.append("\n").append("Межбанк: \n")

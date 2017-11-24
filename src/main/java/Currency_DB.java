@@ -3,7 +3,7 @@ import Currencies.GBP;
 import Currencies.RUB;
 import Currencies.USD;
 
-public class Currency_Updater {
+public class Currency_DB {
     private USD usd = new USD();
     private EURO euro = new EURO();
     private RUB rub = new RUB();
@@ -28,4 +28,6 @@ public class Currency_Updater {
     GBP getGbp() {
         return this.gbp;
     }
+
+
 }
