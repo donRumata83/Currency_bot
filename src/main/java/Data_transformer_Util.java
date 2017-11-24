@@ -8,13 +8,20 @@ class Data_transformer_Util {
     private RUB rub;
     private GBP gbp;
 
-    private String format = "покупка %.3f , продажа %.3f";
+    private final String format = "покупка %.3f , продажа %.3f";
 
+    /**
+     * Constructor
+     * @param currency_DB
+     */
     Data_transformer_Util(Currency_DB currency_DB) {
         this.currency_DB = currency_DB;
         this.getActualCurrencies();
     }
 
+    /**
+     * Actualize currency data from data base
+     */
     private void getActualCurrencies() {
         this.usd = currency_DB.getUSD();
         this.euro = currency_DB.getEuro();
@@ -23,6 +30,11 @@ class Data_transformer_Util {
 
     }
 
+    /**
+     * Gets actual currency and transform into text for sending
+     * @param currency type
+     * @return formatted text message for sending
+     */
     private String getMessage(Currency currency) {
         getActualCurrencies();
         StringBuilder stringBuilder = new StringBuilder();
@@ -38,18 +50,34 @@ class Data_transformer_Util {
         return stringBuilder.toString();
     }
 
+    /**
+     * Return local USD value
+     * @return text USD value
+     */
     String getUSD() {
         return getMessage(usd);
     }
 
+    /**
+     * Return local EURO value
+     * @return text EURO value
+     */
     String getEuro() {
         return getMessage(euro);
     }
 
+    /**
+     * Return local RUB value
+     * @return text RUB value
+     */
     String getRub() {
         return getMessage(rub);
     }
 
+    /**
+     * Return local GBP value
+     * @return text GBP value
+     */
     String getGbp() {
         return getMessage(gbp);
     }

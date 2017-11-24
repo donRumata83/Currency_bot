@@ -7,6 +7,7 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import Enums.Commands;
 
+
 public class Currency_Bot extends TelegramLongPollingBot {
     private static final String TOKEN = "398060505:AAH3ZDikwgbPuiyTSgsE9ppaaiwRBgul6ao";
     private static final String BOT_NAME = "UACurrencyBot";
@@ -14,14 +15,14 @@ public class Currency_Bot extends TelegramLongPollingBot {
     private static long counter = 0;
     private static long mcounter = 0;
 
-    private String helpComand = "\"Это бот для получения актуальных курсов валют\" +\n" +
+    private final String helpComand = "\"Это бот для получения актуальных курсов валют\" +\n" +
             "                    \"Вы можете использовать такие команды:\" +\n" +
             "                    \"/USD - для получения курса доллара\" +\n" +
             "                    \"/EURO - для получения курса евро\" +\n" +
             "                    \"/RUB - для получения курса рубля\" +\n" +
             "                    \"/GBP - для получения курса фунта стерлингов\";";
 
-    private String greetingCommand = "Добрый день, я бот который знает все о валютах. " +
+    private final String greetingCommand = "Добрый день, я бот который знает все о валютах. " +
             "Курс какой валюты вы хотели бы узнать?";
 
     public static void main(String[] args) {
@@ -36,15 +37,27 @@ public class Currency_Bot extends TelegramLongPollingBot {
 
     }
 
+    /**
+     * Constructor
+     * @param data_transformer_util
+     */
     private Currency_Bot(Data_transformer_Util data_transformer_util) {
         this.data_transformer_util = data_transformer_util;
     }
 
+    /**
+     * Returns bots token
+     * @return String
+     */
     @Override
     public String getBotToken() {
         return TOKEN;
     }
 
+    /**
+     * Get the update from user chat, check for not empty and send text message to user
+     * @param update from user chat
+     */
     @Override
     public void onUpdateReceived(Update update) {
         Message message = update.getMessage();
@@ -54,11 +67,20 @@ public class Currency_Bot extends TelegramLongPollingBot {
 
     }
 
+    /**
+     * Returns bots name
+     * @return String bot name
+     */
     @Override
     public String getBotUsername() {
         return BOT_NAME;
     }
 
+    /**
+     * Sends message to user chat
+     * @param message from user
+     * @param text
+     */
     private void sendMsg(Message message, String text) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
@@ -72,6 +94,11 @@ public class Currency_Bot extends TelegramLongPollingBot {
         }
     }
 
+    /**
+     * Convert user request and returns text for sending to user
+     * @param message checked not null message
+     * @return String text for sending
+     */
     private String messageCheck(Message message) {
         switch (Commands.convert(message.getText().trim().toUpperCase())) {
             case START: {

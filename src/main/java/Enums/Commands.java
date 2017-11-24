@@ -1,16 +1,15 @@
 package Enums;
 
 public enum Commands {
-    USD,
-    EURO,
-    GBP,
-    RUB,
-    NOT_CURRENCY,
-    START,
-    HELP,
-    STAT,
-    MSTAT;
+    USD, EURO, GBP, RUB,
+    NOT_CURRENCY, START, HELP,
+    STAT, MSTAT;
 
+    /**
+     * Converts text from user chat to enum
+     * @param  text from user message
+     * @return enum
+     */
     public static Commands convert(String text) {
         switch (text) {
             case "/START":
