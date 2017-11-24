@@ -38,18 +38,16 @@ class Data_transformer_Util {
      */
     private String getMessage(Currency currency) {
         getActualCurrencies();
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(currency.getName());
-        stringBuilder.append("\n").append("Межбанк: \n")
-                .append(String.format(format,currency.getMb_ask(),currency.getMb_bid()));
-        stringBuilder.append("\n").append("Средний курс в банках: \n")
-                .append(String.format(format,currency.getBank_ask(),currency.getBank_bid()));
-        stringBuilder.append("\n").append("НБУ: \n")
-                .append(String.format(format,currency.getNbu_ask(),currency.getNbu_bid()));
-        stringBuilder.append("\n").append("Аукцион: \n").
-                append(String.format(format,currency.getAuc_ask(),currency.getAuc_bid()));
-        stringBuilder.append("\n").append(info);
-        return stringBuilder.toString();
+        String stringBuilder = currency.getName() +
+                "\n" + "Межбанк: \n" +
+                String.format(format, currency.getMb_ask(), currency.getMb_bid()) +
+                "\n" + "Средний курс в банках: \n" +
+                String.format(format, currency.getBank_ask(), currency.getBank_bid()) +
+                "\n" + "НБУ: \n" +
+                String.format(format, currency.getNbu_ask(), currency.getNbu_bid()) +
+                "\n" + "Аукцион: \n" +
+                String.format(format, currency.getAuc_ask(), currency.getAuc_bid());
+        return stringBuilder;
     }
 
     /**

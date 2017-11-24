@@ -18,6 +18,8 @@ public enum Commands {
             case "USD":
             case "ДОЛЛАР":
             case "ДОЛАР":
+            case "DOLLAR":
+            case "DOLAR":
                 return USD;
             case "/EURO":
             case "EURO":
@@ -26,6 +28,7 @@ public enum Commands {
             case "/GBP":
             case "POUND":
             case "ФУНТ":
+            case "ФУНТ СТЕРЛИНГОВ":
                 return GBP;
             case "/RUB":
             case "RUBLE":
@@ -33,6 +36,7 @@ public enum Commands {
                 return RUB;
             case "/HELP":
             case "HELP":
+            case "ПОМОЩЬ":
                 return HELP;
             case "STAT":return STAT;
             case "MSTAT": return MSTAT;

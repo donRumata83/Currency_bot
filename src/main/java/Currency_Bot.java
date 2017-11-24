@@ -15,12 +15,14 @@ public class Currency_Bot extends TelegramLongPollingBot {
     private static long counter = 0;
     private static long mcounter = 0;
 
-    private final String helpComand = "\"Это бот для получения актуальных курсов валют\" +\n" +
-            "                    \"Вы можете использовать такие команды:\" +\n" +
-            "                    \"/USD - для получения курса доллара\" +\n" +
-            "                    \"/EURO - для получения курса евро\" +\n" +
-            "                    \"/RUB - для получения курса рубля\" +\n" +
-            "                    \"/GBP - для получения курса фунта стерлингов\";";
+    private final String helpComand = "Это бот для получения актуальных курсов валют" + "\n" +
+            "Вы можете использовать такие команды:" + "\n" +
+            "   /USD - для получения курса доллара" + "\n" +
+            "   /EURO - для получения курса евро" + "\n" +
+            "   /RUB - для получения курса рубля" + "\n" +
+            "   /GBP - для получения курса фунта стерлингов." + "\n" +
+            "Также возможно использования названий валют как на русском так и английском языках" + "\n"
+            + "Курсы валют актуальны благодаря ресурсу minfin.com.ua/currency";
 
     private final String greetingCommand = "Добрый день, я бот который знает все о валютах. " +
             "Курс какой валюты вы хотели бы узнать?";
@@ -39,6 +41,7 @@ public class Currency_Bot extends TelegramLongPollingBot {
 
     /**
      * Constructor
+     *
      * @param data_transformer_util
      */
     private Currency_Bot(Data_transformer_Util data_transformer_util) {
@@ -47,6 +50,7 @@ public class Currency_Bot extends TelegramLongPollingBot {
 
     /**
      * Returns bots token
+     *
      * @return String
      */
     @Override
@@ -56,6 +60,7 @@ public class Currency_Bot extends TelegramLongPollingBot {
 
     /**
      * Get the update from user chat, check for not empty and send text message to user
+     *
      * @param update from user chat
      */
     @Override
@@ -69,6 +74,7 @@ public class Currency_Bot extends TelegramLongPollingBot {
 
     /**
      * Returns bots name
+     *
      * @return String bot name
      */
     @Override
@@ -78,6 +84,7 @@ public class Currency_Bot extends TelegramLongPollingBot {
 
     /**
      * Sends message to user chat
+     *
      * @param message from user
      * @param text
      */
@@ -96,6 +103,7 @@ public class Currency_Bot extends TelegramLongPollingBot {
 
     /**
      * Convert user request and returns text for sending to user
+     *
      * @param message checked not null message
      * @return String text for sending
      */
@@ -109,21 +117,26 @@ public class Currency_Bot extends TelegramLongPollingBot {
                 return helpComand;
             case USD: {
                 mcounter++;
-                return data_transformer_util.getUSD();}
+                return data_transformer_util.getUSD();
+            }
             case EURO: {
                 mcounter++;
-                return data_transformer_util.getEuro();}
+                return data_transformer_util.getEuro();
+            }
             case RUB: {
                 mcounter++;
-                return data_transformer_util.getRub();}
+                return data_transformer_util.getRub();
+            }
             case GBP: {
                 mcounter++;
-                return data_transformer_util.getGbp();}
+                return data_transformer_util.getGbp();
+            }
             case STAT:
                 return "Юзеров: " + counter;
-            case MSTAT: return  "Запросов: " + mcounter;
+            case MSTAT:
+                return "Запросов: " + mcounter;
             default:
-                return "Неизвестная валюта.";
+                return "Извините не могу ответить на это сообщение, попробуйте еще раз.";
         }
     }
 }
