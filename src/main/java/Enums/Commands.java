@@ -8,7 +8,8 @@ public enum Commands {
     NOT_CURRENCY,
     START,
     HELP,
-    STAT;
+    STAT,
+    MSTAT;
 
     public static Commands convert(String text) {
         switch (text) {
@@ -35,6 +36,7 @@ public enum Commands {
             case "HELP":
                 return HELP;
             case "STAT":return STAT;
+            case "MSTAT": return MSTAT;
             default:
                 return NOT_CURRENCY;
         }

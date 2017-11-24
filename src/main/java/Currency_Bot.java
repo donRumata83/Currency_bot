@@ -10,8 +10,9 @@ import Enums.Commands;
 public class Currency_Bot extends TelegramLongPollingBot {
     private static final String TOKEN = "398060505:AAH3ZDikwgbPuiyTSgsE9ppaaiwRBgul6ao";
     private static final String BOT_NAME = "UACurrencyBot";
-    private Text_transformer texttransformer;
+    private Data_transformer_Util data_transformer_util;
     private static long counter = 0;
+    private static long mcounter = 0;
 
     private String helpComand = "\"Это бот для получения актуальных курсов валют\" +\n" +
             "                    \"Вы можете использовать такие команды:\" +\n" +
@@ -28,15 +29,15 @@ public class Currency_Bot extends TelegramLongPollingBot {
         TelegramBotsApi botapi = new TelegramBotsApi();
         Currency_DB updater = new Currency_DB();
         try {
-            botapi.registerBot(new Currency_Bot(new Text_transformer(updater)));
+            botapi.registerBot(new Currency_Bot(new Data_transformer_Util(updater)));
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
 
     }
 
-    private Currency_Bot(Text_transformer texttransformer) {
-        this.texttransformer = texttransformer;
+    private Currency_Bot(Data_transformer_Util data_transformer_util) {
+        this.data_transformer_util = data_transformer_util;
     }
 
     @Override
@@ -79,16 +80,21 @@ public class Currency_Bot extends TelegramLongPollingBot {
             }
             case HELP:
                 return helpComand;
-            case USD:
-                return texttransformer.getUSD();
-            case EURO:
-                return texttransformer.getEuro();
-            case RUB:
-                return texttransformer.getRub();
-            case GBP:
-                return texttransformer.getGbp();
+            case USD: {
+                mcounter++;
+                return data_transformer_util.getUSD();}
+            case EURO: {
+                mcounter++;
+                return data_transformer_util.getEuro();}
+            case RUB: {
+                mcounter++;
+                return data_transformer_util.getRub();}
+            case GBP: {
+                mcounter++;
+                return data_transformer_util.getGbp();}
             case STAT:
                 return "Юзеров: " + counter;
+            case MSTAT: return  "Запросов: " + mcounter;
             default:
                 return "Неизвестная валюта.";
         }

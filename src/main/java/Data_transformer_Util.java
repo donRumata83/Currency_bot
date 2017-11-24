@@ -1,6 +1,6 @@
 import Currencies.*;
 
-class Text_transformer {
+class Data_transformer_Util {
     private Currency_DB currency_DB;
 
     private USD usd;
@@ -10,7 +10,7 @@ class Text_transformer {
 
     private String format = "покупка %.3f , продажа %.3f";
 
-    Text_transformer(Currency_DB currency_DB) {
+    Data_transformer_Util(Currency_DB currency_DB) {
         this.currency_DB = currency_DB;
         this.getActualCurrencies();
     }
