@@ -8,9 +8,13 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 import Enums.Commands;
 
 
+import java.io.IOException;
+import java.util.Properties;
+
+
 public class Currency_Bot extends TelegramLongPollingBot {
-    private static final String TOKEN = "398060505:AAH3ZDikwgbPuiyTSgsE9ppaaiwRBgul6ao";
-    private static final String BOT_NAME = "UACurrencyBot";
+    private String token;
+    private String botName;
     private Data_transformer_Util data_transformer_util;
     private static long counter = 0;
     private static long mcounter = 0;
@@ -46,6 +50,14 @@ public class Currency_Bot extends TelegramLongPollingBot {
      */
     private Currency_Bot(Data_transformer_Util data_transformer_util) {
         this.data_transformer_util = data_transformer_util;
+        Properties props = new Properties();
+        try {
+            props.load(Currency_Bot.class.getResourceAsStream("/config.properties"));
+            this.token = props.getProperty("token");
+            this.botName = props.getProperty("botName");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -55,7 +67,7 @@ public class Currency_Bot extends TelegramLongPollingBot {
      */
     @Override
     public String getBotToken() {
-        return TOKEN;
+        return token;
     }
 
     /**
@@ -79,7 +91,7 @@ public class Currency_Bot extends TelegramLongPollingBot {
      */
     @Override
     public String getBotUsername() {
-        return BOT_NAME;
+        return botName;
     }
 
     /**
