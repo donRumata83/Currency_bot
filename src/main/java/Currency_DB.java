@@ -9,9 +9,6 @@ public class Currency_DB {
     private RUB rub = new RUB();
     private GBP gbp = new GBP();
 
-    public void getActualCurrencies() {
-
-    }
 
     USD getUSD() {
         return this.usd;

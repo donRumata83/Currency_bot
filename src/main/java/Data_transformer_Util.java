@@ -9,6 +9,7 @@ class Data_transformer_Util {
     private GBP gbp;
 
     private final String format = "покупка %.3f , продажа %.3f";
+    private final String info = "Информация предоставлена с www.minfin.com.ua/currency/";
 
     /**
      * Constructor
@@ -47,6 +48,7 @@ class Data_transformer_Util {
                 .append(String.format(format,currency.getNbu_ask(),currency.getNbu_bid()));
         stringBuilder.append("\n").append("Аукцион: \n").
                 append(String.format(format,currency.getAuc_ask(),currency.getAuc_bid()));
+        stringBuilder.append("\n").append(info);
         return stringBuilder.toString();
     }
 
