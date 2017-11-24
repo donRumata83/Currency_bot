@@ -16,6 +16,7 @@ public enum Commands {
             case "/USD":
             case "USD":
             case "ДОЛЛАР":
+            case "ДОЛАР":
                 return USD;
             case "/EURO":
             case "EURO":
