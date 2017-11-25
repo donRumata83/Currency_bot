@@ -1,19 +1,24 @@
 package Currencies;
 
+
 public class Currency {
-    protected String name;
+    private String name;
 
-    protected float nbu_ask = 0;
-    protected float nbu_bid = 0;
+    private float nbu_ask = 0;
+    private float nbu_bid = 0;
 
-    protected float mb_ask = 0;
-    protected float mb_bid = 0;
+    private float mb_ask = 0;
+    private float mb_bid = 0;
 
-    protected float bank_ask = 0;
-    protected float bank_bid = 0;
+    private float bank_ask = 0;
+    private float bank_bid = 0;
 
-    protected float auc_ask = 0;
-    protected float auc_bid = 0;
+    private float auc_ask = 0;
+    private float auc_bid = 0;
+
+    public Currency(String name) {
+        this.name = name;
+    }
 
     public float getNbu_ask() {
         return nbu_ask;

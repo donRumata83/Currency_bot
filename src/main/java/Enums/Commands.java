@@ -7,7 +7,8 @@ public enum Commands {
 
     /**
      * Converts text from user chat to enum
-     * @param  text from user message
+     *
+     * @param text from user message
      * @return enum
      */
     public static Commands convert(String text) {
@@ -38,8 +39,10 @@ public enum Commands {
             case "HELP":
             case "ПОМОЩЬ":
                 return HELP;
-            case "STAT":return STAT;
-            case "MSTAT": return MSTAT;
+            case "STAT":
+                return STAT;
+            case "MSTAT":
+                return MSTAT;
             default:
                 return NOT_CURRENCY;
         }

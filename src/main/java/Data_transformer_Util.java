@@ -24,7 +24,7 @@ class Data_transformer_Util {
      * Actualize currency data from data base
      */
     private void getActualCurrencies() {
-        this.map = currency_DB.getMap();
+        this.map = currency_DB.getActualCurrencyStorage();
 
     }
 
