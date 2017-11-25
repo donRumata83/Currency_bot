@@ -2,7 +2,6 @@ import Currencies.*;
 import Enums.Commands;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.PriorityQueue;
@@ -17,6 +16,8 @@ public class Currency_DB {
     private final String nbu_request = "http://api.minfin.com.ua/nbu//";
     private final String banks_request = "http://api.minfin.com.ua/summary//";
     private final String auc_request = "http://api.minfin.com.ua/auction/info//";
+
+    private static final int TIMEOUT_5MIN = 1000*60*5;
 
 
     public Currency_DB() {
@@ -40,18 +41,18 @@ public class Currency_DB {
 
     private void update () {
         while (true) {
-            int delay = 300000;
+
             ActionListener taskPerformer = evt -> {
                 String request = request_queue.poll();
-                String answer = updater.sendRequest(request);
-                decompileJSON(answer);
+                String response = updater.sendRequest(request);
+                parseJSON(response);
                 request_queue.add(request);
             };
-            new Timer(delay, taskPerformer).start();
+            new Timer(TIMEOUT_5MIN, taskPerformer).start();
         }
     }
 
-    private void decompileJSON(String text) {
+    private void parseJSON(String text) {
 
     }
 
