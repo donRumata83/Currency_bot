@@ -1,5 +1,8 @@
 package Enums;
 
+/**
+ * Type of markets
+ */
 public enum Market_Type {
     NBU,
     BANKS,

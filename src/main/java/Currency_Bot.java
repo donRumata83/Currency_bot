@@ -11,7 +11,9 @@ import Enums.Commands;
 import java.io.IOException;
 import java.util.Properties;
 
-
+/**
+ * Main class
+ */
 public class Currency_Bot extends TelegramLongPollingBot {
     private String token;
     private String botName;

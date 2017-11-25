@@ -1,5 +1,8 @@
 package Enums;
 
+/**
+ * Enum for typical commands for bot
+ */
 public enum Commands {
     USD, EURO, GBP, RUB,
     NOT_CURRENCY, START, HELP,
