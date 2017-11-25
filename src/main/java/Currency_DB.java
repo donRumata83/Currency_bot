@@ -44,17 +44,14 @@ public class Currency_DB {
 
             ActionListener taskPerformer = evt -> {
                 String request = request_queue.poll();
-                String response = updater.sendRequest(request);
-                parseJSON(response);
+                this.actualCurrencyStorage =  updater.sendRequest(request);
                 request_queue.add(request);
             };
             new Timer(TIMEOUT_5MIN, taskPerformer).start();
         }
     }
 
-    private void parseJSON(String text) {
 
-    }
 
 
 }
