@@ -1,12 +1,12 @@
 import Currencies.*;
+import Enums.*;
+import java.util.HashMap;
 
 class Data_transformer_Util {
     private Currency_DB currency_DB;
 
-    private USD usd;
-    private EURO euro;
-    private RUB rub;
-    private GBP gbp;
+    private HashMap<Commands, Currency> map = new HashMap<>();
+
 
     private final String format = "покупка %.3f , продажа %.3f";
     private final String info = "Информация предоставлена с www.minfin.com.ua/currency/";
@@ -24,10 +24,7 @@ class Data_transformer_Util {
      * Actualize currency data from data base
      */
     private void getActualCurrencies() {
-        this.usd = currency_DB.getUSD();
-        this.euro = currency_DB.getEuro();
-        this.rub = currency_DB.getRub();
-        this.gbp = currency_DB.getGbp();
+        this.map = currency_DB.getMap();
 
     }
 
@@ -55,7 +52,7 @@ class Data_transformer_Util {
      * @return text USD value
      */
     String getUSD() {
-        return getMessage(usd);
+        return getMessage(map.get(Commands.USD));
     }
 
     /**
@@ -63,15 +60,14 @@ class Data_transformer_Util {
      * @return text EURO value
      */
     String getEuro() {
-        return getMessage(euro);
+        return getMessage(map.get(Commands.EURO));
     }
 
     /**
      * Return local RUB value
      * @return text RUB value
      */
-    String getRub() {
-        return getMessage(rub);
+    String getRub(){return getMessage(map.get(Commands.RUB));
     }
 
     /**
@@ -79,6 +75,6 @@ class Data_transformer_Util {
      * @return text GBP value
      */
     String getGbp() {
-        return getMessage(gbp);
+        return getMessage(map.get(Commands.GBP));
     }
 }

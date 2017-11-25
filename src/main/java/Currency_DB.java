@@ -1,30 +1,16 @@
-import Currencies.EURO;
-import Currencies.GBP;
-import Currencies.RUB;
-import Currencies.USD;
+import Currencies.*;
+import Enums.Commands;
+
+import java.util.HashMap;
 
 public class Currency_DB {
-    private USD usd = new USD();
-    private EURO euro = new EURO();
-    private RUB rub = new RUB();
-    private GBP gbp = new GBP();
+    private HashMap<Commands, Currency> map = new HashMap<>();
 
 
-    USD getUSD() {
-        return this.usd;
+
+
+
+    public HashMap<Commands, Currency> getMap() {
+        return map;
     }
-
-    EURO getEuro() {
-        return this.euro;
-    }
-
-    RUB getRub() {
-        return this.rub;
-    }
-
-    GBP getGbp() {
-        return this.gbp;
-    }
-
-
 }
