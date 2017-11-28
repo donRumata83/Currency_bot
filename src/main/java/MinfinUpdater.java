@@ -27,8 +27,8 @@ public class MinfinUpdater implements Updater {
     }
 
     @Override
-    public ArrayList<Long> sendRequest(Market_Type request) {
-        ArrayList<Long> result;
+    public ArrayList<Float> sendRequest(Market_Type request) {
+        ArrayList<Float> result;
         switch (request) {
             case NBU:
                 result = parseNBUresponse(sendGet(Market_Type.NBU.toString()));
@@ -47,8 +47,8 @@ public class MinfinUpdater implements Updater {
         return result;
     }
 
-    private ArrayList<Long> parseNBUresponse(String response) {
-        ArrayList<Long> result = new ArrayList<>();
+    private ArrayList<Float> parseNBUresponse(String response) {
+        ArrayList<Float> result = new ArrayList<>();
         JSONObject resp = new JSONObject(response);
         result.add(resp.getJSONObject("usd").optLong("ask"));
         result.add(resp.getJSONObject("usd").optLong("bid"));
@@ -61,7 +61,7 @@ public class MinfinUpdater implements Updater {
         return result;
     }
 
-    private ArrayList<Long> parseMBresponse(String response) {
+    private ArrayList<Float> parseMBresponse(String response) {
         /* TODO*/
         return null;
     }

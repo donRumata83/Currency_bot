@@ -6,6 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 interface Updater {
-    ArrayList<Long> sendRequest(Market_Type request);
+    ArrayList<Float> sendRequest(Market_Type request);
 
 }

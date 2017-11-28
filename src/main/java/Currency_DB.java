@@ -17,7 +17,7 @@ public class Currency_DB {
         private static final int TIMEOUT_5MIN = 1000*60*5;
 
 
-    public Currency_DB(MinfinUpdater updater) {
+    public Currency_DB(Updater updater) {
         this.actualCurrencyStorage = new HashMap<>();
         actualCurrencyStorage.put(Commands.USD, new Currency("Доллар США"));
         actualCurrencyStorage.put(Commands.EURO, new Currency("Евро"));
@@ -40,7 +40,7 @@ public class Currency_DB {
 
             ActionListener taskPerformer = evt -> {
                 Market_Type request = request_queue.poll();
-                ArrayList<Long> response = updater.sendRequest(request);
+                ArrayList<Float> response = updater.sendRequest(request);
                 request_queue.add(request);
                 switch (request) {
                     case NBU: updateNBU(response);
@@ -57,7 +57,7 @@ public class Currency_DB {
         }
     }
 
-    private void updateMB(ArrayList<Long> response) {
+    private void updateMB(ArrayList<Float> response) {
         Currency usd = actualCurrencyStorage.get(Commands.USD);
         usd.setMb_ask(response.get(0));
         usd.setMb_bid(response.get(1));
@@ -74,7 +74,7 @@ public class Currency_DB {
         actualCurrencyStorage.put(Commands.RUB, rub);
     }
 
-    private void updateBank(ArrayList<Long> response) {
+    private void updateBank(ArrayList<Float> response) {
         Currency usd = actualCurrencyStorage.get(Commands.USD);
         usd.setBank_ask(response.get(0));
         usd.setBank_bid(response.get(1));
@@ -91,7 +91,7 @@ public class Currency_DB {
         actualCurrencyStorage.put(Commands.RUB, rub);
     }
 
-    private void updateAUC(ArrayList<Long> response) {
+    private void updateAUC(ArrayList<Float> response) {
         Currency usd = actualCurrencyStorage.get(Commands.USD);
         usd.setAuc_ask(response.get(0));
         usd.setAuc_bid(response.get(1));
@@ -108,7 +108,7 @@ public class Currency_DB {
         actualCurrencyStorage.put(Commands.RUB, rub);
     }
 
-    private void updateNBU(ArrayList<Long> response) {
+    private void updateNBU(ArrayList<Float> response) {
         Currency usd = actualCurrencyStorage.get(Commands.USD);
         usd.setNbu_ask(response.get(0));
         usd.setNbu_bid(response.get(1));
