@@ -70,11 +70,4 @@ class Data_transformer_Util {
     String getRub(){return getMessage(map.get(Commands.RUB));
     }
 
-    /**
-     * Return local GBP value
-     * @return text GBP value
-     */
-    String getGbp() {
-        return getMessage(map.get(Commands.GBP));
-    }
 }

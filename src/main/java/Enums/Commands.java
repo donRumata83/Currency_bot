@@ -4,7 +4,7 @@ package Enums;
  * Enum for typical commands for bot
  */
 public enum Commands {
-    USD, EURO, GBP, RUB,
+    USD, EURO, RUB,
     NOT_CURRENCY, START, HELP,
     STAT, MSTAT;
 
@@ -29,11 +29,6 @@ public enum Commands {
             case "EURO":
             case "ЕВРО":
                 return EURO;
-            case "/GBP":
-            case "POUND":
-            case "ФУНТ":
-            case "ФУНТ СТЕРЛИНГОВ":
-                return GBP;
             case "/RUB":
             case "RUBLE":
             case "РУБЛЬ":

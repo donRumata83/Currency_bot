@@ -26,7 +26,6 @@ public class Currency_Bot extends TelegramLongPollingBot {
             "   /USD - для получения курса доллара" + "\n" +
             "   /EURO - для получения курса евро" + "\n" +
             "   /RUB - для получения курса рубля" + "\n" +
-            "   /GBP - для получения курса фунта стерлингов." + "\n" +
             "Также возможно использования названий валют как на русском так и английском языках" + "\n"
             + "Курсы валют актуальны благодаря ресурсу minfin.com.ua/currency";
 
@@ -36,9 +35,9 @@ public class Currency_Bot extends TelegramLongPollingBot {
     public static void main(String[] args) {
         ApiContextInitializer.init();
         TelegramBotsApi botapi = new TelegramBotsApi();
-        Currency_DB updater = new Currency_DB();
+        Currency_DB currency_db = new Currency_DB(new MinfinUpdater());
         try {
-            botapi.registerBot(new Currency_Bot(new Data_transformer_Util(updater)));
+            botapi.registerBot(new Currency_Bot(new Data_transformer_Util(currency_db)));
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
@@ -140,10 +139,6 @@ public class Currency_Bot extends TelegramLongPollingBot {
             case RUB: {
                 mcounter++;
                 return data_transformer_util.getRub();
-            }
-            case GBP: {
-                mcounter++;
-                return data_transformer_util.getGbp();
             }
             case STAT:
                 return "Юзеров: " + counter;
