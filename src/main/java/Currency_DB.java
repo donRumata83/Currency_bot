@@ -4,6 +4,7 @@ import Enums.Market_Type;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -13,12 +14,7 @@ public class Currency_DB {
     private Updater updater;
     private Queue<Market_Type> request_queue;
 
-    private final String mb_request = "http://api.minfin.com.ua/mb//";
-    private final String nbu_request = "http://api.minfin.com.ua/nbu//";
-    private final String banks_request = "http://api.minfin.com.ua/summary//";
-    private final String auc_request = "http://api.minfin.com.ua/auction/info//";
-
-    private static final int TIMEOUT_5MIN = 1000*60*5;
+        private static final int TIMEOUT_5MIN = 1000*60*5;
 
 
     public Currency_DB(MinfinUpdater updater) {
@@ -44,14 +40,90 @@ public class Currency_DB {
 
             ActionListener taskPerformer = evt -> {
                 Market_Type request = request_queue.poll();
-                updater.sendRequest(request);
+                ArrayList<Long> response = updater.sendRequest(request);
                 request_queue.add(request);
+                switch (request) {
+                    case NBU: updateNBU(response);
+                    break;
+                    case AUCTION: updateAUC(response);
+                    break;
+                    case BANKS: updateBank(response);
+                    break;
+                    case MB_MARKET: updateMB(response);
+                }
             };
             new Timer(TIMEOUT_5MIN, taskPerformer).start();
+
         }
     }
 
+    private void updateMB(ArrayList<Long> response) {
+        Currency usd = actualCurrencyStorage.get(Commands.USD);
+        usd.setMb_ask(response.get(0));
+        usd.setMb_bid(response.get(1));
+        actualCurrencyStorage.put(Commands.USD, usd);
 
+        Currency euro = actualCurrencyStorage.get(Commands.EURO);
+        euro.setMb_ask(response.get(2));
+        euro.setMb_bid(response.get(3));
+        actualCurrencyStorage.put(Commands.EURO, euro);
+
+        Currency rub = actualCurrencyStorage.get(Commands.RUB);
+        rub.setMb_ask(response.get(4));
+        rub.setMb_bid(response.get(5));
+        actualCurrencyStorage.put(Commands.RUB, rub);
+    }
+
+    private void updateBank(ArrayList<Long> response) {
+        Currency usd = actualCurrencyStorage.get(Commands.USD);
+        usd.setBank_ask(response.get(0));
+        usd.setBank_bid(response.get(1));
+        actualCurrencyStorage.put(Commands.USD, usd);
+
+        Currency euro = actualCurrencyStorage.get(Commands.EURO);
+        euro.setBank_ask(response.get(2));
+        euro.setBank_bid(response.get(3));
+        actualCurrencyStorage.put(Commands.EURO, euro);
+
+        Currency rub = actualCurrencyStorage.get(Commands.RUB);
+        rub.setBank_ask(response.get(4));
+        rub.setBank_bid(response.get(5));
+        actualCurrencyStorage.put(Commands.RUB, rub);
+    }
+
+    private void updateAUC(ArrayList<Long> response) {
+        Currency usd = actualCurrencyStorage.get(Commands.USD);
+        usd.setAuc_ask(response.get(0));
+        usd.setAuc_bid(response.get(1));
+        actualCurrencyStorage.put(Commands.USD, usd);
+
+        Currency euro = actualCurrencyStorage.get(Commands.EURO);
+        euro.setAuc_ask(response.get(2));
+        euro.setAuc_bid(response.get(3));
+        actualCurrencyStorage.put(Commands.EURO, euro);
+
+        Currency rub = actualCurrencyStorage.get(Commands.RUB);
+        rub.setAuc_ask(response.get(4));
+        rub.setAuc_bid(response.get(5));
+        actualCurrencyStorage.put(Commands.RUB, rub);
+    }
+
+    private void updateNBU(ArrayList<Long> response) {
+        Currency usd = actualCurrencyStorage.get(Commands.USD);
+        usd.setNbu_ask(response.get(0));
+        usd.setNbu_bid(response.get(1));
+        actualCurrencyStorage.put(Commands.USD, usd);
+
+        Currency euro = actualCurrencyStorage.get(Commands.EURO);
+        euro.setNbu_ask(response.get(2));
+        euro.setNbu_bid(response.get(3));
+        actualCurrencyStorage.put(Commands.EURO, euro);
+
+        Currency rub = actualCurrencyStorage.get(Commands.RUB);
+        rub.setNbu_ask(response.get(4));
+        rub.setNbu_bid(response.get(5));
+        actualCurrencyStorage.put(Commands.RUB, rub);
+    }
 
 
 }

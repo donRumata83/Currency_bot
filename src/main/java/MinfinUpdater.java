@@ -3,6 +3,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,10 +37,10 @@ public class MinfinUpdater implements Updater {
                 result = parseMBresponse(sendGet(Market_Type.MB_MARKET.toString()));
                 break;
             case BANKS:
-                result = parseBanksResponse(sendGet(Market_Type.BANKS.toString()));
+                result = parseNBUresponse(sendGet(Market_Type.BANKS.toString()));
                 break;
             case AUCTION:
-                result = parseAUCresponse(sendGet(Market_Type.AUCTION.toString()));
+                result = parseNBUresponse(sendGet(Market_Type.AUCTION.toString()));
                 break;
              default: result = null;
         }
@@ -47,20 +48,24 @@ public class MinfinUpdater implements Updater {
     }
 
     private ArrayList<Long> parseNBUresponse(String response) {
-        return null;
+        ArrayList<Long> result = new ArrayList<>();
+        JSONObject resp = new JSONObject(response);
+        result.add(resp.getJSONObject("usd").optLong("ask"));
+        result.add(resp.getJSONObject("usd").optLong("bid"));
+
+        result.add(resp.getJSONObject("eur").optLong("ask"));
+        result.add(resp.getJSONObject("eur").optLong("bid"));
+
+        result.add(resp.getJSONObject("rub").optLong("ask"));
+        result.add(resp.getJSONObject("rub").optLong("bid"));
+        return result;
     }
 
     private ArrayList<Long> parseMBresponse(String response) {
+        /* TODO*/
         return null;
     }
 
-    private ArrayList<Long> parseBanksResponse(String response) {
-        return null;
-    }
-
-    private ArrayList<Long> parseAUCresponse(String response) {
-        return null;
-    }
 
     private String sendGet(String url) {
 
