@@ -1,4 +1,6 @@
-import Enums.Market_Type;
+package Bot;
+
+import Bot.Enums.Market_Type;
 
 import java.util.ArrayList;
 

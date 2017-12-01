@@ -1,10 +1,10 @@
+package Bot;
 
-import Currencies.Currency;
-import Enums.Commands;
-import Enums.Market_Type;
+import Bot.Currencies.Currency;
+import Bot.Enums.Commands;
+import Bot.Enums.Market_Type;
 
-import java.util.concurrent.*;
-
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Currency_DB {
@@ -38,6 +38,8 @@ public class Currency_DB {
                 try {
                     Market_Type request = request_queue.pollFirst();
                     ArrayList<Float> response = updater.sendRequest(request);
+                    System.out.println(response);
+                    System.out.println(new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
                     switch (request) {
                         case NBU:
                             updateNBU(response);

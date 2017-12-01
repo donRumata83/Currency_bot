@@ -1,12 +1,14 @@
-import Enums.Market_Type;
+package Bot;
+
+import Bot.Enums.Market_Type;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -17,7 +19,7 @@ public class MinfinUpdater implements Updater {
     private String minFinToken;
 
 
-    MinfinUpdater() {
+    public MinfinUpdater() {
         Properties props = new Properties();
         try {
             props.load(Currency_Bot.class.getResourceAsStream("/config.properties"));
@@ -43,12 +45,13 @@ public class MinfinUpdater implements Updater {
             case AUCTION:
                 result = parseNBUresponse(sendGet(Market_Type.AUCTION.toString()));
                 break;
-             default: result = null;
+            default:
+                result = null;
         }
         return result;
     }
 
-    private ArrayList<Float> parseNBUresponse(String response) {
+    public ArrayList<Float> parseNBUresponse(String response) {
         ArrayList<Float> result = new ArrayList<>();
         JSONObject resp = new JSONObject(response);
         result.add(Float.parseFloat(resp.getJSONObject("usd").getString("ask")));
@@ -60,11 +63,22 @@ public class MinfinUpdater implements Updater {
         result.add(Float.parseFloat(resp.getJSONObject("rub").getString("ask")));
         result.add(Float.parseFloat(resp.getJSONObject("rub").getString("bid")));
         return result;
+
     }
 
-    private ArrayList<Float> parseMBresponse(String response) {
-        /* TODO*/
-        return null;
+    public ArrayList<Float> parseMBresponse(String response) {
+        ArrayList<Float> result = new ArrayList<>();
+        JSONArray array = new JSONArray(response);
+        result.add(Float.parseFloat(array.getJSONObject(2).getString("ask")));
+        result.add(Float.parseFloat(array.getJSONObject(2).getString("bid")));
+
+        result.add(Float.parseFloat(array.getJSONObject(1).getString("ask")));
+        result.add(Float.parseFloat(array.getJSONObject(1).getString("bid")));
+
+        result.add(Float.parseFloat(array.getJSONObject(0).getString("ask")));
+        result.add(Float.parseFloat(array.getJSONObject(0).getString("bid")));
+
+        return result;
     }
 
 

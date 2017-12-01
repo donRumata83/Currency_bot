@@ -1,5 +1,7 @@
-import Currencies.*;
-import Enums.*;
+package Bot;
+
+import Bot.Currencies.*;
+import Bot.Enums.*;
 import java.util.HashMap;
 import java.util.Map;
 

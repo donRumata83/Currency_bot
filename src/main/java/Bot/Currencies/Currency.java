@@ -1,4 +1,4 @@
-package Currencies;
+package Bot.Currencies;
 
 
 public class Currency {

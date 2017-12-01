@@ -1,3 +1,5 @@
+package Bot;
+
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -5,7 +7,7 @@ import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import Enums.Commands;
+import Bot.Enums.Commands;
 
 
 
@@ -36,7 +38,7 @@ public class Currency_Bot extends TelegramLongPollingBot {
     public static void main(String[] args) {
         ApiContextInitializer.init();
         TelegramBotsApi botapi = new TelegramBotsApi();
-        Currency_DB currency_db = new Currency_DB(new FakeUpdater());
+        Currency_DB currency_db = new Currency_DB(new MinfinUpdater());
         try {
             botapi.registerBot(new Currency_Bot(new Data_transformer_Util(currency_db)));
         } catch (TelegramApiException e) {
