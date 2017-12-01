@@ -1,11 +1,12 @@
 import Currencies.*;
 import Enums.*;
 import java.util.HashMap;
+import java.util.Map;
 
 class Data_transformer_Util {
     private Currency_DB currency_DB;
 
-    private HashMap<Commands, Currency> map = new HashMap<>();
+    private Map<Commands, Currency> map = new HashMap<>();
 
 
     private final String format = "покупка %.3f , продажа %.3f";

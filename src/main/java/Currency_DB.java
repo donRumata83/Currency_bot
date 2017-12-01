@@ -1,20 +1,17 @@
-import Currencies.*;
+
+import Currencies.Currency;
 import Enums.Commands;
 import Enums.Market_Type;
 
-import javax.swing.*;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.concurrent.*;
+
+import java.util.*;
 
 public class Currency_DB {
     private HashMap<Commands, Currency> actualCurrencyStorage;
     private Updater updater;
-    private Queue<Market_Type> request_queue;
 
-        private static final int TIMEOUT_5MIN = 1000*60*5;
+    private static final int TIMEOUT_5MIN = 1000 * 60 * 5;
 
 
     public Currency_DB(Updater updater) {
@@ -22,11 +19,6 @@ public class Currency_DB {
         actualCurrencyStorage.put(Commands.USD, new Currency("Доллар США"));
         actualCurrencyStorage.put(Commands.EURO, new Currency("Евро"));
         actualCurrencyStorage.put(Commands.RUB, new Currency("Российский рубль"));
-        this.request_queue = new PriorityQueue<>();
-        request_queue.add(Market_Type.MB_MARKET);
-        request_queue.add(Market_Type.NBU);
-        request_queue.add(Market_Type.BANKS);
-        request_queue.add(Market_Type.AUCTION);
         this.updater = updater;
         update();
     }
@@ -35,26 +27,43 @@ public class Currency_DB {
         return actualCurrencyStorage;
     }
 
-    private void update () {
-        while (true) {
+    private void update() {
+        Thread run = new Thread(() -> {
+            Deque<Market_Type> request_queue = new ArrayDeque<>();
+            request_queue.add(Market_Type.MB_MARKET);
+            request_queue.add(Market_Type.NBU);
+            request_queue.add(Market_Type.BANKS);
+            request_queue.add(Market_Type.AUCTION);
+            while (true) {
+                try {
+                    Market_Type request = request_queue.pollFirst();
+                    ArrayList<Float> response = updater.sendRequest(request);
+                    switch (request) {
+                        case NBU:
+                            updateNBU(response);
+                            request_queue.addLast(request);
+                            break;
+                        case AUCTION:
+                            updateAUC(response);
+                            request_queue.addLast(request);
+                            break;
+                        case BANKS:
+                            updateBank(response);
+                            request_queue.addLast(request);
+                            break;
+                        case MB_MARKET:
+                            updateMB(response);
+                            request_queue.addLast(request);
+                            break;
+                    }
 
-            ActionListener taskPerformer = evt -> {
-                Market_Type request = request_queue.poll();
-                ArrayList<Float> response = updater.sendRequest(request);
-                request_queue.add(request);
-                switch (request) {
-                    case NBU: updateNBU(response);
-                    break;
-                    case AUCTION: updateAUC(response);
-                    break;
-                    case BANKS: updateBank(response);
-                    break;
-                    case MB_MARKET: updateMB(response);
+                    Thread.sleep(TIMEOUT_5MIN);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
                 }
-            };
-            new Timer(TIMEOUT_5MIN, taskPerformer).start();
-
-        }
+            }
+        });
+        run.start();
     }
 
     private void updateMB(ArrayList<Float> response) {

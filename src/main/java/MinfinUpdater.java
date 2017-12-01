@@ -6,6 +6,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -50,14 +51,14 @@ public class MinfinUpdater implements Updater {
     private ArrayList<Float> parseNBUresponse(String response) {
         ArrayList<Float> result = new ArrayList<>();
         JSONObject resp = new JSONObject(response);
-        result.add(resp.getJSONObject("usd").optLong("ask"));
-        result.add(resp.getJSONObject("usd").optLong("bid"));
+        result.add(Float.parseFloat(resp.getJSONObject("usd").getString("ask")));
+        result.add(Float.parseFloat(resp.getJSONObject("usd").getString("bid")));
 
-        result.add(resp.getJSONObject("eur").optLong("ask"));
-        result.add(resp.getJSONObject("eur").optLong("bid"));
+        result.add(Float.parseFloat(resp.getJSONObject("eur").getString("ask")));
+        result.add(Float.parseFloat(resp.getJSONObject("eur").getString("bid")));
 
-        result.add(resp.getJSONObject("rub").optLong("ask"));
-        result.add(resp.getJSONObject("rub").optLong("bid"));
+        result.add(Float.parseFloat(resp.getJSONObject("rub").getString("ask")));
+        result.add(Float.parseFloat(resp.getJSONObject("rub").getString("bid")));
         return result;
     }
 
