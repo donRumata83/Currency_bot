@@ -1,8 +1,11 @@
 package Bot.Currencies;
 
 
+import Bot.Enums.Mark;
+
 public class Currency {
     private String name;
+    private Mark mark;
 
     private float nbu_ask = 0;
     private float nbu_bid = 0;
@@ -16,8 +19,9 @@ public class Currency {
     private float auc_ask = 0;
     private float auc_bid = 0;
 
-    public Currency(String name) {
+    public Currency(String name, Mark mark) {
         this.name = name;
+        this.mark = mark;
     }
 
     public float getNbu_ask() {
@@ -91,4 +95,10 @@ public class Currency {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String getMark() {
+        return mark.getMark();
+    }
+
+
 }

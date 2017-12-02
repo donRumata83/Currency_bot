@@ -28,8 +28,11 @@ public enum Commands {
             case "/EURO":
             case "EURO":
             case "ЕВРО":
+            case "EUR":
                 return EURO;
             case "/RUB":
+            case "RUB":
+            case "RUR":
             case "RUBLE":
             case "РУБЛЬ":
                 return RUB;

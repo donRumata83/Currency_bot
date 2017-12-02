@@ -2,6 +2,7 @@ package Bot;
 
 import Bot.Currencies.Currency;
 import Bot.Enums.Commands;
+import Bot.Enums.Mark;
 import Bot.Enums.Market_Type;
 
 import java.text.SimpleDateFormat;
@@ -16,9 +17,9 @@ public class Currency_DB {
 
     public Currency_DB(Updater updater) {
         this.actualCurrencyStorage = new HashMap<>();
-        actualCurrencyStorage.put(Commands.USD, new Currency("Доллар США"));
-        actualCurrencyStorage.put(Commands.EURO, new Currency("Евро"));
-        actualCurrencyStorage.put(Commands.RUB, new Currency("Российский рубль"));
+        actualCurrencyStorage.put(Commands.USD, new Currency("Доллар США", Mark.USD));
+        actualCurrencyStorage.put(Commands.EURO, new Currency("Евро", Mark.EUR));
+        actualCurrencyStorage.put(Commands.RUB, new Currency("Российский рубль", Mark.RUB));
         this.updater = updater;
         update();
     }
@@ -37,6 +38,7 @@ public class Currency_DB {
             while (true) {
                 try {
                     Market_Type request = request_queue.pollFirst();
+                    System.out.println(new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
                     ArrayList<Float> response = updater.sendRequest(request);
                     System.out.println(response);
                     System.out.println(new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));

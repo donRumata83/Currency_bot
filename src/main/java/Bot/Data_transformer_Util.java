@@ -11,7 +11,7 @@ class Data_transformer_Util {
     private Map<Commands, Currency> map = new HashMap<>();
 
 
-    private final String format = "покупка %.3f , продажа %.3f";
+    private final String format = "покупка %.2f , продажа %.2f";
     private final String info = "Информация предоставлена с www.minfin.com.ua/currency/";
 
     /**
@@ -38,14 +38,14 @@ class Data_transformer_Util {
      */
     private String getMessage(Currency currency) {
         getActualCurrencies();
-        String stringBuilder = currency.getName() +
-                "\n" + "Межбанк: \n" +
+        String stringBuilder = "*" +currency.getName() + "*"+  currency.getMark() +
+                "\n" + "*Межбанк:* \n" +
                 String.format(format, currency.getMb_ask(), currency.getMb_bid()) +
-                "\n" + "Средний курс в банках: \n" +
+                "\n" + "*Средний курс в банках:* \n" +
                 String.format(format, currency.getBank_ask(), currency.getBank_bid()) +
-                "\n" + "НБУ: \n" +
+                "\n" + "*НБУ:* \n" +
                 String.format(format, currency.getNbu_ask(), currency.getNbu_bid()) +
-                "\n" + "Аукцион: \n" +
+                "\n" + "*Аукцион:* \n" +
                 String.format(format, currency.getAuc_ask(), currency.getAuc_bid());
         return stringBuilder;
     }

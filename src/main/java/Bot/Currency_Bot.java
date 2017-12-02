@@ -30,15 +30,16 @@ public class Currency_Bot extends TelegramLongPollingBot {
             "   /EURO - для получения курса евро" + "\n" +
             "   /RUB - для получения курса рубля" + "\n" +
             "Также возможно использования названий валют как на русском так и английском языках" + "\n"
-            + "Курсы валют актуальны благодаря ресурсу minfin.com.ua/currency";
+            + "Курсы валют актуальны благодаря ресурсу [minfin.com.ua/currency]" + "\n" +
+            "Создатель бота @donRumata83";
 
-    private final String greetingCommand = "Добрый день, я бот который знает все о валютах. " +
+    private final String greetingCommand = "Добрый день, я бот который знает все о валютах в Украине. " +
             "Курс какой валюты вы хотели бы узнать?";
 
     public static void main(String[] args) {
         ApiContextInitializer.init();
         TelegramBotsApi botapi = new TelegramBotsApi();
-        Currency_DB currency_db = new Currency_DB(new MinfinUpdater());
+        Currency_DB currency_db = new Currency_DB(new FakeUpdater());
         try {
             botapi.registerBot(new Currency_Bot(new Data_transformer_Util(currency_db)));
         } catch (TelegramApiException e) {
@@ -148,7 +149,7 @@ public class Currency_Bot extends TelegramLongPollingBot {
             case MSTAT:
                 return "Запросов: " + mcounter;
             default:
-                return "Извините не могу ответить на это сообщение, попробуйте еще раз.";
+                return "Извините, не могу ответить на это сообщение. Попробуйте еще раз.";
         }
     }
 }
