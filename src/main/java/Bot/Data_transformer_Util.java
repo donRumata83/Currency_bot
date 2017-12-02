@@ -48,7 +48,7 @@ class Data_transformer_Util {
                 "\n" + "*НБУ:* \n" +
                 String.format(format, currency.getNbu_bid(), currency.getNbu_ask()) +
                 "\n" + "*Аукцион:* \n" +
-                String.format(format, currency.getAuc_bid(), currency.getAuc_ask());
+                String.format(format, currency.getAuc_ask(), currency.getAuc_bid());
     }
 
     /**
