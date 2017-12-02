@@ -7,12 +7,10 @@ import java.util.Map;
 
 class Data_transformer_Util {
     private Currency_DB currency_DB;
-
     private Map<Commands, Currency> map = new HashMap<>();
 
-
     private final String format = "покупка %.2f , продажа %.2f";
-    private final String info = "Информация предоставлена с www.minfin.com.ua/currency/";
+
 
     /**
      * Constructor

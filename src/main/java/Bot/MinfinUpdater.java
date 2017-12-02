@@ -17,6 +17,7 @@ import java.util.Properties;
 
 public class MinfinUpdater implements Updater {
     private String minFinToken;
+    private static final String USER_AGENT = "[UACurrency_Bot]/1.0(http://t.me/UACurrencyBot)";
 
 
     public MinfinUpdater() {
@@ -65,7 +66,6 @@ public class MinfinUpdater implements Updater {
         return result;
     }
 
-
     public ArrayList<Float> parseMBresponse(String response) {
         ArrayList<Float> result = new ArrayList<>();
         JSONArray array = new JSONArray(response);
@@ -87,7 +87,7 @@ public class MinfinUpdater implements Updater {
         HttpClient client = new DefaultHttpClient();
         HttpGet request = new HttpGet(url + minFinToken + "/");
 
-        request.addHeader("User-Agent", "[UACurrency_Bot]/1.0(http://t.me/UACurrencyBot)");
+        request.addHeader("User-Agent", USER_AGENT);
         try {
             HttpResponse response = client.execute(request);
 
