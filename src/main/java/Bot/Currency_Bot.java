@@ -10,8 +10,7 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 import Bot.Enums.Commands;
 
 
-
-import java.io.IOException;
+import java.io.*;
 import java.util.Properties;
 
 /**
@@ -24,17 +23,8 @@ public class Currency_Bot extends TelegramLongPollingBot {
     private static long counter = 0;
     private static long mcounter = 0;
 
-    private final String helpComand = "Это бот для получения актуальных курсов валют" + "\n" +
-            "Вы можете использовать такие команды:" + "\n" +
-            "   /USD - для получения курса доллара" + "\n" +
-            "   /EURO - для получения курса евро" + "\n" +
-            "   /RUB - для получения курса рубля" + "\n" +
-            "Также возможно использования названий валют как на русском так и английском языках" + "\n"
-            + "Курсы валют актуальны благодаря ресурсу [minfin.com.ua/currency]" + "\n" +
-            "Создатель бота @donRumata83";
-
-    private final String greetingCommand = "Добрый день, я бот который знает все о валютах в Украине. " +
-            "Курс какой валюты вы хотели бы узнать?";
+    private String helpComand;
+    private String greetingCommand;
 
     public static void main(String[] args) {
         ApiContextInitializer.init();
@@ -56,10 +46,16 @@ public class Currency_Bot extends TelegramLongPollingBot {
     private Currency_Bot(Data_transformer_Util data_transformer_util) {
         this.data_transformer_util = data_transformer_util;
         Properties props = new Properties();
+        Properties propsMessage = new Properties();
         try {
             props.load(Currency_Bot.class.getResourceAsStream("/config.properties"));
             this.token = props.getProperty("token");
             this.botName = props.getProperty("botName");
+            InputStream is = Currency_Bot.class.getResourceAsStream("/message.properties");
+            InputStreamReader isr = new InputStreamReader(is, "UTF-8");
+            propsMessage.load(new BufferedReader(isr));
+            this.helpComand = propsMessage.getProperty("help");
+            this.greetingCommand = propsMessage.getProperty("greeting");
         } catch (IOException e) {
             e.printStackTrace();
         }

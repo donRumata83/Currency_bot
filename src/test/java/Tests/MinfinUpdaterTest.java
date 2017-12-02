@@ -5,7 +5,6 @@ import Bot.MinfinUpdater;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -25,6 +24,7 @@ public class MinfinUpdaterTest {
             props.load(MinfinUpdaterTest.class.getResourceAsStream("/mb_response.txt"));
             this.MB_response = props.getProperty("mb");
             this.NBU_response = props.getProperty("nbu");
+            this.AUC_response = props.getProperty("auc");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -42,12 +42,13 @@ public class MinfinUpdaterTest {
 
     }
 
+
     @Test
-    public void checkNBU_responseParse()
+    public void checkAUC_responseParsing()
     {
         MinfinUpdater updater = new MinfinUpdater();
 
-        ArrayList<Float> result = updater.parseNBUresponse(NBU_response);
+        ArrayList<Float> result = updater.parseNormalResponse(AUC_response);
 
         System.out.println(result);
     }

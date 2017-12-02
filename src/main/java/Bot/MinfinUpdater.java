@@ -34,16 +34,16 @@ public class MinfinUpdater implements Updater {
         ArrayList<Float> result;
         switch (request) {
             case NBU:
-                result = parseNBUresponse(sendGet(Market_Type.NBU.toString()));
+                result = parseNormalResponse(sendGet(Market_Type.NBU.toString()));
                 break;
             case MB_MARKET:
                 result = parseMBresponse(sendGet(Market_Type.MB_MARKET.toString()));
                 break;
             case BANKS:
-                result = parseNBUresponse(sendGet(Market_Type.BANKS.toString()));
+                result = parseNormalResponse(sendGet(Market_Type.BANKS.toString()));
                 break;
             case AUCTION:
-                result = parseNBUresponse(sendGet(Market_Type.AUCTION.toString()));
+                result = parseNormalResponse(sendGet(Market_Type.AUCTION.toString()));
                 break;
             default:
                 result = null;
@@ -51,32 +51,32 @@ public class MinfinUpdater implements Updater {
         return result;
     }
 
-    public ArrayList<Float> parseNBUresponse(String response) {
+    public ArrayList<Float> parseNormalResponse(String response) {
         ArrayList<Float> result = new ArrayList<>();
         JSONObject resp = new JSONObject(response);
-        result.add(Float.parseFloat(resp.getJSONObject("usd").getString("ask")));
-        result.add(Float.parseFloat(resp.getJSONObject("usd").getString("bid")));
+        result.add(getAsk(resp.getJSONObject("usd")));
+        result.add(getBid(resp.getJSONObject("usd")));
 
-        result.add(Float.parseFloat(resp.getJSONObject("eur").getString("ask")));
-        result.add(Float.parseFloat(resp.getJSONObject("eur").getString("bid")));
+        result.add(getAsk(resp.getJSONObject("eur")));
+        result.add(getBid(resp.getJSONObject("eur")));
 
-        result.add(Float.parseFloat(resp.getJSONObject("rub").getString("ask")));
-        result.add(Float.parseFloat(resp.getJSONObject("rub").getString("bid")));
+        result.add(getAsk(resp.getJSONObject("rub")));
+        result.add(getBid(resp.getJSONObject("rub")));
         return result;
-
     }
+
 
     public ArrayList<Float> parseMBresponse(String response) {
         ArrayList<Float> result = new ArrayList<>();
         JSONArray array = new JSONArray(response);
-        result.add(Float.parseFloat(array.getJSONObject(2).getString("ask")));
-        result.add(Float.parseFloat(array.getJSONObject(2).getString("bid")));
+        result.add(getAsk(array.getJSONObject(2)));
+        result.add(getBid(array.getJSONObject(2)));
 
-        result.add(Float.parseFloat(array.getJSONObject(1).getString("ask")));
-        result.add(Float.parseFloat(array.getJSONObject(1).getString("bid")));
+        result.add(getAsk(array.getJSONObject(1)));
+        result.add(getBid(array.getJSONObject(1)));
 
-        result.add(Float.parseFloat(array.getJSONObject(0).getString("ask")));
-        result.add(Float.parseFloat(array.getJSONObject(0).getString("bid")));
+        result.add(getAsk(array.getJSONObject(0)));
+        result.add(getBid(array.getJSONObject(0)));
 
         return result;
     }
@@ -106,4 +106,21 @@ public class MinfinUpdater implements Updater {
         return "";
 
     }
+
+    private Float getAsk(JSONObject object) {
+        try {
+            return Float.parseFloat(object.getString("ask"));
+        } catch (Exception e) {
+            return (float) object.getDouble("ask");
+        }
+    }
+
+    private Float getBid(JSONObject object) {
+        try {
+            return Float.parseFloat(object.getString("bid"));
+        } catch (Exception e) {
+            return (float) object.getDouble("bid");
+        }
+    }
+
 }
