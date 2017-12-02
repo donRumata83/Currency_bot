@@ -36,16 +36,15 @@ class Data_transformer_Util {
      */
     private String getMessage(Currency currency) {
         getActualCurrencies();
-        String stringBuilder = "*" +currency.getName() + "*"+  currency.getMark() +
+        return "*" +currency.getName() + "*"+  currency.getMark() +
                 "\n" + "*Межбанк:* \n" +
-                String.format(format, currency.getMb_ask(), currency.getMb_bid()) +
+                String.format(format, currency.getMb_bid(), currency.getMb_ask()) +
                 "\n" + "*Средний курс в банках:* \n" +
-                String.format(format, currency.getBank_ask(), currency.getBank_bid()) +
+                String.format(format, currency.getBank_bid(), currency.getBank_ask()) +
                 "\n" + "*НБУ:* \n" +
-                String.format(format, currency.getNbu_ask(), currency.getNbu_bid()) +
+                String.format(format, currency.getNbu_bid(), currency.getNbu_ask()) +
                 "\n" + "*Аукцион:* \n" +
-                String.format(format, currency.getAuc_ask(), currency.getAuc_bid());
-        return stringBuilder;
+                String.format(format, currency.getAuc_bid(), currency.getAuc_ask());
     }
 
     /**

@@ -38,7 +38,7 @@ public class MinfinUpdater implements Updater {
                 result = parseNormalResponse(sendGet(Market_Type.NBU.toString()));
                 break;
             case MB_MARKET:
-                result = parseMBresponse(sendGet(Market_Type.MB_MARKET.toString()));
+                result = parse_MB_Response(sendGet(Market_Type.MB_MARKET.toString()));
                 break;
             case BANKS:
                 result = parseNormalResponse(sendGet(Market_Type.BANKS.toString()));
@@ -66,7 +66,7 @@ public class MinfinUpdater implements Updater {
         return result;
     }
 
-    public ArrayList<Float> parseMBresponse(String response) {
+    public ArrayList<Float> parse_MB_Response(String response) {
         ArrayList<Float> result = new ArrayList<>();
         JSONArray array = new JSONArray(response);
         result.add(getAsk(array.getJSONObject(2)));
@@ -95,7 +95,7 @@ public class MinfinUpdater implements Updater {
                     new InputStreamReader(response.getEntity().getContent()));
 
             StringBuilder result = new StringBuilder();
-            String line = "";
+            String line;
             while ((line = rd.readLine()) != null) {
                 result.append(line);
             }

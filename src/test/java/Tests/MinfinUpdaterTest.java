@@ -36,7 +36,7 @@ public class MinfinUpdaterTest {
         //given
         MinfinUpdater updater = new MinfinUpdater();
 
-        ArrayList<Float> result = updater.parseMBresponse(MB_response);
+        ArrayList<Float> result = updater.parse_MB_Response(MB_response);
 
 
 

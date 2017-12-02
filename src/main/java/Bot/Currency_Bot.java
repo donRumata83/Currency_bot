@@ -21,17 +21,17 @@ public class Currency_Bot extends TelegramLongPollingBot {
     private String botName;
     private Data_transformer_Util data_transformer_util;
     private static long counter = 0;
-    private static long mcounter = 0;
+    private static long messageCounter = 0;
 
-    private String helpComand;
+    private String helpCommand;
     private String greetingCommand;
 
     public static void main(String[] args) {
         ApiContextInitializer.init();
-        TelegramBotsApi botapi = new TelegramBotsApi();
+        TelegramBotsApi botsApi = new TelegramBotsApi();
         Currency_DB currency_db = new Currency_DB(new MinfinUpdater());
         try {
-            botapi.registerBot(new Currency_Bot(new Data_transformer_Util(currency_db)));
+            botsApi.registerBot(new Currency_Bot(new Data_transformer_Util(currency_db)));
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
@@ -54,7 +54,7 @@ public class Currency_Bot extends TelegramLongPollingBot {
             InputStream is = Currency_Bot.class.getResourceAsStream("/message.properties");
             InputStreamReader isr = new InputStreamReader(is, "UTF-8");
             propsMessage.load(new BufferedReader(isr));
-            this.helpComand = propsMessage.getProperty("help");
+            this.helpCommand = propsMessage.getProperty("help");
             this.greetingCommand = propsMessage.getProperty("greeting");
         } catch (IOException e) {
             e.printStackTrace();
@@ -127,23 +127,23 @@ public class Currency_Bot extends TelegramLongPollingBot {
                 return greetingCommand;
             }
             case HELP:
-                return helpComand;
+                return helpCommand;
             case USD: {
-                mcounter++;
+                messageCounter++;
                 return data_transformer_util.getUSD();
             }
             case EURO: {
-                mcounter++;
+                messageCounter++;
                 return data_transformer_util.getEuro();
             }
             case RUB: {
-                mcounter++;
+                messageCounter++;
                 return data_transformer_util.getRub();
             }
             case STAT:
                 return "Юзеров: " + counter;
             case MSTAT:
-                return "Запросов: " + mcounter;
+                return "Запросов: " + messageCounter;
             default:
                 return "Извините, не могу ответить на это сообщение. Попробуйте еще раз.";
         }
