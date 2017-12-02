@@ -54,30 +54,33 @@ public class MinfinUpdater implements Updater {
 
     public ArrayList<Float> parseNormalResponse(String response) {
         ArrayList<Float> result = new ArrayList<>();
-        JSONObject resp = new JSONObject(response);
-        result.add(getAsk(resp.getJSONObject("usd")));
-        result.add(getBid(resp.getJSONObject("usd")));
+        if (!response.equals("[]") | response.equals("")) {
+            JSONObject resp = new JSONObject(response);
+            result.add(getAsk(resp.getJSONObject("usd")));
+            result.add(getBid(resp.getJSONObject("usd")));
 
-        result.add(getAsk(resp.getJSONObject("eur")));
-        result.add(getBid(resp.getJSONObject("eur")));
+            result.add(getAsk(resp.getJSONObject("eur")));
+            result.add(getBid(resp.getJSONObject("eur")));
 
-        result.add(getAsk(resp.getJSONObject("rub")));
-        result.add(getBid(resp.getJSONObject("rub")));
+            result.add(getAsk(resp.getJSONObject("rub")));
+            result.add(getBid(resp.getJSONObject("rub")));
+        }
         return result;
     }
 
     public ArrayList<Float> parse_MB_Response(String response) {
         ArrayList<Float> result = new ArrayList<>();
-        JSONArray array = new JSONArray(response);
-        result.add(getAsk(array.getJSONObject(2)));
-        result.add(getBid(array.getJSONObject(2)));
+        if (!response.equals("[]") | response.equals("")) {
+            JSONArray array = new JSONArray(response);
+            result.add(getAsk(array.getJSONObject(2)));
+            result.add(getBid(array.getJSONObject(2)));
 
-        result.add(getAsk(array.getJSONObject(1)));
-        result.add(getBid(array.getJSONObject(1)));
+            result.add(getAsk(array.getJSONObject(1)));
+            result.add(getBid(array.getJSONObject(1)));
 
-        result.add(getAsk(array.getJSONObject(0)));
-        result.add(getBid(array.getJSONObject(0)));
-
+            result.add(getAsk(array.getJSONObject(0)));
+            result.add(getBid(array.getJSONObject(0)));
+        }
         return result;
     }
 
@@ -95,7 +98,7 @@ public class MinfinUpdater implements Updater {
                     new InputStreamReader(response.getEntity().getContent()));
 
             StringBuilder result = new StringBuilder();
-            String line;
+            String line = "";
             while ((line = rd.readLine()) != null) {
                 result.append(line);
             }

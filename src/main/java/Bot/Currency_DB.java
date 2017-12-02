@@ -15,7 +15,7 @@ public class Currency_DB {
     private static final int TIMEOUT_5MIN = 1000 * 60 * 5;
 
 
-    public Currency_DB(Updater updater) {
+    Currency_DB(Updater updater) {
         this.actualCurrencyStorage = new HashMap<>();
         actualCurrencyStorage.put(Commands.USD, new Currency("Доллар США", Mark.USD));
         actualCurrencyStorage.put(Commands.EURO, new Currency("Евро", Mark.EUR));
@@ -71,71 +71,79 @@ public class Currency_DB {
     }
 
     private void updateMB(ArrayList<Float> response) {
-        Currency usd = actualCurrencyStorage.get(Commands.USD);
-        usd.setMb_ask(response.get(0));
-        usd.setMb_bid(response.get(1));
-        actualCurrencyStorage.put(Commands.USD, usd);
+        if (response.size() != 0) {
+            Currency usd = actualCurrencyStorage.get(Commands.USD);
+            usd.setMb_ask(response.get(0));
+            usd.setMb_bid(response.get(1));
+            actualCurrencyStorage.put(Commands.USD, usd);
 
-        Currency euro = actualCurrencyStorage.get(Commands.EURO);
-        euro.setMb_ask(response.get(2));
-        euro.setMb_bid(response.get(3));
-        actualCurrencyStorage.put(Commands.EURO, euro);
+            Currency euro = actualCurrencyStorage.get(Commands.EURO);
+            euro.setMb_ask(response.get(2));
+            euro.setMb_bid(response.get(3));
+            actualCurrencyStorage.put(Commands.EURO, euro);
 
-        Currency rub = actualCurrencyStorage.get(Commands.RUB);
-        rub.setMb_ask(response.get(4));
-        rub.setMb_bid(response.get(5));
-        actualCurrencyStorage.put(Commands.RUB, rub);
+            Currency rub = actualCurrencyStorage.get(Commands.RUB);
+            rub.setMb_ask(response.get(4));
+            rub.setMb_bid(response.get(5));
+            actualCurrencyStorage.put(Commands.RUB, rub);
+        }
     }
 
     private void updateBank(ArrayList<Float> response) {
-        Currency usd = actualCurrencyStorage.get(Commands.USD);
-        usd.setBank_ask(response.get(0));
-        usd.setBank_bid(response.get(1));
-        actualCurrencyStorage.put(Commands.USD, usd);
+        if (response.size() != 0) {
+            Currency usd = actualCurrencyStorage.get(Commands.USD);
+            usd.setBank_ask(response.get(0));
+            usd.setBank_bid(response.get(1));
+            actualCurrencyStorage.put(Commands.USD, usd);
 
-        Currency euro = actualCurrencyStorage.get(Commands.EURO);
-        euro.setBank_ask(response.get(2));
-        euro.setBank_bid(response.get(3));
-        actualCurrencyStorage.put(Commands.EURO, euro);
+            Currency euro = actualCurrencyStorage.get(Commands.EURO);
+            euro.setBank_ask(response.get(2));
+            euro.setBank_bid(response.get(3));
+            actualCurrencyStorage.put(Commands.EURO, euro);
 
-        Currency rub = actualCurrencyStorage.get(Commands.RUB);
-        rub.setBank_ask(response.get(4));
-        rub.setBank_bid(response.get(5));
-        actualCurrencyStorage.put(Commands.RUB, rub);
+            Currency rub = actualCurrencyStorage.get(Commands.RUB);
+            rub.setBank_ask(response.get(4));
+            rub.setBank_bid(response.get(5));
+            actualCurrencyStorage.put(Commands.RUB, rub);
+        }
     }
 
     private void updateAUC(ArrayList<Float> response) {
-        Currency usd = actualCurrencyStorage.get(Commands.USD);
-        usd.setAuc_ask(response.get(0));
-        usd.setAuc_bid(response.get(1));
-        actualCurrencyStorage.put(Commands.USD, usd);
+        if (response.size() != 0) {
+            Currency usd = actualCurrencyStorage.get(Commands.USD);
+            usd.setAuc_ask(response.get(0));
+            usd.setAuc_bid(response.get(1));
+            actualCurrencyStorage.put(Commands.USD, usd);
 
-        Currency euro = actualCurrencyStorage.get(Commands.EURO);
-        euro.setAuc_ask(response.get(2));
-        euro.setAuc_bid(response.get(3));
-        actualCurrencyStorage.put(Commands.EURO, euro);
+            Currency euro = actualCurrencyStorage.get(Commands.EURO);
+            euro.setAuc_ask(response.get(2));
+            euro.setAuc_bid(response.get(3));
+            actualCurrencyStorage.put(Commands.EURO, euro);
 
-        Currency rub = actualCurrencyStorage.get(Commands.RUB);
-        rub.setAuc_ask(response.get(4));
-        rub.setAuc_bid(response.get(5));
-        actualCurrencyStorage.put(Commands.RUB, rub);
+            Currency rub = actualCurrencyStorage.get(Commands.RUB);
+            rub.setAuc_ask(response.get(4));
+            rub.setAuc_bid(response.get(5));
+            actualCurrencyStorage.put(Commands.RUB, rub);
+        }
     }
 
     private void updateNBU(ArrayList<Float> response) {
-        Currency usd = actualCurrencyStorage.get(Commands.USD);
-        usd.setNbu_ask(response.get(0));
-        usd.setNbu_bid(response.get(1));
-        actualCurrencyStorage.put(Commands.USD, usd);
+        if (response.size() != 0) {
+            Currency usd = actualCurrencyStorage.get(Commands.USD);
+            usd.setNbu_ask(response.get(0));
+            usd.setNbu_bid(response.get(1));
+            actualCurrencyStorage.put(Commands.USD, usd);
 
-        Currency euro = actualCurrencyStorage.get(Commands.EURO);
-        euro.setNbu_ask(response.get(2));
-        euro.setNbu_bid(response.get(3));
-        actualCurrencyStorage.put(Commands.EURO, euro);
+            Currency euro = actualCurrencyStorage.get(Commands.EURO);
+            euro.setNbu_ask(response.get(2));
+            euro.setNbu_bid(response.get(3));
+            actualCurrencyStorage.put(Commands.EURO, euro);
 
-        Currency rub = actualCurrencyStorage.get(Commands.RUB);
-        rub.setNbu_ask(response.get(4));
-        rub.setNbu_bid(response.get(5));
-        actualCurrencyStorage.put(Commands.RUB, rub);
+            Currency rub = actualCurrencyStorage.get(Commands.RUB);
+            rub.setNbu_ask(response.get(4));
+            rub.setNbu_bid(response.get(5));
+            actualCurrencyStorage.put(Commands.RUB, rub);
+        }
     }
 
 

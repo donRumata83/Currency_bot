@@ -2,6 +2,9 @@ package Bot;
 
 import Bot.Currencies.*;
 import Bot.Enums.*;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +39,8 @@ class Data_transformer_Util {
      */
     private String getMessage(Currency currency) {
         getActualCurrencies();
-        return "*" +currency.getName() + "*"+  currency.getMark() +
+        return "*" +currency.getName() + "* "+  currency.getMark() + " на "
+                + new SimpleDateFormat("dd.MM.yyyy").format(new Date())+
                 "\n" + "*Межбанк:* \n" +
                 String.format(format, currency.getMb_bid(), currency.getMb_ask()) +
                 "\n" + "*Средний курс в банках:* \n" +
