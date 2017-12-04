@@ -6,7 +6,7 @@ package Bot.Enums;
 public enum Commands {
     USD, EURO, RUB,
     NOT_CURRENCY, START, HELP,
-    STAT, MSTAT;
+    STAT, MSTAT, SEARCH;
 
     /**
      * Converts text from user chat to enum
@@ -44,6 +44,8 @@ public enum Commands {
                 return STAT;
             case "MSTAT":
                 return MSTAT;
+            case "/SEARCH":
+                return SEARCH;
             default:
                 return NOT_CURRENCY;
         }

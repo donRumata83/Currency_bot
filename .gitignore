@@ -26,3 +26,12 @@ hs_err_pid*
 /src/main/resources/message.properties
 /src/test/resources/mb_response.txt
 /src/test/resources/nbu_response.txt
+/src/main/resources/currency.properties
+.gradle/
+.idea/libraries/Gradle__com_fasterxml_jackson_core_jackson_core_2_9_2.xml
+.idea/libraries/Gradle__junit_junit_4_12.xml
+.idea/libraries/Gradle__org_hamcrest_hamcrest_core_1_3.xml
+.idea/workspace.xml
+out/
+src/main/resources/
+src/test/resources/

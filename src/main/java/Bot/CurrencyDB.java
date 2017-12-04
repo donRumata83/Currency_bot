@@ -4,7 +4,11 @@ import Bot.Currencies.Currency;
 import Bot.Enums.Commands;
 import Bot.Enums.Mark;
 import Bot.Enums.MarketType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+
+import java.io.FileOutputStream;
+import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -13,16 +17,29 @@ public class CurrencyDB {
     private Updater updater;
 
     private static final int TIMEOUT_5MIN = 1000 * 60 * 5;
+    private static final int TIMEOUT_1HOUR = (1000 * 60 * 60) + 100;
 
 
     CurrencyDB(Updater updater) {
-        this.actualCurrencyStorage = new HashMap<Commands, Currency>() {{
-            put(Commands.USD, new Currency("Доллар США", Mark.USD));
-            put(Commands.EURO, new Currency("Евро", Mark.EUR));
-            put(Commands.RUB, new Currency("Десять Российских рублей", Mark.RUB));
-        }};
+        try {
+            ObjectMapper maper = new ObjectMapper();
+            Properties props = new Properties();
+            props.load(CurrencyBot.class.getResourceAsStream("/currency.properties"));
+            this.actualCurrencyStorage = new HashMap<Commands, Currency>() {{
+                put(Commands.USD, maper.readValue(props.getProperty("usd"), Currency.class));
+                put(Commands.EURO, maper.readValue(props.getProperty("eur"), Currency.class));
+                put(Commands.RUB, maper.readValue(props.getProperty("rub"), Currency.class));
+            }};
+        } catch (Exception e) {
+            this.actualCurrencyStorage = new HashMap<Commands, Currency>() {{
+                put(Commands.USD, new Currency("Доллар США", Mark.USD));
+                put(Commands.EURO, new Currency("Евро", Mark.EUR));
+                put(Commands.RUB, new Currency("Десять Российских рублей", Mark.RUB));
+            }};
+        }
         this.updater = updater;
         update();
+        saveInFile();
     }
 
     public HashMap<Commands, Currency> getActualCurrencyStorage() {
@@ -142,5 +159,27 @@ public class CurrencyDB {
         }
     }
 
-
+    private void saveInFile() {
+        new Thread(() -> {
+            while (true) {
+                try (FileOutputStream fos = new FileOutputStream(CurrencyBot.class.getResource("/currency.properties").getFile());){
+                    Thread.sleep(10000);
+                    ObjectMapper mapper = new ObjectMapper();
+                    Properties props = new Properties();
+                    StringWriter writer = new StringWriter();
+                    mapper.writeValue(writer, actualCurrencyStorage.get(Commands.USD));
+                    props.setProperty("usd", writer.toString());
+                    writer = new StringWriter();
+                    mapper.writeValue(writer, actualCurrencyStorage.get(Commands.EURO));
+                    props.setProperty("eur", writer.toString());
+                    writer = new StringWriter();
+                    mapper.writeValue(writer, actualCurrencyStorage.get(Commands.RUB));
+                    props.setProperty("rub", writer.toString());
+                    props.store(fos, "");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).run();
+    }
 }
