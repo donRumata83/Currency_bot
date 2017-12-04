@@ -1,11 +1,9 @@
 package Bot;
 
 import Bot.Enums.MarketType;
-
-import java.util.ArrayList;
+import java.util.List;
 
 
 interface Updater {
-    ArrayList<Float> sendRequest(MarketType request);
-
+    List<Float> sendRequest(MarketType request);
 }

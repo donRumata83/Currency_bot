@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 
@@ -37,42 +38,37 @@ public class MinfinUpdaterTest {
         //given
         MinfinUpdater updater = new MinfinUpdater();
 
-        ArrayList<Float> result = updater.parseMbResponse(MB_response);
-
-        System.out.println(result);
-
-    }
-
-
-    @Test
-    public void checkAUC_responseParsing()
-    {
-        MinfinUpdater updater = new MinfinUpdater();
-
-        ArrayList<Float> result = updater.parseNormalResponse(AUC_response);
+        List<Float> result = updater.parseMbResponse(MB_response);
 
         System.out.println(result);
     }
 
 
     @Test
-    public void checkNBU_ResponseParsing()
-    {
+    public void checkAUCResponseParsing() {
         MinfinUpdater updater = new MinfinUpdater();
 
-        ArrayList<Float> result = updater.parseNormalResponse(NBU_response);
+        List<Float> result = updater.parseNormalResponse(AUC_response);
+
+        System.out.println(result);
+    }
+
+
+    @Test
+    public void checkNBUResponseParsing() {
+        MinfinUpdater updater = new MinfinUpdater();
+
+        List<Float> result = updater.parseNormalResponse(NBU_response);
 
         System.out.println(result);
     }
 
     @Test
-    public void checkServerResponse()
-    {
+    public void checkServerResponse() {
         MinfinUpdater updater = new MinfinUpdater();
 
-        ArrayList<Float> result = updater.sendRequest(MarketType.MB_MARKET);
+        List<Float> result = updater.sendRequest(MarketType.MB_MARKET);
 
         System.out.println(result);
-
     }
 }

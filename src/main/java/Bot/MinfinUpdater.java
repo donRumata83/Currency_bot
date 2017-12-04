@@ -29,8 +29,8 @@ public class MinfinUpdater implements Updater {
     }
 
     @Override
-    public ArrayList<Float> sendRequest(MarketType request) {
-        ArrayList<Float> result;
+    public List<Float> sendRequest(MarketType request) {
+        List<Float> result;
         switch (request) {
             case NBU:
                 result = parseNormalResponse(sendGet(MarketType.NBU.toString()));
@@ -50,7 +50,7 @@ public class MinfinUpdater implements Updater {
         return result;
     }
 
-    public ArrayList<Float> parseNormalResponse(String response) {
+    public List<Float> parseNormalResponse(String response) {
         ArrayList<Float> result = new ArrayList<>();
         if (!response.equals("[]") | response.equals("")) {
             JSONObject resp = new JSONObject(response);
@@ -61,7 +61,7 @@ public class MinfinUpdater implements Updater {
         return result;
     }
 
-    public ArrayList<Float> parseMbResponse(String response) {
+    public List<Float> parseMbResponse(String response) {
         ArrayList<Float> result = new ArrayList<>();
         if (!response.equals("[]") | response.equals("")) {
             JSONArray array = new JSONArray(response);
@@ -73,7 +73,6 @@ public class MinfinUpdater implements Updater {
     }
 
     private String sendGet(String url) {
-
         HttpClient client = new DefaultHttpClient();
         HttpGet request = new HttpGet(url + minFinToken + "/");
         request.addHeader("User-Agent", USER_AGENT);

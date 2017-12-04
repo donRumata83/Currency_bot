@@ -33,12 +33,10 @@ public class CurrencyDB {
         Thread run = new Thread(() -> {
             Deque<MarketType> request_queue = new ArrayDeque<>
                     (Arrays.asList(MarketType.MB_MARKET, MarketType.NBU, MarketType.BANKS, MarketType.AUCTION));
-
-
             while (true) {
                 try {
                     MarketType request = request_queue.pollFirst();
-                    ArrayList<Float> response = updater.sendRequest(request);
+                    List<Float> response = updater.sendRequest(request);
                     System.out.println(response);
                     System.out.println(new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
                     switch (request) {
@@ -59,7 +57,6 @@ public class CurrencyDB {
                             request_queue.addLast(request);
                             break;
                     }
-
                     Thread.sleep(TIMEOUT_5MIN);
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
@@ -69,7 +66,7 @@ public class CurrencyDB {
         run.start();
     }
 
-    private void updateMB(ArrayList<Float> response) {
+    private void updateMB(List<Float> response) {
         if (response.size() != 0) {
             Currency usd = actualCurrencyStorage.get(Commands.USD);
             usd.setMb_ask(response.get(0));
@@ -88,7 +85,7 @@ public class CurrencyDB {
         }
     }
 
-    private void updateBank(ArrayList<Float> response) {
+    private void updateBank(List<Float> response) {
         if (response.size() != 0) {
             Currency usd = actualCurrencyStorage.get(Commands.USD);
             usd.setBank_ask(response.get(0));
@@ -107,7 +104,7 @@ public class CurrencyDB {
         }
     }
 
-    private void updateAUC(ArrayList<Float> response) {
+    private void updateAUC(List<Float> response) {
         if (response.size() != 0) {
             Currency usd = actualCurrencyStorage.get(Commands.USD);
             usd.setAuc_ask(response.get(0));
@@ -126,7 +123,7 @@ public class CurrencyDB {
         }
     }
 
-    private void updateNBU(ArrayList<Float> response) {
+    private void updateNBU(List<Float> response) {
         if (response.size() != 0) {
             Currency usd = actualCurrencyStorage.get(Commands.USD);
             usd.setNbu_ask(response.get(0));
