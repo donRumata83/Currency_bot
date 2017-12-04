@@ -3,23 +3,24 @@ package Bot;
 import Bot.Currencies.Currency;
 import Bot.Enums.Commands;
 import Bot.Enums.Mark;
-import Bot.Enums.Market_Type;
+import Bot.Enums.MarketType;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class Currency_DB {
+public class CurrencyDB {
     private HashMap<Commands, Currency> actualCurrencyStorage;
     private Updater updater;
 
     private static final int TIMEOUT_5MIN = 1000 * 60 * 5;
 
 
-    Currency_DB(Updater updater) {
-        this.actualCurrencyStorage = new HashMap<>();
-        actualCurrencyStorage.put(Commands.USD, new Currency("Доллар США", Mark.USD));
-        actualCurrencyStorage.put(Commands.EURO, new Currency("Евро", Mark.EUR));
-        actualCurrencyStorage.put(Commands.RUB, new Currency("Десять Российских рублей", Mark.RUB));
+    CurrencyDB(Updater updater) {
+        this.actualCurrencyStorage = new HashMap<Commands, Currency>() {{
+            put(Commands.USD, new Currency("Доллар США", Mark.USD));
+            put(Commands.EURO, new Currency("Евро", Mark.EUR));
+            put(Commands.RUB, new Currency("Десять Российских рублей", Mark.RUB));
+        }};
         this.updater = updater;
         update();
     }
@@ -30,13 +31,13 @@ public class Currency_DB {
 
     private void update() {
         Thread run = new Thread(() -> {
-            Deque<Market_Type> request_queue = new ArrayDeque<>
-                    (Arrays.asList(Market_Type.MB_MARKET,Market_Type.NBU, Market_Type.BANKS,Market_Type.AUCTION));
+            Deque<MarketType> request_queue = new ArrayDeque<>
+                    (Arrays.asList(MarketType.MB_MARKET, MarketType.NBU, MarketType.BANKS, MarketType.AUCTION));
 
 
             while (true) {
                 try {
-                    Market_Type request = request_queue.pollFirst();
+                    MarketType request = request_queue.pollFirst();
                     ArrayList<Float> response = updater.sendRequest(request);
                     System.out.println(response);
                     System.out.println(new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
@@ -81,8 +82,8 @@ public class Currency_DB {
             actualCurrencyStorage.put(Commands.EURO, euro);
 
             Currency rub = actualCurrencyStorage.get(Commands.RUB);
-            rub.setMb_ask(response.get(4)*10);
-            rub.setMb_bid(response.get(5)*10);
+            rub.setMb_ask(response.get(4) * 10);
+            rub.setMb_bid(response.get(5) * 10);
             actualCurrencyStorage.put(Commands.RUB, rub);
         }
     }
@@ -100,8 +101,8 @@ public class Currency_DB {
             actualCurrencyStorage.put(Commands.EURO, euro);
 
             Currency rub = actualCurrencyStorage.get(Commands.RUB);
-            rub.setBank_ask(response.get(4)*10);
-            rub.setBank_bid(response.get(5)*10);
+            rub.setBank_ask(response.get(4) * 10);
+            rub.setBank_bid(response.get(5) * 10);
             actualCurrencyStorage.put(Commands.RUB, rub);
         }
     }
@@ -119,8 +120,8 @@ public class Currency_DB {
             actualCurrencyStorage.put(Commands.EURO, euro);
 
             Currency rub = actualCurrencyStorage.get(Commands.RUB);
-            rub.setAuc_ask(response.get(4)*10);
-            rub.setAuc_bid(response.get(5)*10);
+            rub.setAuc_ask(response.get(4) * 10);
+            rub.setAuc_bid(response.get(5) * 10);
             actualCurrencyStorage.put(Commands.RUB, rub);
         }
     }
@@ -138,8 +139,8 @@ public class Currency_DB {
             actualCurrencyStorage.put(Commands.EURO, euro);
 
             Currency rub = actualCurrencyStorage.get(Commands.RUB);
-            rub.setNbu_ask(response.get(4)*10);
-            rub.setNbu_bid(response.get(5)*10);
+            rub.setNbu_ask(response.get(4) * 10);
+            rub.setNbu_bid(response.get(5) * 10);
             actualCurrencyStorage.put(Commands.RUB, rub);
         }
     }

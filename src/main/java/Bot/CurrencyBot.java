@@ -16,10 +16,10 @@ import java.util.Properties;
 /**
  * Main class
  */
-public class Currency_Bot extends TelegramLongPollingBot {
+public class CurrencyBot extends TelegramLongPollingBot {
     private String token;
     private String botName;
-    private Data_transformer_Util data_transformer_util;
+    private DataTransformerUtil dataTransformer_util;
     private static long counter = 0;
     private static long messageCounter = 0;
 
@@ -29,9 +29,9 @@ public class Currency_Bot extends TelegramLongPollingBot {
     public static void main(String[] args) {
         ApiContextInitializer.init();
         TelegramBotsApi botsApi = new TelegramBotsApi();
-        Currency_DB currency_db = new Currency_DB(new MinfinUpdater());
+        CurrencyDB currency_db = new CurrencyDB(new MinfinUpdater());
         try {
-            botsApi.registerBot(new Currency_Bot(new Data_transformer_Util(currency_db)));
+            botsApi.registerBot(new CurrencyBot(new DataTransformerUtil(currency_db)));
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
@@ -41,17 +41,17 @@ public class Currency_Bot extends TelegramLongPollingBot {
     /**
      * Constructor
      *
-     * @param data_transformer_util
+     * @param dataTransformer_util
      */
-    private Currency_Bot(Data_transformer_Util data_transformer_util) {
-        this.data_transformer_util = data_transformer_util;
+    private CurrencyBot(DataTransformerUtil dataTransformer_util) {
+        this.dataTransformer_util = dataTransformer_util;
         Properties props = new Properties();
         Properties propsMessage = new Properties();
         try {
-            props.load(Currency_Bot.class.getResourceAsStream("/config.properties"));
+            props.load(CurrencyBot.class.getResourceAsStream("/config.properties"));
             this.token = props.getProperty("token");
             this.botName = props.getProperty("botName");
-            InputStream is = Currency_Bot.class.getResourceAsStream("/message.properties");
+            InputStream is = CurrencyBot.class.getResourceAsStream("/message.properties");
             InputStreamReader isr = new InputStreamReader(is, "UTF-8");
             propsMessage.load(new BufferedReader(isr));
             this.helpCommand = propsMessage.getProperty("help");
@@ -130,15 +130,15 @@ public class Currency_Bot extends TelegramLongPollingBot {
                 return helpCommand;
             case USD: {
                 messageCounter++;
-                return data_transformer_util.getUSD();
+                return dataTransformer_util.getUSD();
             }
             case EURO: {
                 messageCounter++;
-                return data_transformer_util.getEuro();
+                return dataTransformer_util.getEuro();
             }
             case RUB: {
                 messageCounter++;
-                return data_transformer_util.getRub();
+                return dataTransformer_util.getRub();
             }
             case STAT:
                 return "Юзеров: " + counter;

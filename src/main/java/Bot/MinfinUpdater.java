@@ -1,6 +1,6 @@
 package Bot;
 
-import Bot.Enums.Market_Type;
+import Bot.Enums.MarketType;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -21,7 +21,7 @@ public class MinfinUpdater implements Updater {
     public MinfinUpdater() {
         Properties props = new Properties();
         try {
-            props.load(Currency_Bot.class.getResourceAsStream("/config.properties"));
+            props.load(CurrencyBot.class.getResourceAsStream("/config.properties"));
             this.minFinToken = props.getProperty("minFinToken");
         } catch (IOException e) {
             e.printStackTrace();
@@ -29,20 +29,20 @@ public class MinfinUpdater implements Updater {
     }
 
     @Override
-    public ArrayList<Float> sendRequest(Market_Type request) {
+    public ArrayList<Float> sendRequest(MarketType request) {
         ArrayList<Float> result;
         switch (request) {
             case NBU:
-                result = parseNormalResponse(sendGet(Market_Type.NBU.toString()));
+                result = parseNormalResponse(sendGet(MarketType.NBU.toString()));
                 break;
             case MB_MARKET:
-                result = parse_MB_Response(sendGet(Market_Type.MB_MARKET.toString()));
+                result = parseMbResponse(sendGet(MarketType.MB_MARKET.toString()));
                 break;
             case BANKS:
-                result = parseNormalResponse(sendGet(Market_Type.BANKS.toString()));
+                result = parseNormalResponse(sendGet(MarketType.BANKS.toString()));
                 break;
             case AUCTION:
-                result = parseNormalResponse(sendGet(Market_Type.AUCTION.toString()));
+                result = parseNormalResponse(sendGet(MarketType.AUCTION.toString()));
                 break;
             default:
                 result = null;
@@ -55,25 +55,19 @@ public class MinfinUpdater implements Updater {
         if (!response.equals("[]") | response.equals("")) {
             JSONObject resp = new JSONObject(response);
             result.addAll(getAskAndBid(resp.getJSONObject("usd")));
-
             result.addAll(getAskAndBid(resp.getJSONObject("eur")));
-
             result.addAll(getAskAndBid(resp.getJSONObject("rub")));
-
         }
         return result;
     }
 
-    public ArrayList<Float> parse_MB_Response(String response) {
+    public ArrayList<Float> parseMbResponse(String response) {
         ArrayList<Float> result = new ArrayList<>();
         if (!response.equals("[]") | response.equals("")) {
             JSONArray array = new JSONArray(response);
             result.addAll(getLastCurrencyMark(array, "usd"));
-
             result.addAll(getLastCurrencyMark(array, "eur"));
-
             result.addAll(getLastCurrencyMark(array, "rub"));
-
         }
         return result;
     }
@@ -82,11 +76,9 @@ public class MinfinUpdater implements Updater {
 
         HttpClient client = new DefaultHttpClient();
         HttpGet request = new HttpGet(url + minFinToken + "/");
-
         request.addHeader("User-Agent", USER_AGENT);
         try {
             HttpResponse response = client.execute(request);
-
             BufferedReader rd = new BufferedReader(
                     new InputStreamReader(response.getEntity().getContent()));
 
@@ -100,7 +92,6 @@ public class MinfinUpdater implements Updater {
             e.printStackTrace();
         }
         return "";
-
     }
 
     private Float getAsk(JSONObject object) {
@@ -120,7 +111,7 @@ public class MinfinUpdater implements Updater {
     }
 
     private List<Float> getAskAndBid(JSONObject object) {
-        List<Float> result =  Arrays.asList(getAsk(object),getBid(object));
+        List<Float> result = Arrays.asList(getAsk(object), getBid(object));
         Collections.sort(result);
         return result;
     }

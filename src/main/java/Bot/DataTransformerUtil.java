@@ -8,8 +8,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-class Data_transformer_Util {
-    private Currency_DB currency_DB;
+class DataTransformerUtil {
+    private CurrencyDB currency_DB;
     private Map<Commands, Currency> map = new HashMap<>();
 
     private final String format = "покупка %.3f , продажа %.3f";
@@ -17,9 +17,10 @@ class Data_transformer_Util {
 
     /**
      * Constructor
+     *
      * @param currency_DB
      */
-    Data_transformer_Util(Currency_DB currency_DB) {
+    DataTransformerUtil(CurrencyDB currency_DB) {
         this.currency_DB = currency_DB;
         this.getActualCurrencies();
     }
@@ -34,13 +35,14 @@ class Data_transformer_Util {
 
     /**
      * Gets actual currency and transform into text for sending
+     *
      * @param currency type
      * @return formatted text message for sending
      */
     private String getMessage(Currency currency) {
         getActualCurrencies();
-        return "*" +currency.getName() + "* "+  currency.getMark() + " на "
-                + new SimpleDateFormat("dd.MM.yyyy").format(new Date())+
+        return "*" + currency.getName() + "* " + currency.getMark() + " на "
+                + new SimpleDateFormat("dd.MM.yyyy").format(new Date()) +
                 "\n" + "*Межбанк:* \n" +
                 String.format(format, currency.getMb_ask(), currency.getMb_bid()) +
                 "\n" + "*Средний курс в банках:* \n" +
@@ -53,6 +55,7 @@ class Data_transformer_Util {
 
     /**
      * Return local USD value
+     *
      * @return text USD value
      */
     String getUSD() {
@@ -61,6 +64,7 @@ class Data_transformer_Util {
 
     /**
      * Return local EURO value
+     *
      * @return text EURO value
      */
     String getEuro() {
@@ -69,9 +73,11 @@ class Data_transformer_Util {
 
     /**
      * Return local RUB value
+     *
      * @return text RUB value
      */
-    String getRub(){return getMessage(map.get(Commands.RUB));
+    String getRub() {
+        return getMessage(map.get(Commands.RUB));
     }
 
 }

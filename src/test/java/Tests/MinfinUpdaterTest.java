@@ -1,7 +1,7 @@
 package Tests;
 
 
-import Bot.Enums.Market_Type;
+import Bot.Enums.MarketType;
 import Bot.MinfinUpdater;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +37,7 @@ public class MinfinUpdaterTest {
         //given
         MinfinUpdater updater = new MinfinUpdater();
 
-        ArrayList<Float> result = updater.parse_MB_Response(MB_response);
+        ArrayList<Float> result = updater.parseMbResponse(MB_response);
 
         System.out.println(result);
 
@@ -70,7 +70,7 @@ public class MinfinUpdaterTest {
     {
         MinfinUpdater updater = new MinfinUpdater();
 
-        ArrayList<Float> result = updater.sendRequest(Market_Type.MB_MARKET);
+        ArrayList<Float> result = updater.sendRequest(MarketType.MB_MARKET);
 
         System.out.println(result);
 
