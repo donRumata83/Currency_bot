@@ -11,9 +11,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-
-import java.util.Properties;
+import java.util.*;
 
 public class MinfinUpdater implements Updater {
     private String minFinToken;
@@ -56,14 +54,12 @@ public class MinfinUpdater implements Updater {
         ArrayList<Float> result = new ArrayList<>();
         if (!response.equals("[]") | response.equals("")) {
             JSONObject resp = new JSONObject(response);
-            result.add(getAsk(resp.getJSONObject("usd")));
-            result.add(getBid(resp.getJSONObject("usd")));
+            result.addAll(orderCheck(getAsk(resp.getJSONObject("usd")), getBid(resp.getJSONObject("usd"))));
 
-            result.add(getAsk(resp.getJSONObject("eur")));
-            result.add(getBid(resp.getJSONObject("eur")));
+            result.addAll(orderCheck(getAsk(resp.getJSONObject("eur")), getBid(resp.getJSONObject("eur"))));
 
-            result.add(getAsk(resp.getJSONObject("rub")));
-            result.add(getBid(resp.getJSONObject("rub")));
+            result.addAll(orderCheck(getAsk(resp.getJSONObject("rub")), getBid(resp.getJSONObject("rub"))));
+
         }
         return result;
     }
@@ -72,14 +68,12 @@ public class MinfinUpdater implements Updater {
         ArrayList<Float> result = new ArrayList<>();
         if (!response.equals("[]") | response.equals("")) {
             JSONArray array = new JSONArray(response);
-            result.add(getAsk(array.getJSONObject(2)));
-            result.add(getBid(array.getJSONObject(2)));
+            result.addAll(getLastCurrencyMark(array, "usd"));
 
-            result.add(getAsk(array.getJSONObject(1)));
-            result.add(getBid(array.getJSONObject(1)));
+            result.addAll(getLastCurrencyMark(array, "eur"));
 
-            result.add(getAsk(array.getJSONObject(0)));
-            result.add(getBid(array.getJSONObject(0)));
+            result.addAll(getLastCurrencyMark(array, "rub"));
+
         }
         return result;
     }
@@ -126,4 +120,29 @@ public class MinfinUpdater implements Updater {
         }
     }
 
+    private ArrayList<Float> orderCheck(float first, float second) {
+        Float[] arr = {first, second};
+        ArrayList<Float> result = new ArrayList<>(Arrays.asList(arr));
+        Collections.sort(result);
+        return result;
+    }
+
+    private ArrayList<Float> getLastCurrencyMark(JSONArray array, String currency) {
+        ArrayList<JSONObject> temp = new ArrayList<>();
+        for (int i = 0; i < array.length(); i++) {
+            if (array.getJSONObject(i).get("currency").equals(currency) && array.getJSONObject(i).isNull("status")) {
+                temp.add(array.getJSONObject(i));
+            }
+        }
+        Collections.sort(temp, (Comparator) (o1, o2) -> {
+            JSONObject o1tmp = (JSONObject) o1;
+            JSONObject o2tmp = (JSONObject) o2;
+            int o1int = Integer.parseInt(o1tmp.getString("id"));
+            int o2int = Integer.parseInt(o2tmp.getString("id"));
+            return o1int - o2int;
+        });
+        JSONObject goal = temp.get(temp.size() - 1);
+
+        return orderCheck(getAsk(goal),getBid(goal));
+    }
 }

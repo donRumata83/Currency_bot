@@ -12,7 +12,7 @@ class Data_transformer_Util {
     private Currency_DB currency_DB;
     private Map<Commands, Currency> map = new HashMap<>();
 
-    private final String format = "покупка %.2f , продажа %.2f";
+    private final String format = "покупка %.3f , продажа %.3f";
 
 
     /**
@@ -42,11 +42,11 @@ class Data_transformer_Util {
         return "*" +currency.getName() + "* "+  currency.getMark() + " на "
                 + new SimpleDateFormat("dd.MM.yyyy").format(new Date())+
                 "\n" + "*Межбанк:* \n" +
-                String.format(format, currency.getMb_bid(), currency.getMb_ask()) +
+                String.format(format, currency.getMb_ask(), currency.getMb_bid()) +
                 "\n" + "*Средний курс в банках:* \n" +
-                String.format(format, currency.getBank_bid(), currency.getBank_ask()) +
+                String.format(format, currency.getBank_ask(), currency.getBank_bid()) +
                 "\n" + "*НБУ:* \n" +
-                String.format(format, currency.getNbu_bid(), currency.getNbu_ask()) +
+                String.format(format, currency.getNbu_ask(), currency.getNbu_bid()) +
                 "\n" + "*Аукцион:* \n" +
                 String.format(format, currency.getAuc_ask(), currency.getAuc_bid());
     }

@@ -1,6 +1,7 @@
 package Tests;
 
 
+import Bot.Enums.Market_Type;
 import Bot.MinfinUpdater;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +39,7 @@ public class MinfinUpdaterTest {
 
         ArrayList<Float> result = updater.parse_MB_Response(MB_response);
 
-
+        System.out.println(result);
 
     }
 
@@ -53,4 +54,25 @@ public class MinfinUpdaterTest {
         System.out.println(result);
     }
 
+
+    @Test
+    public void checkNBU_ResponseParsing()
+    {
+        MinfinUpdater updater = new MinfinUpdater();
+
+        ArrayList<Float> result = updater.parseNormalResponse(NBU_response);
+
+        System.out.println(result);
+    }
+
+    @Test
+    public void checkServerResponse()
+    {
+        MinfinUpdater updater = new MinfinUpdater();
+
+        ArrayList<Float> result = updater.sendRequest(Market_Type.MB_MARKET);
+
+        System.out.println(result);
+
+    }
 }
