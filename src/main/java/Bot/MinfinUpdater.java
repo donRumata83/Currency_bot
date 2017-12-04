@@ -132,6 +132,6 @@ public class MinfinUpdater implements Updater {
         }
         return getAskAndBid(temp.stream().filter(e -> e.getString("currency").equals(currency))
                 .filter(e -> e.isNull("status"))
-                .max(Comparator.comparingInt((o1) -> Integer.parseInt(o1.getString("id")))).get());
+                .max(Comparator.comparingInt(o1 -> Integer.parseInt(o1.getString("id")))).get());
     }
 }

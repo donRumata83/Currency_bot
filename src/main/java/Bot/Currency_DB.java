@@ -30,15 +30,13 @@ public class Currency_DB {
 
     private void update() {
         Thread run = new Thread(() -> {
-            Deque<Market_Type> request_queue = new ArrayDeque<>();
-            request_queue.add(Market_Type.MB_MARKET);
-            request_queue.add(Market_Type.NBU);
-            request_queue.add(Market_Type.BANKS);
-            request_queue.add(Market_Type.AUCTION);
+            Deque<Market_Type> request_queue = new ArrayDeque<>
+                    (Arrays.asList(Market_Type.MB_MARKET,Market_Type.NBU, Market_Type.BANKS,Market_Type.AUCTION));
+
+
             while (true) {
                 try {
                     Market_Type request = request_queue.pollFirst();
-                    System.out.println(new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
                     ArrayList<Float> response = updater.sendRequest(request);
                     System.out.println(response);
                     System.out.println(new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
