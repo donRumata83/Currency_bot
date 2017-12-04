@@ -19,7 +19,7 @@ public class Currency_DB {
         this.actualCurrencyStorage = new HashMap<>();
         actualCurrencyStorage.put(Commands.USD, new Currency("Доллар США", Mark.USD));
         actualCurrencyStorage.put(Commands.EURO, new Currency("Евро", Mark.EUR));
-        actualCurrencyStorage.put(Commands.RUB, new Currency("Российский рубль", Mark.RUB));
+        actualCurrencyStorage.put(Commands.RUB, new Currency("Десять Российских рублей", Mark.RUB));
         this.updater = updater;
         update();
     }
@@ -83,8 +83,8 @@ public class Currency_DB {
             actualCurrencyStorage.put(Commands.EURO, euro);
 
             Currency rub = actualCurrencyStorage.get(Commands.RUB);
-            rub.setMb_ask(response.get(4));
-            rub.setMb_bid(response.get(5));
+            rub.setMb_ask(response.get(4)*10);
+            rub.setMb_bid(response.get(5)*10);
             actualCurrencyStorage.put(Commands.RUB, rub);
         }
     }
@@ -102,8 +102,8 @@ public class Currency_DB {
             actualCurrencyStorage.put(Commands.EURO, euro);
 
             Currency rub = actualCurrencyStorage.get(Commands.RUB);
-            rub.setBank_ask(response.get(4));
-            rub.setBank_bid(response.get(5));
+            rub.setBank_ask(response.get(4)*10);
+            rub.setBank_bid(response.get(5)*10);
             actualCurrencyStorage.put(Commands.RUB, rub);
         }
     }
@@ -121,8 +121,8 @@ public class Currency_DB {
             actualCurrencyStorage.put(Commands.EURO, euro);
 
             Currency rub = actualCurrencyStorage.get(Commands.RUB);
-            rub.setAuc_ask(response.get(4));
-            rub.setAuc_bid(response.get(5));
+            rub.setAuc_ask(response.get(4)*10);
+            rub.setAuc_bid(response.get(5)*10);
             actualCurrencyStorage.put(Commands.RUB, rub);
         }
     }
@@ -140,8 +140,8 @@ public class Currency_DB {
             actualCurrencyStorage.put(Commands.EURO, euro);
 
             Currency rub = actualCurrencyStorage.get(Commands.RUB);
-            rub.setNbu_ask(response.get(4));
-            rub.setNbu_bid(response.get(5));
+            rub.setNbu_ask(response.get(4)*10);
+            rub.setNbu_bid(response.get(5)*10);
             actualCurrencyStorage.put(Commands.RUB, rub);
         }
     }

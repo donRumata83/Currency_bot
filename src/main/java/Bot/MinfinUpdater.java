@@ -54,11 +54,11 @@ public class MinfinUpdater implements Updater {
         ArrayList<Float> result = new ArrayList<>();
         if (!response.equals("[]") | response.equals("")) {
             JSONObject resp = new JSONObject(response);
-            result.addAll(orderCheck(getAsk(resp.getJSONObject("usd")), getBid(resp.getJSONObject("usd"))));
+            result.addAll(getAskAndBid(resp.getJSONObject("usd")));
 
-            result.addAll(orderCheck(getAsk(resp.getJSONObject("eur")), getBid(resp.getJSONObject("eur"))));
+            result.addAll(getAskAndBid(resp.getJSONObject("eur")));
 
-            result.addAll(orderCheck(getAsk(resp.getJSONObject("rub")), getBid(resp.getJSONObject("rub"))));
+            result.addAll(getAskAndBid(resp.getJSONObject("rub")));
 
         }
         return result;
@@ -77,7 +77,6 @@ public class MinfinUpdater implements Updater {
         }
         return result;
     }
-
 
     private String sendGet(String url) {
 
@@ -120,25 +119,19 @@ public class MinfinUpdater implements Updater {
         }
     }
 
-    private ArrayList<Float> orderCheck(float first, float second) {
-        Float[] arr = {first, second};
-        ArrayList<Float> result = new ArrayList<>(Arrays.asList(arr));
+    private List<Float> getAskAndBid(JSONObject object) {
+        List<Float> result =  Arrays.asList(getAsk(object),getBid(object));
         Collections.sort(result);
         return result;
     }
 
-    private ArrayList<Float> getLastCurrencyMark(JSONArray array, String currency) {
+    private List<Float> getLastCurrencyMark(JSONArray array, String currency) {
         ArrayList<JSONObject> temp = new ArrayList<>();
-
         for (int i = 0; i < array.length(); i++) {
-            if (array.getJSONObject(i).get("currency").equals(currency) && array.getJSONObject(i).isNull("status")) {
-                temp.add(array.getJSONObject(i));
-            }
+            temp.add(array.getJSONObject(i));
         }
-        Collections.sort(temp, (Comparator) (o1, o2) -> Integer.parseInt(((JSONObject) o1).getString("id")) -
-                Integer.parseInt(((JSONObject) o2).getString("id")));
-        JSONObject goal = temp.get(temp.size() - 1);
-
-        return orderCheck(getAsk(goal),getBid(goal));
+        return getAskAndBid(temp.stream().filter(e -> e.getString("currency").equals(currency))
+                .filter(e -> e.isNull("status"))
+                .max(Comparator.comparingInt((o1) -> Integer.parseInt(o1.getString("id")))).get());
     }
 }
