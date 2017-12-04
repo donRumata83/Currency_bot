@@ -29,7 +29,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
     public static void main(String[] args) {
         ApiContextInitializer.init();
         TelegramBotsApi botsApi = new TelegramBotsApi();
-        CurrencyDB currency_db = new CurrencyDB(new MinfinUpdater());
+        CurrencyDB currency_db = new CurrencyDB(new FakeUpdater());
         try {
             botsApi.registerBot(new CurrencyBot(new DataTransformerUtil(currency_db)));
         } catch (TelegramApiException e) {
@@ -124,7 +124,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
         switch (Commands.convert(message.getText().trim().toUpperCase())) {
             case START: {
                 counter++;
-                return greetingCommand;
+                return String.format(greetingCommand, message.getFrom().getFirstName());
             }
             case HELP:
                 return helpCommand;

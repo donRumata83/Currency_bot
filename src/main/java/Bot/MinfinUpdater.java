@@ -51,7 +51,7 @@ public class MinfinUpdater implements Updater {
     }
 
     public List<Float> parseNormalResponse(String response) {
-        ArrayList<Float> result = new ArrayList<>();
+        List<Float> result = new ArrayList<>();
         if (!response.equals("[]") | response.equals("")) {
             JSONObject resp = new JSONObject(response);
             result.addAll(getAskAndBid(resp.getJSONObject("usd")));
@@ -62,7 +62,7 @@ public class MinfinUpdater implements Updater {
     }
 
     public List<Float> parseMbResponse(String response) {
-        ArrayList<Float> result = new ArrayList<>();
+        List<Float> result = new ArrayList<>();
         if (!response.equals("[]") | response.equals("")) {
             JSONArray array = new JSONArray(response);
             result.addAll(getLastCurrencyMark(array, "usd"));
@@ -116,7 +116,7 @@ public class MinfinUpdater implements Updater {
     }
 
     private List<Float> getLastCurrencyMark(JSONArray array, String currency) {
-        ArrayList<JSONObject> temp = new ArrayList<>();
+        List<JSONObject> temp = new ArrayList<>();
         for (int i = 0; i < array.length(); i++) {
             temp.add(array.getJSONObject(i));
         }
