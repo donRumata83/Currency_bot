@@ -134,13 +134,7 @@ public class MinfinUpdater implements Updater {
                 temp.add(array.getJSONObject(i));
             }
         }
-        Collections.sort(temp, (Comparator) (o1, o2) -> {
-            JSONObject o1tmp = (JSONObject) o1;
-            JSONObject o2tmp = (JSONObject) o2;
-            int o1int = Integer.parseInt(o1tmp.getString("id"));
-            int o2int = Integer.parseInt(o2tmp.getString("id"));
-            return o1int - o2int;
-        });
+        Collections.sort(temp, (Comparator) (o1, o2) -> Integer.parseInt(((JSONObject) o1).getString("id")) - Integer.parseInt(((JSONObject) o2).getString("id")));
         JSONObject goal = temp.get(temp.size() - 1);
 
         return orderCheck(getAsk(goal),getBid(goal));
