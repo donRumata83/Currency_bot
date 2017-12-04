@@ -129,12 +129,14 @@ public class MinfinUpdater implements Updater {
 
     private ArrayList<Float> getLastCurrencyMark(JSONArray array, String currency) {
         ArrayList<JSONObject> temp = new ArrayList<>();
+
         for (int i = 0; i < array.length(); i++) {
             if (array.getJSONObject(i).get("currency").equals(currency) && array.getJSONObject(i).isNull("status")) {
                 temp.add(array.getJSONObject(i));
             }
         }
-        Collections.sort(temp, (Comparator) (o1, o2) -> Integer.parseInt(((JSONObject) o1).getString("id")) - Integer.parseInt(((JSONObject) o2).getString("id")));
+        Collections.sort(temp, (Comparator) (o1, o2) -> Integer.parseInt(((JSONObject) o1).getString("id")) -
+                Integer.parseInt(((JSONObject) o2).getString("id")));
         JSONObject goal = temp.get(temp.size() - 1);
 
         return orderCheck(getAsk(goal),getBid(goal));
