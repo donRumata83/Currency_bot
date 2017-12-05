@@ -9,7 +9,7 @@ public class FakeUpdater implements Updater{
     public ArrayList<Float> sendRequest(MarketType request) {
         ArrayList<Float> result = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
-            result.add(1.6F);
+            result.add(8.0F);
         }
         return result;
     }

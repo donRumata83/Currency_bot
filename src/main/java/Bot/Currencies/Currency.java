@@ -5,9 +5,9 @@ import Bot.Enums.Mark;
 
 import java.io.Serializable;
 
-public class Currency implements Serializable{
+public class Currency implements Serializable {
     private String name;
-    private Mark mark;
+
 
     private float nbu_ask = 0;
     private float nbu_bid = 0;
@@ -21,9 +21,12 @@ public class Currency implements Serializable{
     private float auc_ask = 0;
     private float auc_bid = 0;
 
-    public Currency(String name, Mark mark) {
+    public Currency(String name) {
         this.name = name;
-        this.mark = mark;
+
+    }
+
+    public Currency() {
     }
 
     public float getNbu_ask() {
@@ -93,10 +96,5 @@ public class Currency implements Serializable{
     public String getName() {
         return name;
     }
-
-    public String getMark() {
-        return mark.getMark();
-    }
-
 
 }

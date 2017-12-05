@@ -29,7 +29,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
     public static void main(String[] args) {
         ApiContextInitializer.init();
         TelegramBotsApi botsApi = new TelegramBotsApi();
-        CurrencyDB currency_db = new CurrencyDB(new FakeUpdater());
+        CurrencyDB currency_db = new CurrencyDB(new MinfinUpdater());
         try {
             botsApi.registerBot(new CurrencyBot(new DataTransformerUtil(currency_db)));
         } catch (TelegramApiException e) {

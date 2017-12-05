@@ -41,7 +41,7 @@ class DataTransformerUtil {
      */
     private String getMessage(Currency currency) {
         getActualCurrencies();
-        return "*" + currency.getName() + "* " + currency.getMark() + " на "
+        return "*" + currency.getName() + "* " + getMark(currency)+ " на "
                 + new SimpleDateFormat("dd.MM.yyyy").format(new Date()) +
                 "\n" + "*Межбанк:* \n" +
                 String.format(format, currency.getMb_ask(), currency.getMb_bid()) +
@@ -80,4 +80,15 @@ class DataTransformerUtil {
         return getMessage(map.get(Commands.RUB));
     }
 
+    private String getMark(Currency currency) {
+        switch (currency.getName()) {
+            case "Доллар США":
+                return Mark.USD.getMark();
+            case "Евро":
+                return Mark.EUR.getMark();
+            case "Десять Российских рублей" : return Mark.RUB.getMark();
+            default:
+                return "";
+        }
+    }
 }
