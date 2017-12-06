@@ -49,7 +49,7 @@ class DataTransformerUtil {
                 return getBTC();
             default:
                 return "*" + currency.getName() + "* " + getMark(currency) + " на "
-                        + new SimpleDateFormat("HH:mm dd.MM.yyyy").format(new Date()) +
+                        + new SimpleDateFormat("HH:mm dd.MM.yyyy").format(currency.getDate()) +
                         "\n" + "*Межбанк:* \n" +
                         String.format(format, currency.getMb_ask(), currency.getMb_bid()) +
                         "\n" + "*Средний курс в банках:* \n" +
@@ -91,7 +91,7 @@ class DataTransformerUtil {
     String getBTC() {
         Currency btc = map.get(Commands.BTC);
         return btc.getName() + " на "
-                + new SimpleDateFormat("HH:mm dd.MM.yyyy").format(new Date()) +
+                + new SimpleDateFormat("HH:mm dd.MM.yyyy").format(btc.getDate()) +
                 "\n" + btc.getAuc_ask() + " долларов США";
     }
 

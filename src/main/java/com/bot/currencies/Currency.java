@@ -1,10 +1,19 @@
 package com.bot.currencies;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Currency implements Serializable {
     private String name;
+    private Date date = new Date();
 
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
     private float nbu_ask = 0;
     private float nbu_bid = 0;

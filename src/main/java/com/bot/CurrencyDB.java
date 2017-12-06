@@ -109,16 +109,19 @@ public class CurrencyDB {
             com.bot.currencies.Currency usd = actualCurrencyStorage.get(Commands.USD);
             usd.setMb_ask(response.get(0));
             usd.setMb_bid(response.get(1));
+            usd.setDate(new Date());
             actualCurrencyStorage.put(Commands.USD, usd);
 
             com.bot.currencies.Currency euro = actualCurrencyStorage.get(Commands.EURO);
             euro.setMb_ask(response.get(2));
             euro.setMb_bid(response.get(3));
+            usd.setDate(new Date());
             actualCurrencyStorage.put(Commands.EURO, euro);
 
             com.bot.currencies.Currency rub = actualCurrencyStorage.get(Commands.RUB);
             rub.setMb_ask(response.get(4) * 10);
             rub.setMb_bid(response.get(5) * 10);
+            usd.setDate(new Date());
             actualCurrencyStorage.put(Commands.RUB, rub);
         }
     }
@@ -147,16 +150,19 @@ public class CurrencyDB {
             com.bot.currencies.Currency usd = actualCurrencyStorage.get(Commands.USD);
             usd.setAuc_ask(response.get(0));
             usd.setAuc_bid(response.get(1));
+            usd.setDate(new Date());
             actualCurrencyStorage.put(Commands.USD, usd);
 
             com.bot.currencies.Currency euro = actualCurrencyStorage.get(Commands.EURO);
             euro.setAuc_ask(response.get(2));
             euro.setAuc_bid(response.get(3));
+            euro.setDate(new Date());
             actualCurrencyStorage.put(Commands.EURO, euro);
 
             com.bot.currencies.Currency rub = actualCurrencyStorage.get(Commands.RUB);
             rub.setAuc_ask(response.get(4) * 10);
             rub.setAuc_bid(response.get(5) * 10);
+            rub.setDate(new Date());
             actualCurrencyStorage.put(Commands.RUB, rub);
         }
     }
@@ -184,6 +190,7 @@ public class CurrencyDB {
         if (response.size() != 0) {
             Currency btc = actualCurrencyStorage.get(Commands.BTC);
             btc.setAuc_ask(response.get(0));
+            btc.setDate(new Date());
             actualCurrencyStorage.put(Commands.BTC, btc);
         }
     }
