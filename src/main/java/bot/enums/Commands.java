@@ -1,4 +1,4 @@
-package Bot.Enums;
+package bot.enums;
 
 /**
  * Enum for typical commands for bot

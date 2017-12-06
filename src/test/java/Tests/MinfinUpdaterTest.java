@@ -1,13 +1,12 @@
 package Tests;
 
 
-import Bot.Enums.MarketType;
-import Bot.MinfinUpdater;
+import bot.enums.MarketType;
+import bot.MinfinUpdater;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 

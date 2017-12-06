@@ -1,4 +1,4 @@
-package Bot;
+package bot;
 
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
@@ -7,7 +7,7 @@ import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import Bot.Enums.Commands;
+import bot.enums.Commands;
 
 
 import javax.validation.constraints.NotNull;

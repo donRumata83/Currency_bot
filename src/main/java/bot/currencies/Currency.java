@@ -1,4 +1,4 @@
-package Bot.Currencies;
+package bot.currencies;
 
 import java.io.Serializable;
 

@@ -1,6 +1,6 @@
-package Bot;
+package bot;
 
-import Bot.Enums.MarketType;
+import bot.enums.MarketType;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;

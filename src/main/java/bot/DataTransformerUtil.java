@@ -1,7 +1,7 @@
-package Bot;
+package bot;
 
-import Bot.Currencies.*;
-import Bot.Enums.*;
+import bot.currencies.*;
+import bot.enums.*;
 
 import javax.validation.constraints.NotNull;
 import java.text.SimpleDateFormat;

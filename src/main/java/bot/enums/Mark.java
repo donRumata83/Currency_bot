@@ -1,4 +1,4 @@
-package Bot.Enums;
+package bot.enums;
 
 public enum Mark {
     USD("\uD83D\uDCB5"), EUR("\uD83D\uDCB6"), RUB("");

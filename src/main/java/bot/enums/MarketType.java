@@ -1,4 +1,4 @@
-package Bot.Enums;
+package bot.enums;
 
 /**
  * Type of markets

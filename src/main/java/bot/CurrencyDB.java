@@ -1,8 +1,8 @@
-package Bot;
+package bot;
 
-import Bot.Currencies.Currency;
-import Bot.Enums.Commands;
-import Bot.Enums.MarketType;
+import bot.currencies.Currency;
+import bot.enums.Commands;
+import bot.enums.MarketType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
