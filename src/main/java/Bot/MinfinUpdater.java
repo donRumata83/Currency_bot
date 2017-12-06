@@ -1,6 +1,7 @@
 package Bot;
 
 import Bot.Enums.MarketType;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -8,6 +9,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.validation.constraints.NotNull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -72,6 +74,7 @@ public class MinfinUpdater implements Updater {
         return result;
     }
 
+    @NotNull
     private String sendGet(String url) {
         HttpClient client = new DefaultHttpClient();
         HttpGet request = new HttpGet(url + minFinToken + "/");
@@ -115,6 +118,11 @@ public class MinfinUpdater implements Updater {
         return result;
     }
 
+    /**
+     * @param array
+     * @param currency
+     * @return
+     */
     private List<Float> getLastCurrencyMark(JSONArray array, String currency) {
         List<JSONObject> temp = new ArrayList<>();
         for (int i = 0; i < array.length(); i++) {

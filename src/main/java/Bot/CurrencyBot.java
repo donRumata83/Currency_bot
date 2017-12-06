@@ -10,6 +10,7 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 import Bot.Enums.Commands;
 
 
+import javax.validation.constraints.NotNull;
 import java.io.*;
 import java.util.Properties;
 
@@ -101,7 +102,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
      * @param message from user
      * @param text
      */
-    private void sendMsg(Message message, String text) {
+    private void sendMsg(@NotNull Message message, String text) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setChatId(message.getChatId().toString());
@@ -120,7 +121,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
      * @param message checked not null message
      * @return String text for sending
      */
-    private String messageCheck(Message message) {
+    private String messageCheck(@NotNull Message message) {
         switch (Commands.convert(message.getText().trim().toUpperCase())) {
             case START: {
                 counter++;

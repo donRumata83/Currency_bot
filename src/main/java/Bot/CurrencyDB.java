@@ -6,6 +6,7 @@ import Bot.Enums.MarketType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
+import javax.validation.constraints.NotNull;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -82,7 +83,7 @@ public class CurrencyDB {
         run.start();
     }
 
-    private void updateMB(List<Float> response) {
+    private void updateMB(@NotNull List<Float> response) {
         if (response.size() != 0) {
             Currency usd = actualCurrencyStorage.get(Commands.USD);
             usd.setMb_ask(response.get(0));
@@ -101,7 +102,7 @@ public class CurrencyDB {
         }
     }
 
-    private void updateBank(List<Float> response) {
+    private void updateBank(@NotNull List<Float> response) {
         if (response.size() != 0) {
             Currency usd = actualCurrencyStorage.get(Commands.USD);
             usd.setBank_ask(response.get(0));
@@ -120,7 +121,7 @@ public class CurrencyDB {
         }
     }
 
-    private void updateAUC(List<Float> response) {
+    private void updateAUC(@NotNull List<Float> response) {
         if (response.size() != 0) {
             Currency usd = actualCurrencyStorage.get(Commands.USD);
             usd.setAuc_ask(response.get(0));
@@ -139,7 +140,7 @@ public class CurrencyDB {
         }
     }
 
-    private void updateNBU(List<Float> response) {
+    private void updateNBU(@NotNull List<Float> response) {
         if (response.size() != 0) {
             Currency usd = actualCurrencyStorage.get(Commands.USD);
             usd.setNbu_ask(response.get(0));
@@ -163,7 +164,7 @@ public class CurrencyDB {
 
             try {
                 while (true) {
-                    Thread.sleep(10000);
+                    Thread.sleep(TIMEOUT_1HOUR);
                     saveInFile();
                 }
             } catch (Exception e) {

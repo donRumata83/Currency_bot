@@ -1,8 +1,5 @@
 package Bot.Currencies;
 
-
-import Bot.Enums.Mark;
-
 import java.io.Serializable;
 
 public class Currency implements Serializable {

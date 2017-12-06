@@ -4,7 +4,7 @@ import Bot.Enums.MarketType;
 
 import java.util.ArrayList;
 
-public class FakeUpdater implements Updater{
+public class FakeUpdater implements Updater {
     @Override
     public ArrayList<Float> sendRequest(MarketType request) {
         ArrayList<Float> result = new ArrayList<>();

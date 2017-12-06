@@ -3,6 +3,7 @@ package Bot;
 import Bot.Currencies.*;
 import Bot.Enums.*;
 
+import javax.validation.constraints.NotNull;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,9 +40,9 @@ class DataTransformerUtil {
      * @param currency type
      * @return formatted text message for sending
      */
-    private String getMessage(Currency currency) {
+    private String getMessage(@NotNull Currency currency) {
         getActualCurrencies();
-        return "*" + currency.getName() + "* " + getMark(currency)+ " на "
+        return "*" + currency.getName() + "* " + getMark(currency) + " на "
                 + new SimpleDateFormat("dd.MM.yyyy").format(new Date()) +
                 "\n" + "*Межбанк:* \n" +
                 String.format(format, currency.getMb_ask(), currency.getMb_bid()) +
@@ -80,13 +81,14 @@ class DataTransformerUtil {
         return getMessage(map.get(Commands.RUB));
     }
 
-    private String getMark(Currency currency) {
+    private String getMark(@NotNull Currency currency) {
         switch (currency.getName()) {
             case "Доллар США":
                 return Mark.USD.getMark();
             case "Евро":
                 return Mark.EUR.getMark();
-            case "Десять Российских рублей" : return Mark.RUB.getMark();
+            case "Десять Российских рублей":
+                return Mark.RUB.getMark();
             default:
                 return "";
         }
