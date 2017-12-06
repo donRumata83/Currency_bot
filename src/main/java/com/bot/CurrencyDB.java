@@ -19,6 +19,7 @@ public class CurrencyDB {
 
     private static final int TIMEOUT_5MIN = 1000 * 60 * 5;
     private static final int TIMEOUT_1HOUR = (1000 * 60 * 60) + 100;
+    private static final int TIMEOUT_30SEC = 1000 * 30;
 
 
     CurrencyDB(Updater updater, Updater bitCoinUpdater) {
@@ -42,7 +43,8 @@ public class CurrencyDB {
 
         this.updater = updater;
         this.bitCoinUpdater = bitCoinUpdater;
-        update();
+        fiveMinuteUpdateTimer();
+        thirtySecondsUpdateTimer();
         //saveTimer();
     }
 
@@ -50,7 +52,7 @@ public class CurrencyDB {
         return actualCurrencyStorage;
     }
 
-    private void update() {
+    private void fiveMinuteUpdateTimer() {
         Thread run = new Thread(() -> {
             Deque<MarketType> request_queue = new ArrayDeque<>
                     (Arrays.asList(MarketType.MB_MARKET, MarketType.NBU, MarketType.BANKS, MarketType.AUCTION));
@@ -86,6 +88,17 @@ public class CurrencyDB {
             }
         });
         run.start();
+    }
+
+    private void thirtySecondsUpdateTimer(){
+        new Thread(() -> {
+            try {
+                updateBTC(bitCoinUpdater.sendRequest(MarketType.BTC));
+                Thread.sleep(TIMEOUT_30SEC);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     private void updateMB(@NotNull List<Float> response) {
