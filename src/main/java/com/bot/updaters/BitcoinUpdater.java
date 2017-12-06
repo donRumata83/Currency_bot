@@ -25,7 +25,6 @@ public class BitcoinUpdater implements Updater{
     private String sendGet(String url) {
         URL httpsUrl;
         try {
-
             httpsUrl = new URL(url);
             HttpsURLConnection con = (HttpsURLConnection)httpsUrl.openConnection();
             BufferedReader rd = new BufferedReader(
@@ -36,7 +35,6 @@ public class BitcoinUpdater implements Updater{
             while ((line = rd.readLine()) != null) {
                 result.append(line);
             }
-            System.out.println(result.toString());
             return result.toString();
         } catch (IOException e) {
             e.printStackTrace();

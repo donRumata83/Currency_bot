@@ -34,12 +34,12 @@ public class CurrencyDB {
             ;
         } catch (Exception e) {
             e.printStackTrace();*/
-            this.actualCurrencyStorage = new HashMap<Commands, com.bot.currencies.Currency>() {{
-                put(Commands.USD, new com.bot.currencies.Currency("Доллар США"));
-                put(Commands.EURO, new com.bot.currencies.Currency("Евро"));
-                put(Commands.RUB, new com.bot.currencies.Currency("Десять Российских рублей"));
-                put(Commands.BTC, new Currency("Биткоин"));
-            }};
+        this.actualCurrencyStorage = new HashMap<Commands, com.bot.currencies.Currency>() {{
+            put(Commands.USD, new com.bot.currencies.Currency("Доллар США"));
+            put(Commands.EURO, new com.bot.currencies.Currency("Евро"));
+            put(Commands.RUB, new com.bot.currencies.Currency("Десять Российских рублей"));
+            put(Commands.BTC, new Currency("Биткоин"));
+        }};
 
         this.updater = updater;
         this.bitCoinUpdater = bitCoinUpdater;
@@ -90,15 +90,18 @@ public class CurrencyDB {
         run.start();
     }
 
-    private void thirtySecondsUpdateTimer(){
-        new Thread(() -> {
+    private void thirtySecondsUpdateTimer() {
+        Thread run = new Thread(() -> {
             try {
-                updateBTC(bitCoinUpdater.sendRequest(MarketType.BTC));
-                Thread.sleep(TIMEOUT_30SEC);
+                while (true) {
+                    updateBTC(bitCoinUpdater.sendRequest(MarketType.BTC));
+                    Thread.sleep(TIMEOUT_30SEC);
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
+        run.start();
     }
 
     private void updateMB(@NotNull List<Float> response) {
@@ -177,10 +180,11 @@ public class CurrencyDB {
         }
     }
 
-    private void updateBTC(List<Float> response){
-        if (response.size() != 0){
+    private void updateBTC(List<Float> response) {
+        if (response.size() != 0) {
             Currency btc = actualCurrencyStorage.get(Commands.BTC);
             btc.setAuc_ask(response.get(0));
+            actualCurrencyStorage.put(Commands.BTC, btc);
         }
     }
 
