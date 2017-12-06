@@ -1,4 +1,4 @@
-package bot.enums;
+package com.bot.enums;
 
 /**
  * Enum for typical commands for bot
@@ -6,7 +6,8 @@ package bot.enums;
 public enum Commands {
     USD, EURO, RUB,
     NOT_CURRENCY, START, HELP,
-    STAT, MSTAT, SEARCH;
+    STAT, MSTAT, SEARCH,
+    BTC;
 
     /**
      * Converts text from user chat to enum
@@ -36,6 +37,11 @@ public enum Commands {
             case "RUBLE":
             case "РУБЛЬ":
                 return RUB;
+            case "BTC":
+            case "BITCOIN" :
+            case "БИТКОИН":
+            case "БИТКА":
+                return BTC;
             case "/HELP":
             case "HELP":
             case "ПОМОЩЬ":

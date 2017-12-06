@@ -1,4 +1,4 @@
-package bot.enums;
+package com.bot.enums;
 
 public enum City {
     KIEV, ODESSA, LVIV, DNIPRO, ZAPORIJ, DONETSK, LUGANSK

@@ -9,7 +9,7 @@ jar {
     manifest {
         attributes 'Implementation-Title': 'UA_currency_bot',
                 'Implementation-Version': version,
-                "Main-Class": "com.bot.CurrencyBot"
+                'Main-Class': 'com.bot.CurrencyBot'
     }
 }
 

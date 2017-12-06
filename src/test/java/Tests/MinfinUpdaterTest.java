@@ -1,8 +1,8 @@
 package Tests;
 
 
-import bot.enums.MarketType;
-import bot.MinfinUpdater;
+import com.bot.enums.MarketType;
+import com.bot.updaters.MinfinUpdater;
 import org.junit.Before;
 import org.junit.Test;
 

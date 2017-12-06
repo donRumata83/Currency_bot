@@ -1,5 +1,7 @@
-package bot;
+package com.bot;
 
+import com.bot.updaters.BitcoinUpdater;
+import com.bot.updaters.MinfinUpdater;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -7,7 +9,7 @@ import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import bot.enums.Commands;
+import com.bot.enums.Commands;
 
 
 import javax.validation.constraints.NotNull;
@@ -30,7 +32,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
     public static void main(String[] args) {
         ApiContextInitializer.init();
         TelegramBotsApi botsApi = new TelegramBotsApi();
-        CurrencyDB currency_db = new CurrencyDB(new MinfinUpdater());
+        CurrencyDB currency_db = new CurrencyDB(new MinfinUpdater(), new BitcoinUpdater());
         try {
             botsApi.registerBot(new CurrencyBot(new DataTransformerUtil(currency_db)));
         } catch (TelegramApiException e) {
@@ -140,6 +142,10 @@ public class CurrencyBot extends TelegramLongPollingBot {
             case RUB: {
                 messageCounter++;
                 return dataTransformer_util.getRub();
+            }
+            case BTC: {
+                messageCounter++;
+                return dataTransformer_util.getBTC();
             }
             case STAT:
                 return "Юзеров: " + counter;

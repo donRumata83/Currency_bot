@@ -1,7 +1,9 @@
-package bot;
+package com.bot;
 
-import bot.currencies.*;
-import bot.enums.*;
+
+import com.bot.currencies.Currency;
+import com.bot.enums.Commands;
+import com.bot.enums.Mark;
 
 import javax.validation.constraints.NotNull;
 import java.text.SimpleDateFormat;
@@ -42,16 +44,21 @@ class DataTransformerUtil {
      */
     private String getMessage(@NotNull Currency currency) {
         getActualCurrencies();
-        return "*" + currency.getName() + "* " + getMark(currency) + " на "
-                + new SimpleDateFormat("dd.MM.yyyy").format(new Date()) +
-                "\n" + "*Межбанк:* \n" +
-                String.format(format, currency.getMb_ask(), currency.getMb_bid()) +
-                "\n" + "*Средний курс в банках:* \n" +
-                String.format(format, currency.getBank_ask(), currency.getBank_bid()) +
-                "\n" + "*НБУ:* \n" +
-                String.format(format, currency.getNbu_ask(), currency.getNbu_bid()) +
-                "\n" + "*Аукцион:* \n" +
-                String.format(format, currency.getAuc_ask(), currency.getAuc_bid());
+        switch (currency.getName()) {
+            case "Биткоин":
+                return getBTC();
+            default:
+                return "*" + currency.getName() + "* " + getMark(currency) + " на "
+                        + new SimpleDateFormat("dd.MM.yyyy").format(new Date()) +
+                        "\n" + "*Межбанк:* \n" +
+                        String.format(format, currency.getMb_ask(), currency.getMb_bid()) +
+                        "\n" + "*Средний курс в банках:* \n" +
+                        String.format(format, currency.getBank_ask(), currency.getBank_bid()) +
+                        "\n" + "*НБУ:* \n" +
+                        String.format(format, currency.getNbu_ask(), currency.getNbu_bid()) +
+                        "\n" + "*Аукцион:* \n" +
+                        String.format(format, currency.getAuc_ask(), currency.getAuc_bid());
+        }
     }
 
     /**
@@ -79,6 +86,13 @@ class DataTransformerUtil {
      */
     String getRub() {
         return getMessage(map.get(Commands.RUB));
+    }
+
+    String getBTC() {
+        Currency btc = map.get(Commands.BTC);
+        return btc.getName() + " на "
+                + new SimpleDateFormat("dd.MM.yyyy").format(new Date()) +
+                "\n" + btc.getAuc_ask() + " долларов США";
     }
 
     private String getMark(@NotNull Currency currency) {

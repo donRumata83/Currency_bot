@@ -1,7 +1,9 @@
-package bot;
+package com.bot.updaters;
 
-import bot.enums.MarketType;
+import com.bot.CurrencyBot;
+import com.bot.enums.MarketType;
 
+import com.bot.updaters.Updater;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
