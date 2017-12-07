@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.nio.charset.StandardCharsets;
 
 class DataTransformerUtil {
     private CurrencyDB currency_DB;
@@ -118,7 +119,7 @@ class DataTransformerUtil {
         Properties props = new Properties();
         InputStream in = getClass().getResourceAsStream("/message.properties");
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8.name()));
             props.load(reader);
             HEAD_FORMAT = props.getProperty("head");
             MARKET_FORMAT = props.getProperty("market");

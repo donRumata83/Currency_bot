@@ -5,8 +5,7 @@ import com.bot.enums.Commands;
 import com.bot.enums.MarketType;
 import com.bot.updaters.Updater;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-
+import java.nio.charset.StandardCharsets;
 import javax.validation.constraints.NotNull;
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -58,7 +57,7 @@ public class CurrencyDB {
         Properties props = new Properties();
         InputStream in = getClass().getResourceAsStream("/message.properties");
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8.name()));
             props.load(reader);
             usd = props.getProperty("usd");
             eur = props.getProperty("eur");
