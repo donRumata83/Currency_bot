@@ -76,7 +76,7 @@ public class CurrencyDB {
     private void fiveMinuteUpdateTimer() {
         Thread run = new Thread(() -> {
             Deque<MarketType> request_queue = new ArrayDeque<>
-                    (Arrays.asList(MarketType.MB_MARKET, MarketType.NBU, MarketType.BANKS, MarketType.AUCTION));
+                    (Arrays.asList(MarketType.NBU, MarketType.MB_MARKET, MarketType.BANKS, MarketType.AUCTION));
             while (true) {
                 try {
                     updateBTC(bitCoinUpdater.sendRequest(MarketType.BTC));
