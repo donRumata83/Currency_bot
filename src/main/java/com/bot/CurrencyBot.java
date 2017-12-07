@@ -29,6 +29,12 @@ public class CurrencyBot extends TelegramLongPollingBot {
     private String helpCommand;
     private String greetingCommand;
 
+    private static final File DATA_STORE_DIR = new File(
+            System.getProperty("user.home"), "currency-telegram-bot");
+
+    private static final String CONFIG_PROPERTIES = File.pathSeparatorChar + "config.properties";
+    private static final String MESSAGE_POPERTIES = File.pathSeparatorChar + "message.properties";
+
     public static void main(String[] args) {
         ApiContextInitializer.init();
         TelegramBotsApi botsApi = new TelegramBotsApi();
@@ -51,15 +57,17 @@ public class CurrencyBot extends TelegramLongPollingBot {
         Properties props = new Properties();
         Properties propsMessage = new Properties();
         try {
-            props.load(CurrencyBot.class.getResourceAsStream("/config.properties"));
+            InputStream in = getClass().getResourceAsStream(MESSAGE_POPERTIES);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            props.load(reader);
             this.token = props.getProperty("token");
             this.botName = props.getProperty("botName");
-            InputStream is = CurrencyBot.class.getResourceAsStream("/message.properties");
-            InputStreamReader isr = new InputStreamReader(is, "UTF-8");
-            propsMessage.load(new BufferedReader(isr));
+            in = getClass().getResourceAsStream(MESSAGE_POPERTIES);
+            reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            propsMessage.load(reader);
             this.helpCommand = propsMessage.getProperty("help");
             this.greetingCommand = propsMessage.getProperty("greeting");
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

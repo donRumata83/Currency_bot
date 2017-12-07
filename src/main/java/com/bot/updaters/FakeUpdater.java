@@ -1,4 +1,4 @@
-package com.bot;
+package com.bot.updaters;
 
 import com.bot.enums.MarketType;
 import com.bot.updaters.Updater;
