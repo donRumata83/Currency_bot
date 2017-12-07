@@ -18,8 +18,13 @@ public class CurrencyDB {
     private Updater bitCoinUpdater;
 
     private static final int TIMEOUT_5MIN = 1000 * 60 * 5;
-    private static final int TIMEOUT_1HOUR = (1000 * 60 * 60) + 100;
+    //private static final int TIMEOUT_1HOUR = (1000 * 60 * 60) + 100;
     private static final int TIMEOUT_30SEC = 1000 * 30;
+
+    private static String usd;
+    private static String eur;
+    private static String rub;
+    private static String bc;
 
 
     CurrencyDB(Updater updater, Updater bitCoinUpdater) {
@@ -34,11 +39,12 @@ public class CurrencyDB {
             ;
         } catch (Exception e) {
             e.printStackTrace();*/
+        loadProperties();
         this.actualCurrencyStorage = new HashMap<Commands, com.bot.currencies.Currency>() {{
-            put(Commands.USD, new com.bot.currencies.Currency("Доллар США"));
-            put(Commands.EURO, new com.bot.currencies.Currency("Евро"));
-            put(Commands.RUB, new com.bot.currencies.Currency("Десять Российских рублей"));
-            put(Commands.BTC, new Currency("Биткоин"));
+            put(Commands.USD, new Currency(usd));
+            put(Commands.EURO, new Currency(eur));
+            put(Commands.RUB, new Currency(rub));
+            put(Commands.BTC, new Currency(bc));
         }};
 
         this.updater = updater;
@@ -46,6 +52,21 @@ public class CurrencyDB {
         fiveMinuteUpdateTimer();
         thirtySecondsUpdateTimer();
         //saveTimer();
+    }
+
+    private void loadProperties() {
+        Properties props = new Properties();
+        InputStream in = getClass().getResourceAsStream("/message.properties");
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            props.load(reader);
+            usd = props.getProperty("usd");
+            eur = props.getProperty("eur");
+            rub = props.getProperty("rub");
+            bc = props.getProperty("bc");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public HashMap<Commands, com.bot.currencies.Currency> getActualCurrencyStorage() {

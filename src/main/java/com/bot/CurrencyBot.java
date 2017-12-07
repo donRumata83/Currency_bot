@@ -26,14 +26,12 @@ public class CurrencyBot extends TelegramLongPollingBot {
     private static long counter = 0;
     private static long messageCounter = 0;
 
-    private String helpCommand;
-    private String greetingCommand;
+    private static String helpCommand;
+    private static String greetingCommand;
+    private static String users;
+    private static String requests;
+    private static String noCurrency;
 
-    private static final File DATA_STORE_DIR = new File(
-            System.getProperty("user.home"), "currency-telegram-bot");
-
-    private static final String CONFIG_PROPERTIES = File.pathSeparatorChar + "config.properties";
-    private static final String MESSAGE_POPERTIES = File.pathSeparatorChar + "message.properties";
 
     public static void main(String[] args) {
         ApiContextInitializer.init();
@@ -54,22 +52,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
      */
     private CurrencyBot(DataTransformerUtil dataTransformer_util) {
         this.dataTransformer_util = dataTransformer_util;
-        Properties props = new Properties();
-        Properties propsMessage = new Properties();
-        try {
-            InputStream in = getClass().getResourceAsStream(MESSAGE_POPERTIES);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            props.load(reader);
-            this.token = props.getProperty("token");
-            this.botName = props.getProperty("botName");
-            in = getClass().getResourceAsStream(MESSAGE_POPERTIES);
-            reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            propsMessage.load(reader);
-            this.helpCommand = propsMessage.getProperty("help");
-            this.greetingCommand = propsMessage.getProperty("greeting");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        loadProperties();
     }
 
     /**
@@ -118,6 +101,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
         sendMessage.setChatId(message.getChatId().toString());
         sendMessage.setReplyToMessageId(message.getMessageId());
         sendMessage.setText(text);
+
         try {
             sendMessage(sendMessage);
         } catch (TelegramApiException e) {
@@ -156,11 +140,33 @@ public class CurrencyBot extends TelegramLongPollingBot {
                 return dataTransformer_util.getBTC();
             }
             case STAT:
-                return "Юзеров: " + counter;
+                return users + counter;
             case MSTAT:
-                return "Запросов: " + messageCounter;
+                return requests + messageCounter;
             default:
-                return "Извините, не могу ответить на это сообщение. Попробуйте еще раз.";
+                return noCurrency;
+        }
+    }
+
+    private void loadProperties() {
+        Properties props = new Properties();
+        Properties propsMessage = new Properties();
+        try {
+            InputStream in = getClass().getResourceAsStream("/config.properties");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            props.load(reader);
+            this.token = props.getProperty("token");
+            this.botName = props.getProperty("botName");
+            in = getClass().getResourceAsStream("/message.properties");
+            reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            propsMessage.load(reader);
+            helpCommand = propsMessage.getProperty("help");
+            greetingCommand = propsMessage.getProperty("greeting");
+            users = propsMessage.getProperty("users");
+            requests = propsMessage.getProperty("requests");
+            noCurrency = propsMessage.getProperty("nocurrency");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

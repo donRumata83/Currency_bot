@@ -8,8 +8,7 @@ public enum MarketType {
     BANKS("http://api.minfin.com.ua/summary/"),
     AUCTION("http://api.minfin.com.ua/auction/info/"),
     MB_MARKET("http://api.minfin.com.ua/mb/"),
-    BTC("https://api.cryptonator.com/api/ticker/btc-usd")
-    ;
+    BTC("https://api.cryptonator.com/api/ticker/btc-usd");
 
     private String request;
 

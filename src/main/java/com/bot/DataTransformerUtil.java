@@ -6,17 +6,26 @@ import com.bot.enums.Commands;
 import com.bot.enums.Mark;
 
 import javax.validation.constraints.NotNull;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 class DataTransformerUtil {
     private CurrencyDB currency_DB;
     private Map<Commands, Currency> map = new HashMap<>();
 
-    private final String format = "покупка %.3f , продажа %.3f";
-
+    private static String HEAD_FORMAT;
+    private static String MARKET_FORMAT;
+    private static String BITCOIN;
+    private static String MB;
+    private static String BANKS;
+    private static String NBU;
+    private static String AUC;
 
     /**
      * Constructor
@@ -26,6 +35,7 @@ class DataTransformerUtil {
     DataTransformerUtil(CurrencyDB currency_DB) {
         this.currency_DB = currency_DB;
         this.getActualCurrencies();
+        loadProperties();
     }
 
     /**
@@ -48,16 +58,11 @@ class DataTransformerUtil {
             case "Биткоин":
                 return getBTC();
             default:
-                return "*" + currency.getName() + "* " + getMark(currency) + " на "
-                        + new SimpleDateFormat("HH:mm dd.MM.yyyy").format(currency.getDate()) +
-                        "\n" + "*Межбанк:* \n" +
-                        String.format(format, currency.getMb_ask(), currency.getMb_bid()) +
-                        "\n" + "*Средний курс в банках:* \n" +
-                        String.format(format, currency.getBank_ask(), currency.getBank_bid()) +
-                        "\n" + "*НБУ:* \n" +
-                        String.format(format, currency.getNbu_ask(), currency.getNbu_bid()) +
-                        "\n" + "*Аукцион:* \n" +
-                        String.format(format, currency.getAuc_ask(), currency.getAuc_bid());
+                return String.format(HEAD_FORMAT, currency.getName(), getMark(currency), new SimpleDateFormat("HH:mm dd.MM.yyyy").format(currency.getDate())) +
+                        String.format(MARKET_FORMAT, NBU, currency.getNbu_ask(), currency.getNbu_bid()) +
+                        String.format(MARKET_FORMAT, MB, currency.getMb_ask(),currency.getMb_bid()) +
+                        String.format(MARKET_FORMAT, BANKS, currency.getBank_ask(), currency.getBank_bid()) +
+                        String.format(MARKET_FORMAT, AUC, currency.getAuc_ask(), currency.getAuc_bid());
         }
     }
 
@@ -90,9 +95,10 @@ class DataTransformerUtil {
 
     String getBTC() {
         Currency btc = map.get(Commands.BTC);
-        return btc.getName() + " на "
-                + new SimpleDateFormat("HH:mm dd.MM.yyyy").format(btc.getDate()) +
-                "\n" + btc.getAuc_ask() + " долларов США";
+        return String.format(BITCOIN, btc.getName(),
+                new SimpleDateFormat("HH:mm dd.MM.yyyy").format(btc.getDate()),
+                btc.getAuc_ask());
+
     }
 
     private String getMark(@NotNull Currency currency) {
@@ -106,5 +112,24 @@ class DataTransformerUtil {
             default:
                 return "";
         }
+    }
+
+    private void loadProperties() {
+        Properties props = new Properties();
+        InputStream in = getClass().getResourceAsStream("/message.properties");
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            props.load(reader);
+            HEAD_FORMAT = props.getProperty("head");
+            MARKET_FORMAT = props.getProperty("market");
+            BITCOIN = props.getProperty("bitcoin");
+            MB = props.getProperty("mb");
+            BANKS = props.getProperty("banks");
+            NBU = props.getProperty("nbu");
+            AUC = props.getProperty("auc");
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
