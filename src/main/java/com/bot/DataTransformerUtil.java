@@ -21,7 +21,6 @@ class DataTransformerUtil {
     private Map<Commands, Currency> map = new HashMap<>();
 
     private static String HEAD_FORMAT;
-    private static String MARKET_FORMAT;
     private static String BITCOIN;
     private static String MB;
     private static String BANKS;
@@ -59,11 +58,11 @@ class DataTransformerUtil {
             case "Биткоин":
                 return getBTC();
             default:
-                return String.format(HEAD_FORMAT, currency.getName(), getMark(currency), new SimpleDateFormat("HH:mm dd.MM.yyyy").format(currency.getDate())) +
-                        String.format(MARKET_FORMAT, NBU, currency.getNbu_ask(), currency.getNbu_bid()) +
-                        String.format(MARKET_FORMAT, MB, currency.getMb_ask(), currency.getMb_bid()) +
-                        String.format(MARKET_FORMAT, BANKS, currency.getBank_ask(), currency.getBank_bid()) +
-                        String.format(MARKET_FORMAT, AUC, currency.getAuc_ask(), currency.getAuc_bid());
+                return String.format(HEAD_FORMAT, currency.getName(), getMark(currency), new SimpleDateFormat("HH:mm dd.MM.yyyy").format(currency.getDate()),
+                         NBU, currency.getNbu_ask(), currency.getNbu_bid(),
+                         MB, currency.getMb_ask(), currency.getMb_bid(),
+                         BANKS, currency.getBank_ask(), currency.getBank_bid(),
+                         AUC, currency.getAuc_ask(), currency.getAuc_bid());
         }
     }
 
@@ -124,7 +123,6 @@ class DataTransformerUtil {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8.name()));
             props.load(reader);
             HEAD_FORMAT = props.getProperty("head");
-            MARKET_FORMAT = props.getProperty("market");
             BITCOIN = props.getProperty("bitcoin");
             MB = props.getProperty("mb");
             BANKS = props.getProperty("banks");

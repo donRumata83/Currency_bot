@@ -121,7 +121,8 @@ public class CurrencyBot extends TelegramLongPollingBot {
         long chat_id = update.getCallbackQuery().getMessage().getChatId();
         SendMessage new_message = new SendMessage()
                 .setChatId(chat_id)
-                .setText(text);
+                .setText(text)
+                .enableMarkdown(true);
         try {
             execute(new_message);
         } catch (TelegramApiException e) {
