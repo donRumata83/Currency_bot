@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Properties;
 
 
-
 /**
  * Main class
  */
@@ -44,7 +43,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
     private static String usd;
     private static String eur;
     private static String rub;
-    private static String bc;
+    private static String btc;
     private static String calc;
 
 
@@ -63,7 +62,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
     /**
      * Constructor
      *
-     * @param dataTransformer_util
+     * @param dataTransformer_util gets
      */
     private CurrencyBot(DataTransformerUtil dataTransformer_util) {
         this.dataTransformer_util = dataTransformer_util;
@@ -99,9 +98,10 @@ public class CurrencyBot extends TelegramLongPollingBot {
      */
     private void sendMsg(@NotNull Message message, String text) {
         SendMessage sendMessage = new SendMessage();
-        sendMessage.enableMarkdown(true);
-        sendMessage.setChatId(message.getChatId().toString());
-        sendMessage.setText(text);
+        sendMessage.enableMarkdown(true)
+                .setChatId(message.getChatId().toString())
+                .setReplyToMessageId(message.getMessageId())
+                .setText(text);
 
         try {
             execute(sendMessage);
@@ -143,10 +143,10 @@ public class CurrencyBot extends TelegramLongPollingBot {
             usd = propsMessage.getProperty("usd");
             eur = propsMessage.getProperty("eur");
             rub = propsMessage.getProperty("rub");
-            bc = propsMessage.getProperty("bc");
+            btc = propsMessage.getProperty("btc");
             calc = propsMessage.getProperty("calc");
             newSearch = propsMessage.getProperty("new");
-            newCurrencyRequestMessage = props.getProperty("newreq");
+            newCurrencyRequestMessage = propsMessage.getProperty("newreq");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -226,7 +226,10 @@ public class CurrencyBot extends TelegramLongPollingBot {
     }
 
     private void getStandartKeyboard(Message message) {
-        SendMessage keybordMessage = new SendMessage().setText(newCurrencyRequestMessage).setChatId(message.getChatId());
+        SendMessage keybordMessage = new SendMessage()
+                .setChatId(message.getChatId())
+                .setText(newCurrencyRequestMessage);
+
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
 
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
@@ -235,7 +238,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
         firstLine.add(new InlineKeyboardButton().setText(eur).setCallbackData("eur"));
         List<InlineKeyboardButton> secondLine = new ArrayList<>();
         secondLine.add(new InlineKeyboardButton().setText(rub).setCallbackData("rub"));
-        secondLine.add(new InlineKeyboardButton().setText(bc).setCallbackData("btc"));
+        secondLine.add(new InlineKeyboardButton().setText(btc).setCallbackData("btc"));
         rows.add(firstLine);
         rows.add(secondLine);
         markupInline.setKeyboard(rows);
