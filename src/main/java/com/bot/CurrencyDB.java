@@ -5,6 +5,7 @@ import com.bot.enums.Commands;
 import com.bot.enums.MarketType;
 import com.bot.updaters.Updater;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.nio.charset.StandardCharsets;
 import javax.validation.constraints.NotNull;
 import java.io.*;
@@ -17,7 +18,6 @@ public class CurrencyDB {
     private Updater bitCoinUpdater;
 
     private static final int TIMEOUT_5MIN = 1000 * 60 * 5;
-    //private static final int TIMEOUT_1HOUR = (1000 * 60 * 60) + 100;
     private static final int TIMEOUT_30SEC = 1000 * 30;
 
     private static String usd;
@@ -27,17 +27,6 @@ public class CurrencyDB {
 
 
     CurrencyDB(Updater updater, Updater bitCoinUpdater) {
-        /*try (InputStream reader = CurrencyBot.class.getResourceAsStream("/currency.properties")) {
-            ObjectMapper maper = new ObjectMapper();
-            Properties props = new Properties();
-            props.load(reader);
-            this.actualCurrencyStorage = new HashMap<>();
-            this.actualCurrencyStorage.put(Commands.USD, maper.readValue(props.getProperty("usd"), com.bot.currencies.Currency.class));
-            this.actualCurrencyStorage.put(Commands.EURO, maper.readValue(props.getProperty("eur"), com.bot.currencies.Currency.class));
-            this.actualCurrencyStorage.put(Commands.RUB, maper.readValue(props.getProperty("rub"), com.bot.currencies.Currency.class));
-            ;
-        } catch (Exception e) {
-            e.printStackTrace();*/
         loadProperties();
         this.actualCurrencyStorage = new HashMap<Commands, com.bot.currencies.Currency>() {{
             put(Commands.USD, new Currency(usd, "usd"));
@@ -50,7 +39,6 @@ public class CurrencyDB {
         this.bitCoinUpdater = bitCoinUpdater;
         fiveMinuteUpdateTimer();
         thirtySecondsUpdateTimer();
-        //saveTimer();
     }
 
     private void loadProperties() {
@@ -62,7 +50,7 @@ public class CurrencyDB {
             usd = props.getProperty("usd");
             eur = props.getProperty("eur");
             rub = props.getProperty("rub");
-            bc = props.getProperty("bc");
+            bc = props.getProperty("btc");
         } catch (IOException e) {
             e.printStackTrace();
         }
