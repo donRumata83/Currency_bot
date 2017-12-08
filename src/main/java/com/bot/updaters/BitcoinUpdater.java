@@ -11,9 +11,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-public class BitcoinUpdater implements Updater{
+public class BitcoinUpdater implements Updater {
     @Override
     public List<Float> sendRequest(MarketType request) {
         List<Float> result;
@@ -26,7 +28,7 @@ public class BitcoinUpdater implements Updater{
         URL httpsUrl;
         try {
             httpsUrl = new URL(url);
-            HttpsURLConnection con = (HttpsURLConnection)httpsUrl.openConnection();
+            HttpsURLConnection con = (HttpsURLConnection) httpsUrl.openConnection();
             BufferedReader rd = new BufferedReader(
                     new InputStreamReader(con.getInputStream()));
 
@@ -43,11 +45,15 @@ public class BitcoinUpdater implements Updater{
     }
 
     private List<Float> parse(String response) {
-        List<Float> result = new ArrayList<>();
-        if (!response.equals("{}") | response.equals("")) {
-            JSONObject resp = new JSONObject(response);
-            result.add(Float.parseFloat(resp.getJSONObject("ticker").getString("price")));
-        }
-        return result;
+        try {
+            List<Float> result = new ArrayList<>();
+            if (!response.equals("{}") | response.equals("")) {
+                JSONObject resp = new JSONObject(response);
+                result.add(Float.parseFloat(resp.getJSONObject("ticker").getString("price")));
+            }
+            return result;
+        } catch (Exception e) {e.printStackTrace();}
+        return Collections.singletonList(0.0f);
+
     }
 }
