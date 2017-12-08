@@ -61,7 +61,7 @@ class DataTransformerUtil {
             default:
                 return String.format(HEAD_FORMAT, currency.getName(), getMark(currency), new SimpleDateFormat("HH:mm dd.MM.yyyy").format(currency.getDate())) +
                         String.format(MARKET_FORMAT, NBU, currency.getNbu_ask(), currency.getNbu_bid()) +
-                        String.format(MARKET_FORMAT, MB, currency.getMb_ask(),currency.getMb_bid()) +
+                        String.format(MARKET_FORMAT, MB, currency.getMb_ask(), currency.getMb_bid()) +
                         String.format(MARKET_FORMAT, BANKS, currency.getBank_ask(), currency.getBank_bid()) +
                         String.format(MARKET_FORMAT, AUC, currency.getAuc_ask(), currency.getAuc_bid());
         }
@@ -103,13 +103,15 @@ class DataTransformerUtil {
     }
 
     private String getMark(@NotNull Currency currency) {
-        switch (currency.getName()) {
-            case "Доллар США":
+        switch (currency.getMark()) {
+            case "usd":
                 return Mark.USD.getMark();
-            case "Евро":
+            case "eur":
                 return Mark.EUR.getMark();
-            case "Десять Российских рублей":
+            case "rub":
                 return Mark.RUB.getMark();
+            case "btc":
+                return Mark.BTC.getMark();
             default:
                 return "";
         }
@@ -128,7 +130,7 @@ class DataTransformerUtil {
             BANKS = props.getProperty("banks");
             NBU = props.getProperty("nbu");
             AUC = props.getProperty("auc");
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 

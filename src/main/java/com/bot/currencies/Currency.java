@@ -5,15 +5,9 @@ import java.util.Date;
 
 public class Currency implements Serializable {
     private String name;
+    private String mark;
     private Date date = new Date();
 
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
 
     private float nbu_ask = 0;
     private float nbu_bid = 0;
@@ -27,12 +21,11 @@ public class Currency implements Serializable {
     private float auc_ask = 0;
     private float auc_bid = 0;
 
-    public Currency(String name) {
+
+    public Currency(String name, String mark) {
         this.name = name;
+        this.mark = mark;
 
-    }
-
-    public Currency() {
     }
 
     public float getNbu_ask() {
@@ -102,5 +95,18 @@ public class Currency implements Serializable {
     public String getName() {
         return name;
     }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public String getMark() {
+        return mark;
+    }
+
 
 }

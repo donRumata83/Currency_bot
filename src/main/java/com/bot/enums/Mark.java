@@ -1,7 +1,7 @@
 package com.bot.enums;
 
 public enum Mark {
-    USD("\uD83D\uDCB5"), EUR("\uD83D\uDCB6"), RUB("");
+    USD("\uD83D\uDCB5"), EUR("\uD83D\uDCB6"), RUB(""), BTC("");
 
     private String mark;
 

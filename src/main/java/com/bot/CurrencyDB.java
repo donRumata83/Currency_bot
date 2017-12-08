@@ -40,10 +40,10 @@ public class CurrencyDB {
             e.printStackTrace();*/
         loadProperties();
         this.actualCurrencyStorage = new HashMap<Commands, com.bot.currencies.Currency>() {{
-            put(Commands.USD, new Currency(usd));
-            put(Commands.EURO, new Currency(eur));
-            put(Commands.RUB, new Currency(rub));
-            put(Commands.BTC, new Currency(bc));
+            put(Commands.USD, new Currency(usd, "usd"));
+            put(Commands.EURO, new Currency(eur, "eur"));
+            put(Commands.RUB, new Currency(rub, "rub"));
+            put(Commands.BTC, new Currency(bc, "btc"));
         }};
 
         this.updater = updater;

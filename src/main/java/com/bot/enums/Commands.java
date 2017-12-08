@@ -21,30 +21,23 @@ public enum Commands {
                 return START;
             case "/USD":
             case "USD":
-            case "ДОЛЛАР":
-            case "ДОЛАР":
             case "DOLLAR":
             case "DOLAR":
                 return USD;
             case "/EURO":
             case "EURO":
-            case "ЕВРО":
             case "EUR":
                 return EURO;
             case "/RUB":
             case "RUB":
             case "RUR":
             case "RUBLE":
-            case "РУБЛЬ":
                 return RUB;
             case "BTC":
-            case "BITCOIN" :
-            case "БИТКОИН":
-            case "БИТКА":
+            case "BITCOIN":
                 return BTC;
             case "/HELP":
             case "HELP":
-            case "ПОМОЩЬ":
                 return HELP;
             case "STAT":
                 return STAT;

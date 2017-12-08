@@ -1,6 +1,7 @@
 package com.bot;
 
 import com.bot.updaters.BitcoinUpdater;
+import com.bot.updaters.FakeUpdater;
 import com.bot.updaters.MinfinUpdater;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
@@ -11,15 +12,16 @@ import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import com.bot.enums.Commands;
+
 
 import java.nio.charset.StandardCharsets;
 import javax.validation.constraints.NotNull;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+
+
 
 /**
  * Main class
@@ -84,12 +86,6 @@ public class CurrencyBot extends TelegramLongPollingBot {
      * @param update from user chat
      */
 
-    /*public void onUpdateReceived(Update update) {
-        Message message = update.getMessage();
-        if (message != null && message.hasText()) {
-            sendMsg(message, messageCheck(message));
-        }
-    }*/
 
     /**
      * Returns bots name
@@ -121,30 +117,17 @@ public class CurrencyBot extends TelegramLongPollingBot {
         }
     }
 
-
-    /*private String messageCheck(@NotNull Message message) {
+    private void sendMessageWithQuery(Update update, String text) {
+        long chat_id = update.getCallbackQuery().getMessage().getChatId();
+        SendMessage new_message = new SendMessage()
+                .setChatId(chat_id)
+                .setText(text);
         try {
-            switch (Commands.convert(message.getText().trim().toUpperCase())) {
-                case START: {
-                    counter++;
-                    return String.format(greetingCommand, message.getFrom().getFirstName());
-                }
-                case HELP:
-                    return helpCommand;
-                case SEARCH:
-                    return
-                case STAT:
-                    return users + counter;
-                case MSTAT:
-                    return requests + messageCounter;
-                default:
-                    return noCurrency;
-            }
-        } catch (Exception e) {
+            execute(new_message);
+        } catch (TelegramApiException e) {
             e.printStackTrace();
         }
-        return noCurrency;
-    }*/
+    }
 
     private void loadProperties() {
         Properties props = new Properties();
@@ -179,7 +162,6 @@ public class CurrencyBot extends TelegramLongPollingBot {
         Message message = update.getMessage();
         if (update.hasMessage() && message.hasText()) {
             String message_text = update.getMessage().getText();
-            long chat_id = update.getMessage().getChatId();
             switch (message_text) {
                 case "/start": {
                     counter++;
@@ -219,23 +201,23 @@ public class CurrencyBot extends TelegramLongPollingBot {
                 String data = update.getCallbackQuery().getData();
                 switch (data) {
                     case "usd": {
-                        sendMsg(message, dataTransformer_util.getUSD());
-                        sendMsg(message, newSearch);
+                        sendMessageWithQuery(update, dataTransformer_util.getUSD());
+                        sendMessageWithQuery(update, newSearch);
                         break;
                     }
                     case "eur": {
-                        sendMsg(message, dataTransformer_util.getEuro());
-                        sendMsg(message, newSearch);
+                        sendMessageWithQuery(update, dataTransformer_util.getEuro());
+                        sendMessageWithQuery(update, newSearch);
                         break;
                     }
                     case "rub": {
-                        sendMsg(message, dataTransformer_util.getRub());
-                        sendMsg(message, newSearch);
+                        sendMessageWithQuery(update, dataTransformer_util.getRub());
+                        sendMessageWithQuery(update, newSearch);
                         break;
                     }
                     case "bc": {
-                        sendMsg(message, dataTransformer_util.getBTC());
-                        sendMsg(message, newSearch);
+                        sendMessageWithQuery(update, dataTransformer_util.getBTC());
+                        sendMessageWithQuery(update, newSearch);
                         break;
                     }
                 }
