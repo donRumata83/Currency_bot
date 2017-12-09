@@ -44,6 +44,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
     private static String exit;
     private static String notNumber;
     private static String enterSum;
+    private static String betterCurse;
 
     private static String usd;
     private static String eur;
@@ -65,7 +66,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
     public static void main(String[] args) {
         ApiContextInitializer.init();
         TelegramBotsApi botsApi = new TelegramBotsApi();
-        CurrencyDB currency_db = new CurrencyDB(new FakeUpdater(), new BitcoinUpdater());
+        CurrencyDB currency_db = new CurrencyDB(new MinfinUpdater(), new BitcoinUpdater());
         CurrencyBot bot = new CurrencyBot(new DataTransformerUtil(currency_db));
         try {
             botsApi.registerBot(bot);
@@ -184,6 +185,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
             exit = propsMessage.getProperty("exit");
             enterSum = propsMessage.getProperty("enterSum");
             notNumber = propsMessage.getProperty("notNumber");
+            betterCurse = propsMessage.getProperty("betterCurse");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -328,8 +330,14 @@ public class CurrencyBot extends TelegramLongPollingBot {
                 String message_text = update.getMessage().getText();
                 try {
                     sum = Integer.parseInt(message_text);
-                    sendMsg(message, getSum(sum, command));
-                    sendMsg(message, newSearch);
+                    if (sum < 1000) {
+                        sendMsg(message, getSum(sum, command));
+                        sendMsg(message, newSearch);
+                    } else {
+                        sendMsg(message, getSum(sum, command));
+                        sendMsg(message, newSearch);
+                        sendMsg(message, betterCurse);
+                    }
                 } catch (NumberFormatException e) {
                     switch (message_text) {
                         case "/new": {
