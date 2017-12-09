@@ -1,5 +1,9 @@
 package com.bot;
 
+
+import com.bot.currencies.Currency;
+import com.bot.enums.CalcCommands;
+import com.bot.enums.Commands;
 import com.bot.updaters.BitcoinUpdater;
 import com.bot.updaters.FakeUpdater;
 import com.bot.updaters.MinfinUpdater;
@@ -17,9 +21,7 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 import java.nio.charset.StandardCharsets;
 import javax.validation.constraints.NotNull;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 
 /**
@@ -39,6 +41,9 @@ public class CurrencyBot extends TelegramLongPollingBot {
     private static String requests;
     private static String noCurrency;
     private static String newCurrencyRequestMessage;
+    private static String exit;
+    private static String notNumber;
+    private static String enterSum;
 
     private static String usd;
     private static String eur;
@@ -46,13 +51,24 @@ public class CurrencyBot extends TelegramLongPollingBot {
     private static String btc;
     private static String calc;
 
+    private static String sellUsd;
+    private static String buyUsd;
+    private static String sellEur;
+    private static String buyEur;
+    private static String sellRub;
+    private static String buyRub;
+
+    private StandartMessageHandler standartMessageHandler;
+    private CalcMessageListener calcMessageHandler;
+    private boolean isCalcOn = false;
 
     public static void main(String[] args) {
         ApiContextInitializer.init();
         TelegramBotsApi botsApi = new TelegramBotsApi();
-        CurrencyDB currency_db = new CurrencyDB(new MinfinUpdater(), new BitcoinUpdater());
+        CurrencyDB currency_db = new CurrencyDB(new FakeUpdater(), new BitcoinUpdater());
+        CurrencyBot bot = new CurrencyBot(new DataTransformerUtil(currency_db));
         try {
-            botsApi.registerBot(new CurrencyBot(new DataTransformerUtil(currency_db)));
+            botsApi.registerBot(bot);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
@@ -68,6 +84,8 @@ public class CurrencyBot extends TelegramLongPollingBot {
         this.dataTransformer_util = dataTransformer_util;
         StandardCharsets.UTF_8.name();
         loadProperties();
+        this.standartMessageHandler = new StandartMessageHandler();
+        this.calcMessageHandler = new CalcMessageListener();
     }
 
     /**
@@ -100,7 +118,6 @@ public class CurrencyBot extends TelegramLongPollingBot {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true)
                 .setChatId(message.getChatId().toString())
-                .setReplyToMessageId(message.getMessageId())
                 .setText(text);
 
         try {
@@ -121,6 +138,17 @@ public class CurrencyBot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Gets the update from user chat, check for not empty and send text message to user
+     *
+     * @param update from user chat
+     */
+    @Override
+    public void onUpdateReceived(Update update) {
+        if (!isCalcOn) standartMessageHandler.handle(update);
+        else calcMessageHandler.handle(update);
     }
 
     private void loadProperties() {
@@ -147,81 +175,17 @@ public class CurrencyBot extends TelegramLongPollingBot {
             calc = propsMessage.getProperty("calc");
             newSearch = propsMessage.getProperty("new");
             newCurrencyRequestMessage = propsMessage.getProperty("newreq");
+            sellUsd = propsMessage.getProperty("sellUsd");
+            buyUsd = propsMessage.getProperty("buyUsd");
+            sellEur = propsMessage.getProperty("sellEur");
+            buyEur = propsMessage.getProperty("buyEur");
+            sellRub = propsMessage.getProperty("sellRub");
+            buyRub = propsMessage.getProperty("buyRub");
+            exit = propsMessage.getProperty("exit");
+            enterSum = propsMessage.getProperty("enterSum");
+            notNumber = propsMessage.getProperty("notNumber");
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * Gets the update from user chat, check for not empty and send text message to user
-     *
-     * @param update from user chat
-     */
-    @Override
-    public void onUpdateReceived(Update update) {
-        Message message = update.getMessage();
-        if (update.hasMessage() && message.hasText()) {
-            String message_text = update.getMessage().getText();
-            switch (message_text) {
-                case "/start": {
-                    counter++;
-                    sendMsg(message, String.format(greetingCommand, message.getFrom().getFirstName()));
-                    sendMsg(message, newSearch);
-                    break;
-                }
-                case "/help": {
-                    sendMsg(message, helpCommand);
-                    sendMsg(message, newSearch);
-                    break;
-                }
-                case "users": {
-                    sendMsg(message, users + counter);
-                    sendMsg(message, newSearch);
-                    break;
-                }
-                case "/new": {
-                    messageCounter++;
-                    getStandartKeyboard(message);
-                    break;
-                }
-                case "/mstat": {
-                    sendMsg(message, requests + messageCounter);
-                    sendMsg(message, newSearch);
-                    break;
-                }
-                default: {
-                    sendMsg(message, noCurrency);
-                    sendMsg(message, newSearch);
-                    break;
-                }
-
-            }
-        } else {
-            if (update.hasCallbackQuery()) {
-                String data = update.getCallbackQuery().getData();
-                switch (data) {
-                    case "usd": {
-                        sendMessageWithQuery(update, dataTransformer_util.getUSD());
-                        sendMessageWithQuery(update, newSearch);
-                        break;
-                    }
-                    case "eur": {
-                        sendMessageWithQuery(update, dataTransformer_util.getEuro());
-                        sendMessageWithQuery(update, newSearch);
-                        break;
-                    }
-                    case "rub": {
-                        sendMessageWithQuery(update, dataTransformer_util.getRub());
-                        sendMessageWithQuery(update, newSearch);
-                        break;
-                    }
-                    case "btc": {
-                        sendMessageWithQuery(update, dataTransformer_util.getBTC());
-                        sendMessageWithQuery(update, newSearch);
-                        break;
-                    }
-                }
-            }
         }
     }
 
@@ -241,6 +205,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
         secondLine.add(new InlineKeyboardButton().setText(btc).setCallbackData("btc"));
         rows.add(firstLine);
         rows.add(secondLine);
+        rows.add(Collections.singletonList(new InlineKeyboardButton().setText(calc).setCallbackData("calc")));
         markupInline.setKeyboard(rows);
         keybordMessage.setReplyMarkup(markupInline);
         try {
@@ -250,5 +215,208 @@ public class CurrencyBot extends TelegramLongPollingBot {
         }
     }
 
+    private void getCalcKeybord(Update update) {
+        SendMessage keybordMessage = new SendMessage()
+                .setChatId(update.getCallbackQuery().getMessage().getChatId())
+                .setText(calc);
 
+        InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
+
+        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+        List<InlineKeyboardButton> firstLine = new ArrayList<>();
+        firstLine.add(new InlineKeyboardButton().setText(sellUsd).setCallbackData("sellUsd"));
+        firstLine.add(new InlineKeyboardButton().setText(buyUsd).setCallbackData("buyUsd"));
+        List<InlineKeyboardButton> secondLine = new ArrayList<>();
+        secondLine.add(new InlineKeyboardButton().setText(sellEur).setCallbackData("sellEur"));
+        secondLine.add(new InlineKeyboardButton().setText(buyEur).setCallbackData("buyEur"));
+        List<InlineKeyboardButton> thirdLine = new ArrayList<>();
+        thirdLine.add(new InlineKeyboardButton().setText(sellRub).setCallbackData("sellRub"));
+        thirdLine.add(new InlineKeyboardButton().setText(buyRub).setCallbackData("buyRub"));
+        rows.add(firstLine);
+        rows.add(secondLine);
+        rows.add(thirdLine);
+        rows.add(Collections.singletonList(new InlineKeyboardButton().setText(exit).setCallbackData("exit")));
+        markupInline.setKeyboard(rows);
+        keybordMessage.setReplyMarkup(markupInline);
+        try {
+            execute(keybordMessage); // Sending our message object to user
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private class StandartMessageHandler {
+        void handle(Update update) {
+            Message message = update.getMessage();
+            if (update.hasMessage() && message.hasText()) {
+                String message_text = update.getMessage().getText();
+                switch (message_text) {
+                    case "/start": {
+                        counter++;
+                        sendMsg(message, String.format(greetingCommand, message.getFrom().getFirstName()));
+                        getStandartKeyboard(message);
+                        break;
+                    }
+                    case "/help": {
+                        sendMsg(message, helpCommand);
+                        sendMsg(message, newSearch);
+                        break;
+                    }
+                    case "users": {
+                        sendMsg(message, users + counter);
+                        sendMsg(message, newSearch);
+                        break;
+                    }
+                    case "/new": {
+                        messageCounter++;
+                        isCalcOn = false;
+                        getStandartKeyboard(message);
+                        break;
+                    }
+                    case "/mstat": {
+                        sendMsg(message, requests + messageCounter);
+                        sendMsg(message, newSearch);
+                        break;
+                    }
+                    default: {
+                        sendMsg(message, noCurrency);
+                        sendMsg(message, newSearch);
+                        break;
+                    }
+                }
+            } else {
+                if (update.hasCallbackQuery()) {
+                    String data = update.getCallbackQuery().getData();
+                    switch (data) {
+                        case "usd": {
+                            sendMessageWithQuery(update, dataTransformer_util.getUSD());
+                            sendMessageWithQuery(update, newSearch);
+                            break;
+                        }
+                        case "eur": {
+                            sendMessageWithQuery(update, dataTransformer_util.getEuro());
+                            sendMessageWithQuery(update, newSearch);
+                            break;
+                        }
+                        case "rub": {
+                            sendMessageWithQuery(update, dataTransformer_util.getRub());
+                            sendMessageWithQuery(update, newSearch);
+                            break;
+                        }
+                        case "btc": {
+                            sendMessageWithQuery(update, dataTransformer_util.getBTC());
+                            sendMessageWithQuery(update, newSearch);
+                            break;
+                        }
+                        case "calc": {
+                            isCalcOn = true;
+                            getCalcKeybord(update);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private class CalcMessageListener {
+        CalcCommands command = CalcCommands.DEF;
+
+        void handle(Update update) {
+            Message message = update.getMessage();
+            int sum;
+            if (update.hasMessage() && message.hasText()) {
+                String message_text = update.getMessage().getText();
+                try {
+                    sum = Integer.parseInt(message_text);
+                    sendMsg(message, getSum(sum, command));
+                    sendMsg(message, newSearch);
+                } catch (NumberFormatException e) {
+                    switch (message_text) {
+                        case "/new": {
+                            isCalcOn = false;
+                            getStandartKeyboard(message);
+                            break;
+                        }
+                        case "/mstat": {
+                            sendMessageWithQuery(update, requests + messageCounter);
+                            sendMessageWithQuery(update, newSearch);
+                            break;
+                        }
+                        default: {
+                            sendMessageWithQuery(update, notNumber);
+                            break;
+                        }
+                    }
+
+                }
+            } else {
+                if (update.hasCallbackQuery()) {
+                    String data = update.getCallbackQuery().getData();
+                    switch (data) {
+                        case "sellUsd": {
+                            sendMessageWithQuery(update, enterSum);
+                            command = CalcCommands.SELL_USD;
+                            break;
+                        }
+                        case "buyUsd": {
+                            sendMessageWithQuery(update, enterSum);
+                            command = CalcCommands.BUY_USD;
+                            break;
+                        }
+                        case "sellEur": {
+                            sendMessageWithQuery(update, enterSum);
+                            command = CalcCommands.SELL_EUR;
+                            break;
+                        }
+                        case "buyEur": {
+                            sendMessageWithQuery(update, enterSum);
+                            command = CalcCommands.BUY_EUR;
+                            break;
+                        }
+                        case "sellRub": {
+                            sendMessageWithQuery(update, enterSum);
+                            command = CalcCommands.SELL_RUB;
+                            break;
+                        }
+                        case "buyRub": {
+                            sendMessageWithQuery(update, enterSum);
+                            command = CalcCommands.BUY_RUB;
+                            break;
+                        }
+                        case "exit": {
+                            isCalcOn = false;
+                            sendMessageWithQuery(update, newSearch);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private String getSum(int count, CalcCommands command) {
+            Float result = 0.0f;
+            Map<Commands, Currency> map = dataTransformer_util.getMap();
+            switch (command) {
+                case SELL_USD:
+                    result = count * map.get(Commands.USD).getAuc_ask();
+                    break;
+                case BUY_USD:
+                    result = count * map.get(Commands.USD).getAuc_bid();
+                    break;
+                case SELL_EUR:
+                    result = count * map.get(Commands.EURO).getAuc_ask();
+                    break;
+                case BUY_EUR:
+                    result = count * map.get(Commands.EURO).getAuc_bid();
+                    break;
+                case SELL_RUB:
+                    result = count * map.get(Commands.RUB).getAuc_ask();
+                    break;
+                case BUY_RUB:
+                    result = count * map.get(Commands.RUB).getAuc_bid();
+                    break;
+            }
+            return result.toString();
+        }
+    }
 }

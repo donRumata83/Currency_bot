@@ -116,6 +116,10 @@ class DataTransformerUtil {
         }
     }
 
+    public Map<Commands, Currency> getMap() {
+        return map;
+    }
+
     private void loadProperties() {
         Properties props = new Properties();
         InputStream in = getClass().getResourceAsStream("/message.properties");
