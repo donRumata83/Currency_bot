@@ -45,6 +45,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
     private static String notNumber;
     private static String enterSum;
     private static String betterCurse;
+    private static String sumLayout;
 
     private static String usd;
     private static String eur;
@@ -186,6 +187,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
             enterSum = propsMessage.getProperty("enterSum");
             notNumber = propsMessage.getProperty("notNumber");
             betterCurse = propsMessage.getProperty("betterCurse");
+            sumLayout=propsMessage.getProperty("sumLayout");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -424,7 +426,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
                     result = count * map.get(Commands.RUB).getAuc_bid();
                     break;
             }
-            return result.toString();
+            return String.format(sumLayout, result);
         }
     }
 }
