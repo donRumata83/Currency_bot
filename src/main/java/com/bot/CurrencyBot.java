@@ -258,6 +258,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
                     case "/start": {
                         counter++;
                         sendMsg(message, String.format(greetingCommand, message.getFrom().getFirstName()));
+
                         getStandartKeyboard(message);
                         break;
                     }
@@ -341,7 +342,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
                         sendMsg(message, betterCurse);
                     }
                 } catch (NumberFormatException e) {
-                    switch (message_text) {
+                    try {switch (message_text) {
                         case "/new": {
                             isCalcOn = false;
                             getStandartKeyboard(message);
@@ -356,6 +357,9 @@ public class CurrencyBot extends TelegramLongPollingBot {
                             sendMessageWithQuery(update, notNumber);
                             break;
                         }
+                    }} catch (NullPointerException ex) {
+                        ex.printStackTrace();
+                        sendMsg(message, newSearch);
                     }
 
                 }
