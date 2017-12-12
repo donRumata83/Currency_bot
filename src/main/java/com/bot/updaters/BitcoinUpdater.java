@@ -1,5 +1,7 @@
 package com.bot.updaters;
 
+import com.bot.currencies.Market;
+import com.bot.enums.Commands;
 import com.bot.enums.MarketType;
 import org.json.JSONObject;
 
@@ -10,14 +12,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class BitcoinUpdater implements Updater {
 
     @Override
-    public List<Float> sendRequest(MarketType request) {
+    public Map<Commands, Market> sendRequest(MarketType request) {
         return parse(sendGet(MarketType.BTC.toString()));
     }
 
@@ -42,16 +42,19 @@ public class BitcoinUpdater implements Updater {
         return "";
     }
 
-    private List<Float> parse(String response) {
+    private Map<Commands, Market> parse(String response) {
         try {
-            List<Float> result = new ArrayList<>();
+            Map<Commands, Market> result = new HashMap<>();
             if (!response.equals("{}") | response.equals("")) {
                 JSONObject resp = new JSONObject(response);
-                result.add(Float.parseFloat(resp.getJSONObject("ticker").getString("price")));
+                result.put(Commands.BTC, new Market(Float.parseFloat(resp.getJSONObject("ticker").getString("price")), 0.0f, MarketType.AUCTION));
             }
             return result;
-        } catch (Exception e) {e.printStackTrace();}
-        return Collections.singletonList(0.0f);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return Collections.emptyMap();
 
     }
 }

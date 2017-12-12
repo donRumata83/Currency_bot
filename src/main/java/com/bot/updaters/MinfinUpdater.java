@@ -1,6 +1,8 @@
 package com.bot.updaters;
 
 import com.bot.CurrencyBot;
+import com.bot.currencies.Market;
+import com.bot.enums.Commands;
 import com.bot.enums.MarketType;
 
 import com.bot.updaters.Updater;
@@ -33,45 +35,33 @@ public class MinfinUpdater implements Updater {
     }
 
     @Override
-    public List<Float> sendRequest(MarketType request) {
-        List<Float> result;
-        switch (request) {
-            case NBU:
-                result = parseNormalResponse(sendGet(MarketType.NBU.toString()));
-                break;
-            case MB_MARKET:
-                result = parseMbResponse(sendGet(MarketType.MB_MARKET.toString()));
-                break;
-            case BANKS:
-                result = parseNormalResponse(sendGet(MarketType.BANKS.toString()));
-                break;
-            case AUCTION:
-                result = parseNormalResponse(sendGet(MarketType.AUCTION.toString()));
-                break;
-            default:
-                result = null;
-        }
+    public Map<Commands, Market> sendRequest(MarketType request) {
+        Map<Commands, Market> result;
+        if (request.equals(MarketType.MB_MARKET)) {
+            result = parseMbResponse(sendGet(MarketType.MB_MARKET.toString()), MarketType.MB_MARKET);
+        } else result = parseNormalResponse(sendGet(MarketType.NBU.toString()), request);
+
         return result;
     }
 
-    public List<Float> parseNormalResponse(String response) {
-        List<Float> result = new ArrayList<>();
+    public Map<Commands, Market> parseNormalResponse(String response, MarketType marketType) {
+        Map<Commands, Market> result = new HashMap<>();
         if (!response.equals("[]") | response.equals("")) {
             JSONObject resp = new JSONObject(response);
-            result.addAll(getAskAndBid(resp.getJSONObject("usd")));
-            result.addAll(getAskAndBid(resp.getJSONObject("eur")));
-            result.addAll(getAskAndBid(resp.getJSONObject("rub")));
+            result.put(Commands.USD, getAskAndBid(resp.getJSONObject("usd"), marketType));
+            result.put(Commands.EURO, getAskAndBid(resp.getJSONObject("eur"), marketType));
+            result.put(Commands.RUB, getAskAndBid(resp.getJSONObject("rub"), marketType));
         }
         return result;
     }
 
-    public List<Float> parseMbResponse(String response) {
-        List<Float> result = new ArrayList<>();
+    public Map<Commands, Market> parseMbResponse(String response, MarketType marketType) {
+        Map<Commands, Market> result = new HashMap<>();
         if (!response.equals("[]") | response.equals("")) {
             JSONArray array = new JSONArray(response);
-            result.addAll(getLastCurrencyMark(array, "usd"));
-            result.addAll(getLastCurrencyMark(array, "eur"));
-            result.addAll(getLastCurrencyMark(array, "rub"));
+            result.put(Commands.USD, getLastCurrencyMark(array, "usd", marketType));
+            result.put(Commands.EURO, getLastCurrencyMark(array, "eur", marketType));
+            result.put(Commands.RUB, getLastCurrencyMark(array, "rub", marketType));
         }
         return result;
     }
@@ -114,10 +104,10 @@ public class MinfinUpdater implements Updater {
         }
     }
 
-    private List<Float> getAskAndBid(JSONObject object) {
+    private Market getAskAndBid(JSONObject object, MarketType marketType) {
         List<Float> result = Arrays.asList(getAsk(object), getBid(object));
         Collections.sort(result);
-        return result;
+        return new Market(result.get(0), result.get(1), marketType);
     }
 
     /**
@@ -125,13 +115,13 @@ public class MinfinUpdater implements Updater {
      * @param currency
      * @return
      */
-    private List<Float> getLastCurrencyMark(JSONArray array, String currency) {
+    private Market getLastCurrencyMark(JSONArray array, String currency, MarketType marketType) {
         List<JSONObject> temp = new ArrayList<>();
         for (int i = 0; i < array.length(); i++) {
             temp.add(array.getJSONObject(i));
         }
         return getAskAndBid(temp.stream().filter(e -> e.getString("currency").equals(currency))
                 .filter(e -> e.isNull("status"))
-                .max(Comparator.comparingInt(o1 -> Integer.parseInt(o1.getString("id")))).get());
+                .max(Comparator.comparingInt(o1 -> Integer.parseInt(o1.getString("id")))).get(), marketType);
     }
 }

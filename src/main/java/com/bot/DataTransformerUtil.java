@@ -61,10 +61,10 @@ class DataTransformerUtil {
                 return getBTC();
             default:
                 return String.format(HEAD_FORMAT, currency.getName(), getMark(currency), new SimpleDateFormat("HH:mm dd.MM.yyyy").format(currency.getDate()),
-                         NBU, currency.getNbu_ask(),
-                         MB, currency.getMb_ask(), currency.getMb_bid(),
-                         BANKS, currency.getBank_ask(), currency.getBank_bid(),
-                         AUC, currency.getAuc_ask(), currency.getAuc_bid());
+                        NBU, currency.getNbu_ask(),
+                        MB, currency.getMb_ask(), currency.getMb_bid(),
+                        BANKS, currency.getBank_ask(), currency.getBank_bid(),
+                        AUC, currency.getAuc_ask(), currency.getAuc_bid());
         }
     }
 
@@ -104,11 +104,11 @@ class DataTransformerUtil {
     }
 
     String getOtherCurrencyFirstHalf() {
-        return getOtherCurrency(otherCurrency.size()/2, 0);
+        return getOtherCurrency(otherCurrency.size() / 2, 0);
     }
 
     String getOtherCurrencySecondHalf() {
-        return getOtherCurrency(otherCurrency.size()/2, otherCurrency.size()/2);
+        return getOtherCurrency(otherCurrency.size() / 2, otherCurrency.size() / 2);
     }
 
     private String getOtherCurrency(int limitValues, int skipValues) {

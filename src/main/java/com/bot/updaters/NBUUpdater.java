@@ -1,6 +1,6 @@
 package com.bot.updaters;
 
-import com.bot.currencies.Currency;
+
 import com.bot.currencies.SimpleCurrency;
 import com.bot.enums.MarketType;
 import org.json.JSONArray;
@@ -8,13 +8,12 @@ import org.json.JSONObject;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NBUUpdater  {
+public class NBUUpdater {
 
     public List<SimpleCurrency> sendRequest(MarketType request) {
 
@@ -28,8 +27,9 @@ public class NBUUpdater  {
             JSONArray array = new JSONArray(response);
             for (int i = 0; i < array.length(); i++) {
                 temp = array.getJSONObject(i);
-                result.add(new SimpleCurrency(temp.getString("txt"), (float)temp.getDouble("rate"), temp.getString("cc")));
-            }}
+                result.add(new SimpleCurrency(temp.getString("txt"), (float) temp.getDouble("rate"), temp.getString("cc")));
+            }
+        }
         return result;
     }
 
@@ -47,10 +47,10 @@ public class NBUUpdater  {
                 result.append(line);
             }
             return result.toString();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return "";
+        return "[]";
     }
 
 

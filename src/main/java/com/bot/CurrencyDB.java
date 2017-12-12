@@ -1,6 +1,7 @@
 package com.bot;
 
 import com.bot.currencies.Currency;
+import com.bot.currencies.Market;
 import com.bot.currencies.SimpleCurrency;
 import com.bot.enums.Commands;
 import com.bot.enums.MarketType;
@@ -11,7 +12,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import javax.validation.constraints.NotNull;
 import java.io.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class CurrencyDB {
@@ -32,7 +32,7 @@ public class CurrencyDB {
 
     CurrencyDB(Updater updater, Updater bitCoinUpdater, NBUUpdater nbu) {
         loadProperties();
-        this.actualCurrencyStorage = new HashMap<Commands, com.bot.currencies.Currency>() {{
+        this.actualCurrencyStorage = new HashMap<>() {{
             put(Commands.USD, new Currency(usd, "usd"));
             put(Commands.EURO, new Currency(eur, "eur"));
             put(Commands.RUB, new Currency(rub, "rub"));
@@ -77,23 +77,9 @@ public class CurrencyDB {
                 try {
                     updateNBU(nbuUpdater.sendRequest(MarketType.NBU));
                     MarketType request = request_queue.pollFirst();
-                    List<Float> response = updater.sendRequest(request);
-                    System.out.println(response);
-                    System.out.println(new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
-                    switch (request) {
-                        case AUCTION:
-                            updateAUC(response);
-                            request_queue.addLast(request);
-                            break;
-                        case BANKS:
-                            updateBank(response);
-                            request_queue.addLast(request);
-                            break;
-                        case MB_MARKET:
-                            updateMB(response);
-                            request_queue.addLast(request);
-                            break;
-                    }
+                    Map<Commands, Market> response = updater.sendRequest(request);
+                    updateMainCurrency(response);
+                    request_queue.push(request);
                     Thread.sleep(TIMEOUT_5MIN);
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
@@ -117,102 +103,43 @@ public class CurrencyDB {
         run.start();
     }
 
-    private void updateMB(@NotNull List<Float> response) {
-        if (response.size() != 0) {
-            com.bot.currencies.Currency usd = actualCurrencyStorage.get(Commands.USD);
-            usd.setMb_ask(response.get(0));
-            usd.setMb_bid(response.get(1));
-            usd.setDate(new Date());
-            actualCurrencyStorage.put(Commands.USD, usd);
-
-            com.bot.currencies.Currency euro = actualCurrencyStorage.get(Commands.EURO);
-            euro.setMb_ask(response.get(2));
-            euro.setMb_bid(response.get(3));
-            euro.setDate(new Date());
-            actualCurrencyStorage.put(Commands.EURO, euro);
-
-            com.bot.currencies.Currency rub = actualCurrencyStorage.get(Commands.RUB);
-            rub.setMb_ask(response.get(4) * 10);
-            rub.setMb_bid(response.get(5) * 10);
-            euro.setDate(new Date());
-            actualCurrencyStorage.put(Commands.RUB, rub);
-        }
-    }
-
-    private void updateBank(@NotNull List<Float> response) {
-        if (response.size() != 0) {
-            com.bot.currencies.Currency usd = actualCurrencyStorage.get(Commands.USD);
-            usd.setBank_ask(response.get(0));
-            usd.setBank_bid(response.get(1));
-            actualCurrencyStorage.put(Commands.USD, usd);
-
-            com.bot.currencies.Currency euro = actualCurrencyStorage.get(Commands.EURO);
-            euro.setBank_ask(response.get(2));
-            euro.setBank_bid(response.get(3));
-            actualCurrencyStorage.put(Commands.EURO, euro);
-
-            com.bot.currencies.Currency rub = actualCurrencyStorage.get(Commands.RUB);
-            rub.setBank_ask(response.get(4) * 10);
-            rub.setBank_bid(response.get(5) * 10);
-            actualCurrencyStorage.put(Commands.RUB, rub);
-        }
-    }
-
-    private void updateAUC(@NotNull List<Float> response) {
-        if (response.size() != 0) {
-            com.bot.currencies.Currency usd = actualCurrencyStorage.get(Commands.USD);
-            usd.setAuc_ask(response.get(0));
-            usd.setAuc_bid(response.get(1));
-            usd.setDate(new Date());
-            actualCurrencyStorage.put(Commands.USD, usd);
-
-            com.bot.currencies.Currency euro = actualCurrencyStorage.get(Commands.EURO);
-            euro.setAuc_ask(response.get(2));
-            euro.setAuc_bid(response.get(3));
-            euro.setDate(new Date());
-            actualCurrencyStorage.put(Commands.EURO, euro);
-
-            com.bot.currencies.Currency rub = actualCurrencyStorage.get(Commands.RUB);
-            rub.setAuc_ask(response.get(4) * 10);
-            rub.setAuc_bid(response.get(5) * 10);
-            rub.setDate(new Date());
-            actualCurrencyStorage.put(Commands.RUB, rub);
-        }
-    }
-
     private void updateNBU(@NotNull List<SimpleCurrency> response) {
-        for (SimpleCurrency currency: response) {
-            if (currency.getMark().equals("USD") || currency.getMark().equals("EUR") || currency.getMark().equals("RUB"))
-            {
+        List<SimpleCurrency> tmp = new ArrayList<>();
+        for (SimpleCurrency currency : response) {
+            if (currency.getMark().equals("USD") || currency.getMark().equals("EUR") || currency.getMark().equals("RUB")) {
                 if (currency.getMark().equals("USD")) {
-                    Currency usd = actualCurrencyStorage.get(Commands.USD);
-                    usd.setNbu_ask(currency.getRate());
-                    usd.setNbu_bid(currency.getRate());
-                    actualCurrencyStorage.put(Commands.USD, usd);
+                    updateNBUone(Commands.USD, currency.getRate());
                 }
                 if (currency.getMark().equals("EUR")) {
-                    Currency eur = actualCurrencyStorage.get(Commands.EURO);
-                    eur.setNbu_ask(currency.getRate());
-                    eur.setNbu_bid(currency.getRate());
-                    actualCurrencyStorage.put(Commands.EURO, eur);
+                    updateNBUone(Commands.EURO, currency.getRate());
                 }
                 if (currency.getMark().equals("RUB")) {
-                    Currency rub = actualCurrencyStorage.get(Commands.RUB);
-                    rub.setNbu_ask(currency.getRate());
-                    rub.setNbu_bid(currency.getRate());
-                    actualCurrencyStorage.put(Commands.RUB, rub);
+                    updateNBUone(Commands.RUB, currency.getRate());
                 }
             } else {
-                simpleCurrencyList.add(currency);
+                tmp.add(currency);
             }
         }
+        simpleCurrencyList = tmp;
     }
 
-    private void updateBTC(List<Float> response) {
+    private void updateNBUone(Commands currency, float rate) {
+        Currency currency1 = actualCurrencyStorage.get(currency);
+        currency1.update(new Market(rate, 0.0f, MarketType.NBU));
+        actualCurrencyStorage.put(currency, currency1);
+    }
+
+    private void updateMainCurrency(Map<Commands, Market> response) {
+        actualCurrencyStorage.get(Commands.USD).update(response.get(Commands.USD));
+        actualCurrencyStorage.get(Commands.EURO).update(response.get(Commands.EURO));
+        actualCurrencyStorage.get(Commands.RUB).update(response.get(Commands.RUB));
+    }
+
+    private void updateBTC(Map<Commands, Market> response) {
         if (response.size() != 0) {
             Currency btc = actualCurrencyStorage.get(Commands.BTC);
-            btc.setAuc_ask(response.get(0));
             btc.setDate(new Date());
+            btc.update(response.get(Commands.BTC));
             actualCurrencyStorage.put(Commands.BTC, btc);
         }
     }

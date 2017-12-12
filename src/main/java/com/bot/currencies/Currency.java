@@ -1,95 +1,54 @@
 package com.bot.currencies;
 
+import com.bot.enums.MarketType;
+
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Currency implements Serializable {
     private String name;
     private String mark;
     private Date date = new Date();
-
-
-    private float nbu_ask = 0;
-    private float nbu_bid = 0;
-
-    private float mb_ask = 0;
-    private float mb_bid = 0;
-
-    private float bank_ask = 0;
-    private float bank_bid = 0;
-
-    private float auc_ask = 0;
-    private float auc_bid = 0;
-
+    private Map<MarketType, Market> map;
 
     public Currency(String name, String mark) {
         this.name = name;
         this.mark = mark;
-
+        this.map = new HashMap<>();
+        map.put(MarketType.NBU, new Market());
+        map.put(MarketType.BANKS, new Market());
+        map.put(MarketType.AUCTION, new Market());
+        map.put(MarketType.MB_MARKET, new Market());
     }
 
     public float getNbu_ask() {
-        return nbu_ask;
-    }
-
-    public void setNbu_ask(float nbu_ask) {
-        this.nbu_ask = nbu_ask;
-    }
-
-    public float getNbu_bid() {
-        return nbu_bid;
-    }
-
-    public void setNbu_bid(float nbu_bid) {
-        this.nbu_bid = nbu_bid;
+        return map.get(MarketType.NBU).getAsk();
     }
 
     public float getMb_ask() {
-        return mb_ask;
-    }
-
-    public void setMb_ask(float mb_ask) {
-        this.mb_ask = mb_ask;
+        return map.get(MarketType.MB_MARKET).getAsk();
     }
 
     public float getMb_bid() {
-        return mb_bid;
-    }
-
-    public void setMb_bid(float mb_bid) {
-        this.mb_bid = mb_bid;
+        return map.get(MarketType.MB_MARKET).getBid();
     }
 
     public float getBank_ask() {
-        return bank_ask;
-    }
-
-    public void setBank_ask(float bank_ask) {
-        this.bank_ask = bank_ask;
+        return map.get(MarketType.BANKS).getAsk();
     }
 
     public float getBank_bid() {
-        return bank_bid;
-    }
-
-    public void setBank_bid(float bank_bid) {
-        this.bank_bid = bank_bid;
+        return map.get(MarketType.BANKS).getBid();
     }
 
     public float getAuc_ask() {
-        return auc_ask;
-    }
-
-    public void setAuc_ask(float auc_ask) {
-        this.auc_ask = auc_ask;
+        return map.get(MarketType.AUCTION).getAsk();
     }
 
     public float getAuc_bid() {
-        return auc_bid;
-    }
-
-    public void setAuc_bid(float auc_bid) {
-        this.auc_bid = auc_bid;
+        return map.get(MarketType.AUCTION).getBid();
     }
 
     public String getName() {
@@ -108,5 +67,8 @@ public class Currency implements Serializable {
         return mark;
     }
 
-
+    public void update(Market market) {
+        MarketType type = market.getMarketType();
+        map.put(type, market);
+    }
 }
