@@ -79,9 +79,9 @@ public class CurrencyDB {
                     MarketType request = request_queue.pollFirst();
                     Map<Commands, Market> response = updater.sendRequest(request);
                     updateMainCurrency(response);
-                    request_queue.push(request);
+                    request_queue.addLast(request);
                     Thread.sleep(TIMEOUT_5MIN);
-                } catch (InterruptedException ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }

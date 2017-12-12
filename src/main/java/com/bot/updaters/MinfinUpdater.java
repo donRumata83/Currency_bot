@@ -37,10 +37,9 @@ public class MinfinUpdater implements Updater {
     @Override
     public Map<Commands, Market> sendRequest(MarketType request) {
         Map<Commands, Market> result;
-        if (request.equals(MarketType.MB_MARKET)) {
+        if (request==MarketType.MB_MARKET) {
             result = parseMbResponse(sendGet(MarketType.MB_MARKET.toString()), MarketType.MB_MARKET);
-        } else result = parseNormalResponse(sendGet(MarketType.NBU.toString()), request);
-
+        } else result = parseNormalResponse(sendGet(request.toString()), request);
         return result;
     }
 

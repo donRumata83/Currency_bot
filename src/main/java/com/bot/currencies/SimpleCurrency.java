@@ -1,5 +1,8 @@
 package com.bot.currencies;
 
+import java.text.Collator;
+import java.util.Locale;
+
 public class SimpleCurrency implements Comparable{
     private String name;
 
