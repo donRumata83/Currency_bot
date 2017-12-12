@@ -1,8 +1,10 @@
 package com.bot;
 
 import com.bot.currencies.Currency;
+import com.bot.currencies.SimpleCurrency;
 import com.bot.enums.Commands;
 import com.bot.enums.MarketType;
+import com.bot.updaters.NBUUpdater;
 import com.bot.updaters.Updater;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -14,8 +16,10 @@ import java.util.*;
 
 public class CurrencyDB {
     private HashMap<Commands, com.bot.currencies.Currency> actualCurrencyStorage;
+    private List<SimpleCurrency> simpleCurrencyList;
     private Updater updater;
     private Updater bitCoinUpdater;
+    private NBUUpdater nbuUpdater;
 
     private static final int TIMEOUT_5MIN = 1000 * 60 * 5;
     private static final int TIMEOUT_30SEC = 1000 * 30;
@@ -26,7 +30,7 @@ public class CurrencyDB {
     private static String bc;
 
 
-    CurrencyDB(Updater updater, Updater bitCoinUpdater) {
+    CurrencyDB(Updater updater, Updater bitCoinUpdater, NBUUpdater nbu) {
         loadProperties();
         this.actualCurrencyStorage = new HashMap<Commands, com.bot.currencies.Currency>() {{
             put(Commands.USD, new Currency(usd, "usd"));
@@ -34,9 +38,10 @@ public class CurrencyDB {
             put(Commands.RUB, new Currency(rub, "rub"));
             put(Commands.BTC, new Currency(bc, "btc"));
         }};
-
         this.updater = updater;
         this.bitCoinUpdater = bitCoinUpdater;
+        this.nbuUpdater = nbu;
+        this.simpleCurrencyList = new ArrayList<>();
         fiveMinuteUpdateTimer();
         thirtySecondsUpdateTimer();
     }
@@ -56,26 +61,26 @@ public class CurrencyDB {
         }
     }
 
-    public HashMap<Commands, com.bot.currencies.Currency> getActualCurrencyStorage() {
+    public HashMap<Commands, Currency> getActualCurrencyStorage() {
         return actualCurrencyStorage;
+    }
+
+    public List<SimpleCurrency> getSimpleCurrencyList() {
+        return simpleCurrencyList;
     }
 
     private void fiveMinuteUpdateTimer() {
         Thread run = new Thread(() -> {
             Deque<MarketType> request_queue = new ArrayDeque<>
-                    (Arrays.asList(MarketType.NBU, MarketType.MB_MARKET, MarketType.BANKS, MarketType.AUCTION));
+                    (Arrays.asList(MarketType.MB_MARKET, MarketType.BANKS, MarketType.AUCTION));
             while (true) {
                 try {
-                    updateBTC(bitCoinUpdater.sendRequest(MarketType.BTC));
+                    updateNBU(nbuUpdater.sendRequest(MarketType.NBU));
                     MarketType request = request_queue.pollFirst();
                     List<Float> response = updater.sendRequest(request);
                     System.out.println(response);
                     System.out.println(new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
                     switch (request) {
-                        case NBU:
-                            updateNBU(response);
-                            request_queue.addLast(request);
-                            break;
                         case AUCTION:
                             updateAUC(response);
                             request_queue.addLast(request);
@@ -123,13 +128,13 @@ public class CurrencyDB {
             com.bot.currencies.Currency euro = actualCurrencyStorage.get(Commands.EURO);
             euro.setMb_ask(response.get(2));
             euro.setMb_bid(response.get(3));
-            usd.setDate(new Date());
+            euro.setDate(new Date());
             actualCurrencyStorage.put(Commands.EURO, euro);
 
             com.bot.currencies.Currency rub = actualCurrencyStorage.get(Commands.RUB);
             rub.setMb_ask(response.get(4) * 10);
             rub.setMb_bid(response.get(5) * 10);
-            usd.setDate(new Date());
+            euro.setDate(new Date());
             actualCurrencyStorage.put(Commands.RUB, rub);
         }
     }
@@ -175,22 +180,31 @@ public class CurrencyDB {
         }
     }
 
-    private void updateNBU(@NotNull List<Float> response) {
-        if (response.size() != 0) {
-            com.bot.currencies.Currency usd = actualCurrencyStorage.get(Commands.USD);
-            usd.setNbu_ask(response.get(0));
-            usd.setNbu_bid(response.get(1));
-            actualCurrencyStorage.put(Commands.USD, usd);
-
-            com.bot.currencies.Currency euro = actualCurrencyStorage.get(Commands.EURO);
-            euro.setNbu_ask(response.get(2));
-            euro.setNbu_bid(response.get(3));
-            actualCurrencyStorage.put(Commands.EURO, euro);
-
-            Currency rub = actualCurrencyStorage.get(Commands.RUB);
-            rub.setNbu_ask(response.get(4) * 10);
-            rub.setNbu_bid(response.get(5) * 10);
-            actualCurrencyStorage.put(Commands.RUB, rub);
+    private void updateNBU(@NotNull List<SimpleCurrency> response) {
+        for (SimpleCurrency currency: response) {
+            if (currency.getMark().equals("USD") || currency.getMark().equals("EUR") || currency.getMark().equals("RUB"))
+            {
+                if (currency.getMark().equals("USD")) {
+                    Currency usd = actualCurrencyStorage.get(Commands.USD);
+                    usd.setNbu_ask(currency.getRate());
+                    usd.setNbu_bid(currency.getRate());
+                    actualCurrencyStorage.put(Commands.USD, usd);
+                }
+                if (currency.getMark().equals("EUR")) {
+                    Currency eur = actualCurrencyStorage.get(Commands.EURO);
+                    eur.setNbu_ask(currency.getRate());
+                    eur.setNbu_bid(currency.getRate());
+                    actualCurrencyStorage.put(Commands.EURO, eur);
+                }
+                if (currency.getMark().equals("RUB")) {
+                    Currency rub = actualCurrencyStorage.get(Commands.RUB);
+                    rub.setNbu_ask(currency.getRate());
+                    rub.setNbu_bid(currency.getRate());
+                    actualCurrencyStorage.put(Commands.RUB, rub);
+                }
+            } else {
+                simpleCurrencyList.add(currency);
+            }
         }
     }
 
@@ -218,7 +232,7 @@ public class CurrencyDB {
     }
 
     private void saveInFile() {
-        try (FileOutputStream fis = new FileOutputStream(CurrencyBot.class.getResource("/currency.properties").getFile(), false);) {
+        try (FileOutputStream fis = new FileOutputStream(CurrencyBot.class.getResource("/currency.properties").getFile(), false)) {
             ObjectMapper mapper = new ObjectMapper();
             Properties props = new Properties();
             StringWriter stringWriter = new StringWriter();

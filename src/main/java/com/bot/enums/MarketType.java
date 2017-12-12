@@ -4,7 +4,7 @@ package com.bot.enums;
  * Type of markets
  */
 public enum MarketType {
-    NBU("http://api.minfin.com.ua/nbu/"),
+    NBU("https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json"),
     BANKS("http://api.minfin.com.ua/summary/"),
     AUCTION("http://api.minfin.com.ua/auction/info/"),
     MB_MARKET("http://api.minfin.com.ua/mb/"),

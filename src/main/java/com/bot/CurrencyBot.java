@@ -5,8 +5,8 @@ import com.bot.currencies.Currency;
 import com.bot.enums.CalcCommands;
 import com.bot.enums.Commands;
 import com.bot.updaters.BitcoinUpdater;
-import com.bot.updaters.FakeUpdater;
 import com.bot.updaters.MinfinUpdater;
+import com.bot.updaters.NBUUpdater;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -42,6 +42,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
     private static String noCurrency;
     private static String newCurrencyRequestMessage;
     private static String exit;
+    private static String other;
     private static String notNumber;
     private static String enterSum;
     private static String betterCurse;
@@ -51,8 +52,8 @@ public class CurrencyBot extends TelegramLongPollingBot {
     private static String eur;
     private static String rub;
     private static String btc;
-    private static String calc;
 
+    private static String calc;
     private static String sellUsd;
     private static String buyUsd;
     private static String sellEur;
@@ -64,10 +65,11 @@ public class CurrencyBot extends TelegramLongPollingBot {
     private CalcMessageListener calcMessageHandler;
     private boolean isCalcOn = false;
 
+
     public static void main(String[] args) {
         ApiContextInitializer.init();
         TelegramBotsApi botsApi = new TelegramBotsApi();
-        CurrencyDB currency_db = new CurrencyDB(new MinfinUpdater(), new BitcoinUpdater());
+        CurrencyDB currency_db = new CurrencyDB(new MinfinUpdater(), new BitcoinUpdater(), new NBUUpdater());
         CurrencyBot bot = new CurrencyBot(new DataTransformerUtil(currency_db));
         try {
             botsApi.registerBot(bot);
@@ -84,7 +86,6 @@ public class CurrencyBot extends TelegramLongPollingBot {
      */
     private CurrencyBot(DataTransformerUtil dataTransformer_util) {
         this.dataTransformer_util = dataTransformer_util;
-        StandardCharsets.UTF_8.name();
         loadProperties();
         this.standartMessageHandler = new StandartMessageHandler();
         this.calcMessageHandler = new CalcMessageListener();
@@ -188,6 +189,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
             notNumber = propsMessage.getProperty("notNumber");
             betterCurse = propsMessage.getProperty("betterCurse");
             sumLayout=propsMessage.getProperty("sumLayout");
+            other=propsMessage.getProperty("other");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -209,6 +211,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
         secondLine.add(new InlineKeyboardButton().setText(btc).setCallbackData("btc"));
         rows.add(firstLine);
         rows.add(secondLine);
+        rows.add(Collections.singletonList(new InlineKeyboardButton().setText(other).setCallbackData("other")));
         rows.add(Collections.singletonList(new InlineKeyboardButton().setText(calc).setCallbackData("calc")));
         markupInline.setKeyboard(rows);
         keybordMessage.setReplyMarkup(markupInline);
@@ -313,9 +316,16 @@ public class CurrencyBot extends TelegramLongPollingBot {
                             sendMessageWithQuery(update, newSearch);
                             break;
                         }
+                        case "other": {
+                            sendMessageWithQuery(update, dataTransformer_util.getOtherCurrencyFirstHalf());
+                            sendMessageWithQuery(update, dataTransformer_util.getOtherCurrencySecondHalf());
+                            sendMessageWithQuery(update, newSearch);
+                            break;
+                        }
                         case "calc": {
                             isCalcOn = true;
                             getCalcKeybord(update);
+                            break;
                         }
                     }
                 }
@@ -424,10 +434,10 @@ public class CurrencyBot extends TelegramLongPollingBot {
                     result = count * map.get(Commands.EURO).getAuc_bid();
                     break;
                 case SELL_RUB:
-                    result = count * map.get(Commands.RUB).getAuc_ask();
+                    result = count * map.get(Commands.RUB).getAuc_ask()/10;
                     break;
                 case BUY_RUB:
-                    result = count * map.get(Commands.RUB).getAuc_bid();
+                    result = count * map.get(Commands.RUB).getAuc_bid()/10;
                     break;
             }
             return String.format(sumLayout, result);

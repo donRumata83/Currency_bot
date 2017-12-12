@@ -2,6 +2,7 @@ package com.bot;
 
 
 import com.bot.currencies.Currency;
+import com.bot.currencies.SimpleCurrency;
 import com.bot.enums.Commands;
 import com.bot.enums.Mark;
 
@@ -11,14 +12,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
 
 class DataTransformerUtil {
     private CurrencyDB currency_DB;
     private Map<Commands, Currency> map = new HashMap<>();
+    private List<SimpleCurrency> otherCurrency = new ArrayList<>();
 
     private static String HEAD_FORMAT;
     private static String BITCOIN;
@@ -43,6 +44,7 @@ class DataTransformerUtil {
      */
     private void getActualCurrencies() {
         this.map = currency_DB.getActualCurrencyStorage();
+        this.otherCurrency = currency_DB.getSimpleCurrencyList();
 
     }
 
@@ -59,7 +61,7 @@ class DataTransformerUtil {
                 return getBTC();
             default:
                 return String.format(HEAD_FORMAT, currency.getName(), getMark(currency), new SimpleDateFormat("HH:mm dd.MM.yyyy").format(currency.getDate()),
-                         NBU, currency.getNbu_ask(), currency.getNbu_bid(),
+                         NBU, currency.getNbu_ask(),
                          MB, currency.getMb_ask(), currency.getMb_bid(),
                          BANKS, currency.getBank_ask(), currency.getBank_bid(),
                          AUC, currency.getAuc_ask(), currency.getAuc_bid());
@@ -99,6 +101,18 @@ class DataTransformerUtil {
                 new SimpleDateFormat("HH:mm dd.MM.yyyy").format(btc.getDate()),
                 btc.getAuc_ask());
 
+    }
+
+    String getOtherCurrencyFirstHalf() {
+        return getOtherCurrency(otherCurrency.size()/2, 0);
+    }
+
+    String getOtherCurrencySecondHalf() {
+        return getOtherCurrency(otherCurrency.size()/2, otherCurrency.size()/2);
+    }
+
+    private String getOtherCurrency(int limitValues, int skipValues) {
+        return otherCurrency.stream().sorted().skip(skipValues).limit(limitValues).map(SimpleCurrency::toString).collect(Collectors.joining("\n"));
     }
 
     private String getMark(@NotNull Currency currency) {
