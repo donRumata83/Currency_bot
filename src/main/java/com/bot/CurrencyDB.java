@@ -15,7 +15,7 @@ import java.io.*;
 import java.util.*;
 
 public class CurrencyDB {
-    private HashMap<Commands, com.bot.currencies.Currency> actualCurrencyStorage;
+    private HashMap<Commands, Currency> actualCurrencyStorage;
     private List<SimpleCurrency> simpleCurrencyList;
     private Updater updater;
     private Updater bitCoinUpdater;
@@ -130,9 +130,16 @@ public class CurrencyDB {
     }
 
     private void updateMainCurrency(Map<Commands, Market> response) {
+        setNewDate();
         actualCurrencyStorage.get(Commands.USD).update(response.get(Commands.USD));
         actualCurrencyStorage.get(Commands.EURO).update(response.get(Commands.EURO));
         actualCurrencyStorage.get(Commands.RUB).update(response.get(Commands.RUB));
+    }
+
+    private void setNewDate() {
+        for (Commands c: actualCurrencyStorage.keySet()) {
+            actualCurrencyStorage.get(c).updateDate();
+        }
     }
 
     private void updateBTC(Map<Commands, Market> response) {

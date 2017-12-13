@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class NBUUpdater {
@@ -23,14 +24,20 @@ public class NBUUpdater {
     private List<SimpleCurrency> parse(String response) {
         List<SimpleCurrency> result = new ArrayList<>();
         JSONObject temp;
-        if (!response.equals("[]")) {
-            JSONArray array = new JSONArray(response);
-            for (int i = 0; i < array.length(); i++) {
-                temp = array.getJSONObject(i);
-                result.add(new SimpleCurrency(temp.getString("txt"), (float) temp.getDouble("rate"), temp.getString("cc")));
+        try {
+            if (!response.equals("[]")) {
+                JSONArray array = new JSONArray(response);
+                for (int i = 0; i < array.length(); i++) {
+                    temp = array.getJSONObject(i);
+                    result.add(new SimpleCurrency(temp.getString("txt"), (float) temp.getDouble("rate"), temp.getString("cc")));
+                }
             }
+            System.out.println("NBU parse - normal");
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return result;
+        return Collections.emptyList();
     }
 
     private String sendGet(String url) {

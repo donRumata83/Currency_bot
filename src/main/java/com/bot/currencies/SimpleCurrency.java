@@ -21,7 +21,7 @@ public class SimpleCurrency implements Comparable{
 
     @Override
     public String toString() {
-        return String.format("%s %.3f", name, rate);
+        return String.format("%s | %.3f", name, rate);
     }
 
     public String getMark() {

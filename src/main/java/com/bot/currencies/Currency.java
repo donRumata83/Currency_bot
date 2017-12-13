@@ -71,4 +71,8 @@ public class Currency implements Serializable {
         MarketType type = market.getMarketType();
         map.put(type, market);
     }
+
+    public void updateDate() {
+        this.date = new Date();
+    }
 }

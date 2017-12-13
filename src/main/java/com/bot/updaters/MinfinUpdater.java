@@ -37,7 +37,7 @@ public class MinfinUpdater implements Updater {
     @Override
     public Map<Commands, Market> sendRequest(MarketType request) {
         Map<Commands, Market> result;
-        if (request==MarketType.MB_MARKET) {
+        if (request == MarketType.MB_MARKET) {
             result = parseMbResponse(sendGet(MarketType.MB_MARKET.toString()), MarketType.MB_MARKET);
         } else result = parseNormalResponse(sendGet(request.toString()), request);
         return result;
@@ -45,24 +45,36 @@ public class MinfinUpdater implements Updater {
 
     public Map<Commands, Market> parseNormalResponse(String response, MarketType marketType) {
         Map<Commands, Market> result = new HashMap<>();
-        if (!response.equals("[]") | response.equals("")) {
-            JSONObject resp = new JSONObject(response);
-            result.put(Commands.USD, getAskAndBid(resp.getJSONObject("usd"), marketType));
-            result.put(Commands.EURO, getAskAndBid(resp.getJSONObject("eur"), marketType));
-            result.put(Commands.RUB, getAskAndBid(resp.getJSONObject("rub"), marketType));
+        try {
+            if (!response.equals("[]") | response.equals("")) {
+                JSONObject resp = new JSONObject(response);
+                result.put(Commands.USD, getAskAndBid(resp.getJSONObject("usd"), marketType));
+                result.put(Commands.EURO, getAskAndBid(resp.getJSONObject("eur"), marketType));
+                result.put(Commands.RUB, getAskAndBid(resp.getJSONObject("rub"), marketType));
+                System.out.printf("%s parse - normal", marketType);
+                return result;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return result;
+        return Collections.emptyMap();
     }
 
     public Map<Commands, Market> parseMbResponse(String response, MarketType marketType) {
         Map<Commands, Market> result = new HashMap<>();
-        if (!response.equals("[]") | response.equals("")) {
-            JSONArray array = new JSONArray(response);
-            result.put(Commands.USD, getLastCurrencyMark(array, "usd", marketType));
-            result.put(Commands.EURO, getLastCurrencyMark(array, "eur", marketType));
-            result.put(Commands.RUB, getLastCurrencyMark(array, "rub", marketType));
+        try {
+            if (!response.equals("[]") | response.equals("")) {
+                JSONArray array = new JSONArray(response);
+                result.put(Commands.USD, getLastCurrencyMark(array, "usd", marketType));
+                result.put(Commands.EURO, getLastCurrencyMark(array, "eur", marketType));
+                result.put(Commands.RUB, getLastCurrencyMark(array, "rub", marketType));
+            }
+            System.out.println("MB parse normal");
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return result;
+        return Collections.emptyMap();
     }
 
     @NotNull
