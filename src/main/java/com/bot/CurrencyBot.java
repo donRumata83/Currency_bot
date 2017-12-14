@@ -1,6 +1,5 @@
 package com.bot;
 
-
 import com.bot.currencies.Currency;
 import com.bot.enums.CalcCommands;
 import com.bot.enums.Commands;
@@ -23,7 +22,6 @@ import javax.validation.constraints.NotNull;
 import java.io.*;
 import java.util.*;
 
-
 /**
  * Main class
  */
@@ -41,17 +39,15 @@ public class CurrencyBot extends TelegramLongPollingBot {
     private static String requests;
     private static String noCurrency;
     private static String newCurrencyRequestMessage;
-    private static String exit;
     private static String other;
-    private static String notNumber;
-    private static String enterSum;
-    private static String betterCurse;
-    private static String sumLayout;
-
     private static String usd;
     private static String eur;
     private static String rub;
     private static String btc;
+
+    private static String notNumber;
+    private static String enterSum;
+    private static String betterCurse;
 
     private static String calc;
     private static String sellUsd;
@@ -60,6 +56,8 @@ public class CurrencyBot extends TelegramLongPollingBot {
     private static String buyEur;
     private static String sellRub;
     private static String buyRub;
+    private static String sumLayout;
+    private static String exit;
 
     private StandartMessageHandler standartMessageHandler;
     private CalcMessageListener calcMessageHandler;

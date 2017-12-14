@@ -1,6 +1,5 @@
 package com.bot.updaters;
 
-
 import com.bot.currencies.SimpleCurrency;
 import com.bot.enums.MarketType;
 import org.json.JSONArray;
@@ -46,7 +45,7 @@ public class NBUUpdater {
             httpsUrl = new URL(url);
             HttpsURLConnection con = (HttpsURLConnection) httpsUrl.openConnection();
             BufferedReader rd = new BufferedReader(
-                    new InputStreamReader(con.getInputStream()));
+                    new InputStreamReader(con.getInputStream(), "UTF-8"));
 
             StringBuilder result = new StringBuilder();
             String line = "";
@@ -59,6 +58,5 @@ public class NBUUpdater {
         }
         return "[]";
     }
-
 
 }

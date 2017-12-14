@@ -1,6 +1,5 @@
 package com.bot;
 
-
 import com.bot.currencies.Currency;
 import com.bot.currencies.SimpleCurrency;
 import com.bot.enums.Commands;
@@ -104,7 +103,7 @@ class DataTransformerUtil {
     }
 
     String getOtherCurrencyFirstHalf() {
-        return getOtherCurrency(otherCurrency.size() / 2, 0);
+        return (getOtherCurrency(otherCurrency.size() / 2, 0));
     }
 
     String getOtherCurrencySecondHalf() {

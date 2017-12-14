@@ -1,14 +1,8 @@
 package com.bot.currencies;
 
-import java.text.Collator;
-import java.util.Locale;
-
 public class SimpleCurrency implements Comparable{
     private String name;
-
-    private String getName() {
-        return name;
-    }
+    private static final String format = "%s  %.3f";
 
     private float rate;
     private String mark;
@@ -21,7 +15,16 @@ public class SimpleCurrency implements Comparable{
 
     @Override
     public String toString() {
-        return String.format("%s | %.3f", name, rate);
+        return String.format(format, name, rate);
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return this.name.compareTo(((SimpleCurrency)o).getName());
+    }
+
+    private String getName() {
+        return name;
     }
 
     public String getMark() {
@@ -30,10 +33,5 @@ public class SimpleCurrency implements Comparable{
 
     public float getRate() {
         return rate;
-    }
-
-    @Override
-    public int compareTo(Object o) {
-        return this.name.compareTo(((SimpleCurrency)o).getName());
     }
 }

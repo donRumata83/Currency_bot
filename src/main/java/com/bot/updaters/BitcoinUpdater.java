@@ -5,7 +5,6 @@ import com.bot.enums.Commands;
 import com.bot.enums.MarketType;
 import org.json.JSONObject;
 
-
 import javax.net.ssl.HttpsURLConnection;
 import javax.validation.constraints.NotNull;
 import java.io.BufferedReader;
