@@ -432,10 +432,10 @@ public class CurrencyBot extends TelegramLongPollingBot {
                     result = count * map.get(Commands.EURO).getAuc_bid();
                     break;
                 case SELL_RUB:
-                    result = count * map.get(Commands.RUB).getAuc_ask()/10;
+                    result = count * map.get(Commands.RUB).getAuc_ask();
                     break;
                 case BUY_RUB:
-                    result = count * map.get(Commands.RUB).getAuc_bid()/10;
+                    result = count * map.get(Commands.RUB).getAuc_bid();
                     break;
             }
             return String.format(sumLayout, result);
