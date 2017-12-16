@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class BitcoinUpdater implements Updater {
@@ -48,6 +49,7 @@ public class BitcoinUpdater implements Updater {
                 JSONObject resp = new JSONObject(response);
                 result.put(Commands.BTC, new Market(Float.parseFloat(resp.getJSONObject("ticker").getString("price")), 0.0f, MarketType.AUCTION));
             }
+            System.out.println("BTC parse - normal" + new SimpleDateFormat("HH:mm:ss").format(new Date()));
             return result;
         } catch (Exception e) {
             e.printStackTrace();

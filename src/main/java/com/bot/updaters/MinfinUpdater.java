@@ -5,7 +5,6 @@ import com.bot.currencies.Market;
 import com.bot.enums.Commands;
 import com.bot.enums.MarketType;
 
-import com.bot.updaters.Updater;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -17,6 +16,7 @@ import javax.validation.constraints.NotNull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class MinfinUpdater implements Updater {
@@ -43,38 +43,34 @@ public class MinfinUpdater implements Updater {
         return result;
     }
 
-    public Map<Commands, Market> parseNormalResponse(String response, MarketType marketType) {
+    private Map<Commands, Market> parseNormalResponse(String response, MarketType marketType) {
         Map<Commands, Market> result = new HashMap<>();
-        try {
-            if (!response.equals("[]") | response.equals("")) {
-                JSONObject resp = new JSONObject(response);
-                result.put(Commands.USD, getAskAndBid(resp.getJSONObject("usd"), marketType));
-                result.put(Commands.EURO, getAskAndBid(resp.getJSONObject("eur"), marketType));
-                result.put(Commands.RUB, getAskAndBid(resp.getJSONObject("rub"), marketType));
-                System.out.printf("%s parse - normal", marketType);
-                return result;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        if (!response.equals("[]") | response.equals("")) {
+            JSONObject resp = new JSONObject(response);
+            result.put(Commands.USD, getAskAndBid(resp.getJSONObject("usd"), marketType));
+            result.put(Commands.EURO, getAskAndBid(resp.getJSONObject("eur"), marketType));
+            result.put(Commands.RUB, getAskAndBid(resp.getJSONObject("rub"), marketType));
+            System.out.printf("%s parse - normal %s", marketType, new SimpleDateFormat("HH:mm:ss").format(new Date()));
+            System.out.println();
+            return result;
         }
-        return Collections.emptyMap();
+        return result;
+
     }
 
-    public Map<Commands, Market> parseMbResponse(String response, MarketType marketType) {
+    private Map<Commands, Market> parseMbResponse(String response, MarketType marketType) {
         Map<Commands, Market> result = new HashMap<>();
-        try {
-            if (!response.equals("[]") | response.equals("")) {
-                JSONArray array = new JSONArray(response);
-                result.put(Commands.USD, getLastCurrencyMark(array, "usd", marketType));
-                result.put(Commands.EURO, getLastCurrencyMark(array, "eur", marketType));
-                result.put(Commands.RUB, getLastCurrencyMark(array, "rub", marketType));
-            }
-            System.out.println("MB parse normal");
-            return result;
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        if (!response.equals("[]") | response.equals("")) {
+            JSONArray array = new JSONArray(response);
+            result.put(Commands.USD, getLastCurrencyMark(array, "usd", marketType));
+            result.put(Commands.EURO, getLastCurrencyMark(array, "eur", marketType));
+            result.put(Commands.RUB, getLastCurrencyMark(array, "rub", marketType));
         }
-        return Collections.emptyMap();
+        System.out.println("MB - parse normal " + new SimpleDateFormat("HH:mm:ss").format(new Date()));
+        return result;
+
     }
 
     @NotNull

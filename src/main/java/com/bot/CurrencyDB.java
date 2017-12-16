@@ -13,16 +13,17 @@ import java.nio.charset.StandardCharsets;
 import javax.validation.constraints.NotNull;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CurrencyDB {
-    private HashMap<Commands, Currency> actualCurrencyStorage;
+    private ConcurrentHashMap<Commands, Currency> actualCurrencyStorage;
     private List<SimpleCurrency> simpleCurrencyList;
     private Updater updater;
     private Updater bitCoinUpdater;
     private NBUUpdater nbuUpdater;
 
     private static final int TIMEOUT_5MIN = 1000 * 60 * 5;
-    private static final int TIMEOUT_30SEC = 1000 * 30;
+    private static final int TIMEOUT_1MIN = 1000 * 60;
 
     private static String usd;
     private static String eur;
@@ -32,7 +33,7 @@ public class CurrencyDB {
 
     CurrencyDB(Updater updater, Updater bitCoinUpdater, NBUUpdater nbu) {
         loadProperties();
-        this.actualCurrencyStorage = new HashMap<>() {{
+        this.actualCurrencyStorage = new ConcurrentHashMap<>() {{
             put(Commands.USD, new Currency(usd, "usd"));
             put(Commands.EURO, new Currency(eur, "eur"));
             put(Commands.RUB, new Currency(rub, "rub"));
@@ -61,8 +62,8 @@ public class CurrencyDB {
         }
     }
 
-    public HashMap<Commands, Currency> getActualCurrencyStorage() {
-        return actualCurrencyStorage;
+    public Map<Commands, Currency> getActualCurrencyStorage() {
+        return this.actualCurrencyStorage;
     }
 
     public List<SimpleCurrency> getSimpleCurrencyList() {
@@ -76,6 +77,7 @@ public class CurrencyDB {
             while (true) {
                 try {
                     updateNBU(nbuUpdater.sendRequest(MarketType.NBU));
+                    Thread.sleep(1000);
                     MarketType request = request_queue.pollFirst();
                     Map<Commands, Market> response = updater.sendRequest(request);
                     updateMainCurrency(response);
@@ -94,7 +96,7 @@ public class CurrencyDB {
             try {
                 while (true) {
                     updateBTC(bitCoinUpdater.sendRequest(MarketType.BTC));
-                    Thread.sleep(TIMEOUT_30SEC);
+                    Thread.sleep(TIMEOUT_1MIN);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -137,7 +139,7 @@ public class CurrencyDB {
     }
 
     private void setNewDate() {
-        for (Commands c: actualCurrencyStorage.keySet()) {
+        for (Commands c : actualCurrencyStorage.keySet()) {
             actualCurrencyStorage.get(c).updateDate();
         }
     }
