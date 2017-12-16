@@ -15,7 +15,7 @@ import java.util.*;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
-class DataTransformerUtil {
+public class DataTransformerUtil {
     private CurrencyDB currency_DB;
     private Map<Commands, Currency> map = new HashMap<>();
     private List<SimpleCurrency> otherCurrency = new ArrayList<>();
@@ -72,7 +72,7 @@ class DataTransformerUtil {
      *
      * @return text USD value
      */
-    String getUSD() {
+    public String getUSD() {
         return getMessage(map.get(Commands.USD));
     }
 
@@ -81,7 +81,7 @@ class DataTransformerUtil {
      *
      * @return text EURO value
      */
-    String getEuro() {
+    public String getEuro() {
         return getMessage(map.get(Commands.EURO));
     }
 
@@ -90,11 +90,11 @@ class DataTransformerUtil {
      *
      * @return text RUB value
      */
-    String getRub() {
+    public String getRub() {
         return getMessage(map.get(Commands.RUB));
     }
 
-    String getBTC() {
+    public String getBTC() {
         Currency btc = map.get(Commands.BTC);
         return String.format(BITCOIN, btc.getName(),
                 new SimpleDateFormat("HH:mm dd.MM.yyyy").format(btc.getDate()),
@@ -102,11 +102,11 @@ class DataTransformerUtil {
 
     }
 
-    String getOtherCurrencyFirstHalf() {
+    public String getOtherCurrencyFirstHalf() {
         return (getOtherCurrency(otherCurrency.size() / 2, 0));
     }
 
-    String getOtherCurrencySecondHalf() {
+    public String getOtherCurrencySecondHalf() {
         return getOtherCurrency(otherCurrency.size() / 2, otherCurrency.size() / 2);
     }
 
