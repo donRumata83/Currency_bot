@@ -58,8 +58,6 @@ public class CurrencyBot extends TelegramLongPollingBot {
 
     /**
      * Constructor
-     *
-     *
      */
     private CurrencyBot() {
         loadProperties();
@@ -135,18 +133,12 @@ public class CurrencyBot extends TelegramLongPollingBot {
 
     private void loadProperties() {
         Properties props = new Properties();
-        Properties propsMessage = new Properties();
         try {
             InputStream in = getClass().getResourceAsStream("/config.properties");
             BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8.name()));
             props.load(reader);
             this.token = props.getProperty("token");
             this.botName = props.getProperty("botName");
-
-            in = getClass().getResourceAsStream("/message.properties");
-            reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8.name()));
-            propsMessage.load(reader);
-
         } catch (Exception e) {
             e.printStackTrace();
         }

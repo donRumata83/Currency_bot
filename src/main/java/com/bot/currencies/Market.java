@@ -15,7 +15,7 @@ public class Market {
         return bid;
     }
 
-    public Market() {
+    Market() {
         this.ask = 0.0f;
         this.bid = 0.0f;
     }

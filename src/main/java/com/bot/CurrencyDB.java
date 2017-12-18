@@ -79,9 +79,10 @@ public class CurrencyDB {
                     updateNBU(nbuUpdater.sendRequest(MarketType.NBU));
                     Thread.sleep(1000);
                     MarketType request = request_queue.pollFirst();
+                    request_queue.addLast(request);
                     Map<Commands, Market> response = updater.sendRequest(request);
                     updateMainCurrency(response);
-                    request_queue.addLast(request);
+
                     Thread.sleep(TIMEOUT_5MIN);
                 } catch (Exception ex) {
                     ex.printStackTrace();
