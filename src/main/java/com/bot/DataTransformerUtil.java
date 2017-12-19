@@ -2,6 +2,7 @@ package com.bot;
 
 import com.bot.currencies.Currency;
 import com.bot.currencies.SimpleCurrency;
+import com.bot.enums.City;
 import com.bot.enums.Commands;
 import com.bot.enums.Mark;
 
@@ -53,7 +54,7 @@ public class DataTransformerUtil {
      * @param currency type
      * @return formatted text message for sending
      */
-    private String getMessage(@NotNull Currency currency) {
+    private String getMessage(@NotNull Currency currency, City city) {
         getActualCurrencies();
         switch (currency.getName()) {
             case "Биткоин":
@@ -63,7 +64,7 @@ public class DataTransformerUtil {
                         NBU, currency.getNbu_ask(),
                         MB, currency.getMb_ask(), currency.getMb_bid(),
                         BANKS, currency.getBank_ask(), currency.getBank_bid(),
-                        AUC, currency.getAuc_ask(), currency.getAuc_bid());
+                        AUC, currency.getAuc_ask(city), currency.getAuc_bid(city));
         }
     }
 
@@ -72,8 +73,8 @@ public class DataTransformerUtil {
      *
      * @return text USD value
      */
-    public String getUSD() {
-        return getMessage(map.get(Commands.USD));
+    public String getUSD(City city) {
+        return getMessage(map.get(Commands.USD), city);
     }
 
     /**
@@ -81,8 +82,8 @@ public class DataTransformerUtil {
      *
      * @return text EURO value
      */
-    public String getEuro() {
-        return getMessage(map.get(Commands.EURO));
+    public String getEuro(City city) {
+        return getMessage(map.get(Commands.EURO), city);
     }
 
     /**
@@ -90,15 +91,15 @@ public class DataTransformerUtil {
      *
      * @return text RUB value
      */
-    public String getRub() {
-        return getMessage(map.get(Commands.RUB));
+    public String getRub(City city) {
+        return getMessage(map.get(Commands.RUB),city);
     }
 
     public String getBTC() {
         Currency btc = map.get(Commands.BTC);
         return String.format(BITCOIN, btc.getName(),
                 new SimpleDateFormat("HH:mm dd.MM.yyyy").format(btc.getDate()),
-                btc.getAuc_ask());
+                btc.getBank_ask());
 
     }
 

@@ -1,5 +1,6 @@
 package com.bot.currencies;
 
+import com.bot.enums.City;
 import com.bot.enums.MarketType;
 
 import java.io.Serializable;
@@ -12,6 +13,7 @@ public class Currency implements Serializable {
     private String mark;
     private Date date = new Date();
     private Map<MarketType, Market> map;
+    private Map<City, Market> auctionMap;
 
     public Currency(String name, String mark) {
         this.name = name;
@@ -21,6 +23,7 @@ public class Currency implements Serializable {
         map.put(MarketType.BANKS, new Market());
         map.put(MarketType.AUCTION, new Market());
         map.put(MarketType.MB_MARKET, new Market());
+        this.auctionMap = new HashMap<>();
     }
 
     public float getNbu_ask() {
@@ -43,12 +46,12 @@ public class Currency implements Serializable {
         return map.get(MarketType.BANKS).getBid();
     }
 
-    public float getAuc_ask() {
-        return map.get(MarketType.AUCTION).getAsk();
+    public float getAuc_ask(City city) {
+        return auctionMap.get(city).getAsk();
     }
 
-    public float getAuc_bid() {
-        return map.get(MarketType.AUCTION).getBid();
+    public float getAuc_bid(City city) {
+        return auctionMap.get(city).getBid();
     }
 
     public String getName() {
@@ -70,6 +73,10 @@ public class Currency implements Serializable {
     public void update(Market market) {
         MarketType type = market.getMarketType();
         map.put(type, market);
+    }
+
+    public void setAuctionMap(Map<City, Market> auctionMap) {
+        this.auctionMap = auctionMap;
     }
 
     public void updateDate() {

@@ -40,7 +40,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
     public static void main(String[] args) {
         ApiContextInitializer.init();
         TelegramBotsApi botsApi = new TelegramBotsApi();
-        CurrencyDB currency_db = new CurrencyDB(new MinfinUpdater(), new BitcoinUpdater(), new NBUUpdater());
+        CurrencyDB currency_db = new CurrencyDB();
         DataTransformerUtil dtu = new DataTransformerUtil(currency_db);
         CurrencyBot bot = new CurrencyBot();
         StandartHandler sh = new StandartHandler(bot, dtu);
