@@ -7,6 +7,7 @@ import com.bot.enums.MarketType;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+
 import java.io.IOException;
 import java.util.*;
 
@@ -31,34 +32,32 @@ public class AuctionUpdater {
     private String getFullUrl(Commands currency, City city) {
         switch (currency) {
             case USD:
-                return usdUrl + city;
+                return usdUrl + city.getEndOfUrl();
             case EURO:
-                return eurUrl + city;
+                return eurUrl + city.getEndOfUrl();
             case RUB:
-                return rubUrl + city;
+                return rubUrl + city.getEndOfUrl();
             default:
                 return "";
         }
 
     }
 
-    private float getAsk(Document html) {
-        return getFloatFromString(html.body().getElementsByClass("au-mid-buysell").first().text());
-    }
-
-    private float getBid(Document html) {
-        return getFloatFromString(html.body().getElementsByClass("au-mid-buysell").last().text());    }
-
-    private Market getMarket(String url) throws IOException {
+    public Market getMarket(String url) throws IOException {
         Document html = Jsoup.connect(url).get();
-        return new Market(getAsk(html), getBid(html), MarketType.AUCTION);
+        List<String> list = html.body().getElementsByClass("au-mid-buysell").eachText();
+        return new Market(getFloatFromString(list.get(0)), getFloatFromString(list.get(1).substring(0, 28)), MarketType.AUCTION);
     }
 
     private float getFloatFromString(String string) {
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < string.length(); i++) {
-            if (!Character.isDigit(string.charAt(i))) {
-                string.replace(string.charAt(i),  )
+            if (Character.isDigit(string.charAt(i)) || string.charAt(i) == ',') {
+                if (string.charAt(i) == ',') sb.append('.');
+                else
+                    sb.append(string.charAt(i));
             }
         }
+        return Float.parseFloat(sb.toString());
     }
 }

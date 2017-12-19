@@ -81,17 +81,17 @@ public class StandartHandler implements BotHandler {
                 String data = update.getCallbackQuery().getData();
                 switch (data) {
                     case "usd": {
-                        bot.sendMessageWithQuery(update, dtu.getUSD());
+                        bot.sendMessageWithQuery(update, dtu.getUSD(bot.getCityForUserFromUpdate(update)));
                         bot.sendMessageWithQuery(update, newSearch);
                         break;
                     }
                     case "eur": {
-                        bot.sendMessageWithQuery(update, dtu.getEuro());
+                        bot.sendMessageWithQuery(update, dtu.getEuro(bot.getCityForUserFromUpdate(update)));
                         bot.sendMessageWithQuery(update, newSearch);
                         break;
                     }
                     case "rub": {
-                        bot.sendMessageWithQuery(update, dtu.getRub());
+                        bot.sendMessageWithQuery(update, dtu.getRub(bot.getCityForUserFromUpdate(update)));
                         bot.sendMessageWithQuery(update, newSearch);
                         break;
                     }

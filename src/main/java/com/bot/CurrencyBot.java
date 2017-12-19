@@ -1,5 +1,6 @@
 package com.bot;
 
+import com.bot.enums.City;
 import com.bot.handlers.BotHandler;
 import com.bot.handlers.CalculatorHandler;
 import com.bot.handlers.KeyboardSupplier;
@@ -27,6 +28,7 @@ import java.util.*;
 public class CurrencyBot extends TelegramLongPollingBot {
     private String token;
     private String botName;
+    private Map<Long, City> userCity;
 
     public long counter = 0;
     public long messageCounter = 0;
@@ -61,6 +63,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
      */
     private CurrencyBot() {
         loadProperties();
+
     }
 
     /**
@@ -150,5 +153,13 @@ public class CurrencyBot extends TelegramLongPollingBot {
 
     private void setCalcMessageHandler(BotHandler calcMessageHandler) {
         this.calcMessageHandler = calcMessageHandler;
+    }
+
+    public City getCityForUserFromUpdate(Update update) {
+        return userCity.get(update.getMessage().getChatId());
+    }
+
+    public void putCityOfUserInMap(long id, City city) {
+        userCity.put(id, city);
     }
 }

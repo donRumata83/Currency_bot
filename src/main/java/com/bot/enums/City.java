@@ -14,7 +14,8 @@ public enum City {
     POLTAVA("poltava/"),
     KHMENTISKIY("khmelnitskiy/"),
     SUMI("sumy/"),
-    CHERNIGOV("chernigov/");
+    CHERNIGOV("chernigov/"),
+    DEFAULT("all/");
 
     private String endOfUrl;
 

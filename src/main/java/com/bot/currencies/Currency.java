@@ -82,4 +82,6 @@ public class Currency implements Serializable {
     public void updateDate() {
         this.date = new Date();
     }
+
+
 }

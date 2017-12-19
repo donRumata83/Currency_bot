@@ -45,10 +45,10 @@ public class CalculatorHandler implements BotHandler {
             try {
                 sum = Integer.parseInt(message_text);
                 if (sum < 1000) {
-                    bot.sendMsg(message, getSum(sum, command));
+                    bot.sendMsg(message, getSum(sum, command, update));
                     bot.sendMsg(message, newSearch);
                 } else {
-                    bot.sendMsg(message, getSum(sum, command));
+                    bot.sendMsg(message, getSum(sum, command, update));
                     bot.sendMsg(message, newSearch);
                     bot.sendMsg(message, betterCurse);
                 }
@@ -136,30 +136,32 @@ public class CalculatorHandler implements BotHandler {
 
     }
 
-    private String getSum(int count, CalcCommands command) {
+    private String getSum(int count, CalcCommands command, Update update) {
         Float result = 0.0f;
         Map<Commands, Currency> map = dtu.getMap();
         switch (command) {
             case SELL_USD:
-                result = count * map.get(Commands.USD).getAuc_ask();
+                result = count * map.get(Commands.USD).getAuc_ask(bot.getCityForUserFromUpdate(update));
                 break;
             case BUY_USD:
-                result = count * map.get(Commands.USD).getAuc_bid();
+                result = count * map.get(Commands.USD).getAuc_bid(bot.getCityForUserFromUpdate(update));
                 break;
             case SELL_EUR:
-                result = count * map.get(Commands.EURO).getAuc_ask();
+                result = count * map.get(Commands.EURO).getAuc_ask(bot.getCityForUserFromUpdate(update));
                 break;
             case BUY_EUR:
-                result = count * map.get(Commands.EURO).getAuc_bid();
+                result = count * map.get(Commands.EURO).getAuc_bid(bot.getCityForUserFromUpdate(update));
                 break;
             case SELL_RUB:
-                result = count * map.get(Commands.RUB).getAuc_ask();
+                result = count * map.get(Commands.RUB).getAuc_ask(bot.getCityForUserFromUpdate(update));
                 break;
             case BUY_RUB:
-                result = count * map.get(Commands.RUB).getAuc_bid();
+                result = count * map.get(Commands.RUB).getAuc_bid(bot.getCityForUserFromUpdate(update));
                 break;
         }
         return String.format(sumLayout, result);
     }
+
+
 }
 
