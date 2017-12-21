@@ -50,20 +50,22 @@ public class StandartHandler implements BotHandler {
                 }
                 case "users": {
                     bot.sendMsg(message, users + bot.getUserCount());
-                    bot.sendMsg(message, newSearch);
                     break;
                 }
                 case "/new": {
                     bot.messageCounter++;
-                    bot.isCalcOn = false;
+                    bot.setCalcOff(update);
                     bot.execute(KeyboardSupplier.getStandartKeyboard(message));
                     break;
                 }
                 case "/mstat": {
                     bot.sendMsg(message, requests + bot.messageCounter);
-                    bot.sendMsg(message, newSearch);
                     break;
                 }
+                case "/start" :
+                    bot.execute(KeyboardSupplier.getCityKeyboard(update));
+                    bot.removeCity(update);
+                    break;
                 default: {
                     bot.sendMsg(message, noCurrency);
                     bot.sendMsg(message, newSearch);
@@ -101,7 +103,7 @@ public class StandartHandler implements BotHandler {
                         break;
                     }
                     case "calc": {
-                        bot.isCalcOn = true;
+                        bot.setCalcOn(update);
                         bot.execute(KeyboardSupplier.getCalcKeyboard(update));
                         break;
                     }

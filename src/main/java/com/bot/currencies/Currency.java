@@ -19,11 +19,18 @@ public class Currency implements Serializable {
         this.name = name;
         this.mark = mark;
         this.map = new HashMap<>();
+        this.auctionMap = new HashMap<>();
+        initAllmaps();
+    }
+
+    private void initAllmaps() {
         map.put(MarketType.NBU, new Market());
         map.put(MarketType.BANKS, new Market());
         map.put(MarketType.AUCTION, new Market());
         map.put(MarketType.MB_MARKET, new Market());
-        this.auctionMap = new HashMap<>();
+        for (City city: City.values()) {
+            auctionMap.put(city, new Market());
+        }
     }
 
     public float getNbu_ask() {

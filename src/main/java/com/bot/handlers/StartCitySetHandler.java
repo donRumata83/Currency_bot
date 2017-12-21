@@ -42,8 +42,8 @@ public class StartCitySetHandler implements BotHandler {
                 }
                 default: {
                     bot.putCityOfUserInMap(update.getMessage().getChatId(), City.getCity(message_text));
-                    bot.sendMessageWithQuery(update, citySet);
-                    bot.sendMessageWithQuery(update, newSearch);
+                    bot.sendMsg(update.getMessage(), String.format(citySet, message_text));
+                    bot.sendMsg(update.getMessage(), newSearch);
                 }
             }
         }

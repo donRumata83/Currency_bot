@@ -64,7 +64,7 @@ public class DataTransformerUtil {
                         NBU, currency.getNbu_ask(),
                         MB, currency.getMb_ask(), currency.getMb_bid(),
                         BANKS, currency.getBank_ask(), currency.getBank_bid(),
-                        AUC, currency.getAuc_ask(city), currency.getAuc_bid(city));
+                        AUC, city.getName(), currency.getAuc_ask(city), currency.getAuc_bid(city));
         }
     }
 

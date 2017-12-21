@@ -124,6 +124,7 @@ public class KeyboardSupplier {
         sixth.add("Другой город");
         List<KeyboardRow> rows = new ArrayList<>(Arrays.asList(first, second, third, fourth, fifth, sixth));
         keyboardMarkup.setKeyboard(rows);
+        keybordMessage.setReplyMarkup(keyboardMarkup);
         return keybordMessage;
     }
 

@@ -5,6 +5,7 @@ import com.bot.handlers.*;
 import com.bot.updaters.BitcoinUpdater;
 import com.bot.updaters.MinfinUpdater;
 import com.bot.updaters.NBUUpdater;
+import com.bot.users.User;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -25,14 +26,13 @@ import java.util.*;
 public class CurrencyBot extends TelegramLongPollingBot {
     private String token;
     private String botName;
-    private Map<Long, City> userCity;
+    private Map<Long, User> userCity;
 
     public long messageCounter = 0;
 
     private BotHandler standartMessageHandler;
     private BotHandler calcMessageHandler;
     private BotHandler startCitySetHandler;
-    public boolean isCalcOn = false;
 
 
 
@@ -127,7 +127,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
         try {
             if (!isCitySet(update)) startCitySetHandler.handle(update);
             else {
-                if (!isCalcOn) standartMessageHandler.handle(update);
+                if (!isCalcOn(update)) standartMessageHandler.handle(update);
                 else calcMessageHandler.handle(update);
             }
         } catch (TelegramApiException e) {
@@ -162,11 +162,12 @@ public class CurrencyBot extends TelegramLongPollingBot {
     }
 
     public City getCityForUserFromUpdate(Update update) {
-        return userCity.get(update.getMessage().getChatId());
+        if (update.hasCallbackQuery()) return this.userCity.get(getID(update)).getCity();
+        else return this.userCity.get(getID(update)).getCity();
     }
 
     public void putCityOfUserInMap(long id, City city) {
-        userCity.put(id, city);
+        userCity.put(id, new User(city));
     }
 
     public int getUserCount() {
@@ -174,8 +175,27 @@ public class CurrencyBot extends TelegramLongPollingBot {
     }
 
     private boolean isCitySet(Update update) {
-        long id = update.getMessage().getChatId();
-        return userCity.containsKey(id);
+        return this.userCity.containsKey(getID(update));
     }
 
+    public void removeCity(Update update) {
+        this.userCity.remove(getID(update));
+    }
+
+    private boolean isCalcOn(Update update) {
+        return this.userCity.get(getID(update)).isCalcOn();
+    }
+
+    public void setCalcOn(Update update) {
+        this.userCity.get(getID(update)).setCalcOn(true);
+    }
+
+    public void setCalcOff(Update update) {this.userCity.get(getID(update)).setCalcOn(false);}
+
+    private long getID(Update update) {
+        long id;
+        if (update.hasCallbackQuery()) id = update.getCallbackQuery().getMessage().getChatId();
+        else id = update.getMessage().getChatId();
+        return id;
+    }
 }

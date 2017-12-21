@@ -7,6 +7,7 @@ import com.bot.enums.CalcCommands;
 import com.bot.enums.Commands;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -37,7 +38,7 @@ public class CalculatorHandler implements BotHandler {
     }
 
     @Override
-    public void handle(Update update) {
+    public void handle(Update update) throws TelegramApiException{
         Message message = update.getMessage();
         int sum;
         if (update.hasMessage() && message.hasText()) {
@@ -56,7 +57,7 @@ public class CalculatorHandler implements BotHandler {
                 try {
                     switch (message_text) {
                         case "/new": {
-                            bot.isCalcOn = false;
+                            bot.setCalcOff(update);
                             KeyboardSupplier.getStandartKeyboard(message);
                             break;
                         }
@@ -65,6 +66,10 @@ public class CalculatorHandler implements BotHandler {
                             bot.sendMessageWithQuery(update, newSearch);
                             break;
                         }
+                        case "/start" :
+                            bot.execute(KeyboardSupplier.getCityKeyboard(update));
+                            bot.removeCity(update);
+                            break;
                         default: {
                             bot.sendMessageWithQuery(update, notNumber);
                             break;
@@ -111,7 +116,7 @@ public class CalculatorHandler implements BotHandler {
                         break;
                     }
                     case "exit": {
-                        bot.isCalcOn = false;
+                        bot.setCalcOff(update);
                         bot.sendMessageWithQuery(update, newSearch);
                         break;
                     }
