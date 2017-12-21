@@ -4,17 +4,18 @@ import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 public class KeyboardSupplier {
     private static String newCurrencyRequestMessage;
@@ -25,6 +26,7 @@ public class KeyboardSupplier {
     private static String btc;
 
     private static String calc;
+    private static String cities;
 
     private static String sellUsd;
     private static String buyUsd;
@@ -66,7 +68,7 @@ public class KeyboardSupplier {
         return keybordMessage;
     }
 
-    public static SendMessage getCalcKeybord(Update update) {
+    public static SendMessage getCalcKeyboard(Update update) {
         SendMessage keybordMessage = new SendMessage()
                 .setChatId(update.getCallbackQuery().getMessage().getChatId())
                 .setText(calc);
@@ -92,6 +94,39 @@ public class KeyboardSupplier {
         return keybordMessage;
     }
 
+    public static SendMessage getCityKeyboard(Update update) {
+        SendMessage keybordMessage = new SendMessage()
+                .setChatId(update.getMessage().getChatId())
+                .setText(cities);
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        keyboardMarkup.setOneTimeKeyboard(true);
+        KeyboardRow first = new KeyboardRow();
+        first.add("Киев");
+        first.add("Харьков");
+        first.add("Одесса");
+        KeyboardRow second = new KeyboardRow();
+        second.add("Днепр");
+        second.add("Львов");
+        second.add("Донецк");
+        KeyboardRow third = new KeyboardRow();
+        third.add("Запорожье");
+        third.add("Николаев");
+        third.add("Винница");
+        KeyboardRow fourth = new KeyboardRow();
+        fourth.add("Полтава");
+        fourth.add("Хмельницкий");
+        fourth.add("Чернигов");
+        KeyboardRow fifth = new KeyboardRow();
+        fifth.add("Сумы");
+        fifth.add("Мариуполь");
+        fifth.add("Житомир");
+        KeyboardRow sixth = new KeyboardRow();
+        sixth.add("Другой город");
+        List<KeyboardRow> rows = new ArrayList<>(Arrays.asList(first, second, third, fourth, fifth, sixth));
+        keyboardMarkup.setKeyboard(rows);
+        return keybordMessage;
+    }
+
     private void loadProperties() throws IOException {
         Properties propsMessage = new Properties();
         InputStream in = getClass().getResourceAsStream("/message.properties");
@@ -112,5 +147,6 @@ public class KeyboardSupplier {
         sellRub = propsMessage.getProperty("sellRub");
         buyRub = propsMessage.getProperty("buyRub");
         exit = propsMessage.getProperty("exit");
+        cities = propsMessage.getProperty("cities");
     }
 }

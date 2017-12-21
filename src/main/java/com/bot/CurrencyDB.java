@@ -76,7 +76,7 @@ public class CurrencyDB {
     private void fiveMinuteUpdateTimer() {
         Thread run = new Thread(() -> {
             Deque<MarketType> request_queue = new ArrayDeque<>
-                    (Arrays.asList(MarketType.MB_MARKET, MarketType.BANKS, MarketType.AUCTION));
+                    (Arrays.asList(MarketType.MB_MARKET, MarketType.BANKS));
             Deque<Commands> queueForAuc = new ArrayDeque<>(Arrays.asList(Commands.USD, Commands.EURO, Commands.RUB));
             while (true) {
                 try {

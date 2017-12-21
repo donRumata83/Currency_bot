@@ -18,8 +18,10 @@ public class AuctionParseTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
-
+    @Test
+    public void dataUtilTest() {
 
     }
 }

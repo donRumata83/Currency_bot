@@ -1,10 +1,7 @@
 package com.bot;
 
 import com.bot.enums.City;
-import com.bot.handlers.BotHandler;
-import com.bot.handlers.CalculatorHandler;
-import com.bot.handlers.KeyboardSupplier;
-import com.bot.handlers.StandartHandler;
+import com.bot.handlers.*;
 import com.bot.updaters.BitcoinUpdater;
 import com.bot.updaters.MinfinUpdater;
 import com.bot.updaters.NBUUpdater;
@@ -30,13 +27,13 @@ public class CurrencyBot extends TelegramLongPollingBot {
     private String botName;
     private Map<Long, City> userCity;
 
-    public long counter = 0;
     public long messageCounter = 0;
-
 
     private BotHandler standartMessageHandler;
     private BotHandler calcMessageHandler;
+    private BotHandler startCitySetHandler;
     public boolean isCalcOn = false;
+
 
 
     public static void main(String[] args) {
@@ -47,9 +44,11 @@ public class CurrencyBot extends TelegramLongPollingBot {
         CurrencyBot bot = new CurrencyBot();
         StandartHandler sh = new StandartHandler(bot, dtu);
         CalculatorHandler ch = new CalculatorHandler(bot, dtu);
+        StartCitySetHandler sch = new StartCitySetHandler(bot);
         KeyboardSupplier ks = new KeyboardSupplier();
         bot.setStandartMessageHandler(sh);
         bot.setCalcMessageHandler(ch);
+        bot.setStartCitySetHandler(sch);
         try {
             botsApi.registerBot(bot);
         } catch (TelegramApiException e) {
@@ -63,7 +62,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
      */
     private CurrencyBot() {
         loadProperties();
-
+        this.userCity = new HashMap<>();
     }
 
     /**
@@ -126,8 +125,11 @@ public class CurrencyBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         try {
-            if (!isCalcOn) standartMessageHandler.handle(update);
-            else calcMessageHandler.handle(update);
+            if (!isCitySet(update)) startCitySetHandler.handle(update);
+            else {
+                if (!isCalcOn) standartMessageHandler.handle(update);
+                else calcMessageHandler.handle(update);
+            }
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
@@ -155,6 +157,10 @@ public class CurrencyBot extends TelegramLongPollingBot {
         this.calcMessageHandler = calcMessageHandler;
     }
 
+    private void setStartCitySetHandler(BotHandler startCitySetHandler) {
+        this.startCitySetHandler = startCitySetHandler;
+    }
+
     public City getCityForUserFromUpdate(Update update) {
         return userCity.get(update.getMessage().getChatId());
     }
@@ -162,4 +168,14 @@ public class CurrencyBot extends TelegramLongPollingBot {
     public void putCityOfUserInMap(long id, City city) {
         userCity.put(id, city);
     }
+
+    public int getUserCount() {
+        return userCity.size();
+    }
+
+    private boolean isCitySet(Update update) {
+        long id = update.getMessage().getChatId();
+        return userCity.containsKey(id);
+    }
+
 }

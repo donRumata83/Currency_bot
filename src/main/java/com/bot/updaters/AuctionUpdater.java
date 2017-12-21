@@ -46,7 +46,9 @@ public class AuctionUpdater {
     public Market getMarket(String url) throws IOException {
         Document html = Jsoup.connect(url).get();
         List<String> list = html.body().getElementsByClass("au-mid-buysell").eachText();
-        return new Market(getFloatFromString(list.get(0)), getFloatFromString(list.get(1).substring(0, 28)), MarketType.AUCTION);
+        System.out.println(url + list.get(0));
+        System.out.println(list.get(1));
+        return new Market(getFloatFromString(list.get(0)), getFloatFromString(list.get(1).substring(0, 25)), MarketType.AUCTION);
     }
 
     private float getFloatFromString(String string) {
