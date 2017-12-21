@@ -1,22 +1,22 @@
 package com.bot.enums;
 
 public enum City {
-    KIEV("kiev/", "в городе Киев"),
-    ODESSA("odessa/", "в городе Одесса"),
-    LVOV("lvov/", "в городе Львов"),
-    KHARKOV("kharkov/", "в городе Харьков"),
-    DNIPRO("dnepropetrovsk/", "в городе Днепр"),
-    ZAPOROZHYE("zaporozhye/", "в городе Запорожье"),
-    NIKOLAEV("nikolaev/", "в городе Николаев"),
-    DONETSK("donetsk/", "в городе Донецк"),
-    VINNITSA("vinnitsa/", "в городе Винница"),
-    MARIUPOL("mariupol/", "в городе Мариуполь"),
-    POLTAVA("poltava/", "в городе Полтава"),
-    KHMENTISKIY("khmelnitskiy/", "в городе Хмельницкий"),
-    SUMY("sumy/", "в городе Сумы"),
-    CHERNIGOV("chernigov/", "в городе Чернигов"),
-    ZHITOMIR("zhitomir/", "в городе Житомир"),
-    DEFAULT("all/", "средний по Украине");
+    KIEV("kiev/", "Киев"),
+    ODESSA("odessa/", "Одеccа"),
+    LVOV("lvov/", "Львов"),
+    KHARKOV("kharkov/", "Харьков"),
+    DNIPRO("dnepropetrovsk/", "Днепр"),
+    ZAPOROZHYE("zaporozhye/", "Запорожье"),
+    NIKOLAEV("nikolaev/", "Hиколаев"),
+    DONETSK("donetsk/", "Донецк"),
+    VINNITSA("vinnitsa/", "Винница"),
+    MARIUPOL("mariupol/", "Мариуполь"),
+    POLTAVA("poltava/", "Полтава"),
+    KHMENTISKIY("khmelnitskiy/", "Хмельницкий"),
+    SUMY("sumy/", "Сумы"),
+    CHERNIGOV("chernigov/", "Чернигов"),
+    ZHITOMIR("zhitomir/", "Житомир"),
+    DEFAULT("all/", "cредний по Украине");
 
     private String endOfUrl;
     private String name;
@@ -31,43 +31,18 @@ public enum City {
     }
 
     public static City getCity(String message) {
-        switch (message) {
-            case "Киев":
-                return City.KIEV;
-            case "Одесса":
-                return City.ODESSA;
-            case "Львов":
-                return City.LVOV;
-            case "Харьков":
-                return City.KHARKOV;
-            case "Днепр":
-                return City.DNIPRO;
-            case "Запорожье":
-                return City.ZAPOROZHYE;
-            case "Николаев":
-                return City.NIKOLAEV;
-            case "Донецк":
-                return City.DONETSK;
-            case "Винница":
-                return City.VINNITSA;
-            case "Мариуполь":
-                return City.MARIUPOL;
-            case "Полтава":
-                return City.POLTAVA;
-            case "Хмельницкий":
-                return City.KHMENTISKIY;
-            case "Сумы":
-                return City.SUMY;
-            case "Чернигов":
-                return City.CHERNIGOV;
-            case "Житомир":
-                return City.ZHITOMIR;
-            default:
-                return City.DEFAULT;
+        for (City city: City.values()) {
+            if (message.equals(city.getName())) return city;
         }
+        return City.DEFAULT;
     }
 
     public String getName() {
-        return name;
+        try {
+            return new String(name.getBytes(), "UTF-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }
