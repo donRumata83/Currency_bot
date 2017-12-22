@@ -2,10 +2,11 @@ package com.bot;
 
 import com.bot.enums.City;
 import com.bot.handlers.*;
-import com.bot.updaters.BitcoinUpdater;
-import com.bot.updaters.MinfinUpdater;
-import com.bot.updaters.NBUUpdater;
 import com.bot.users.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -18,6 +19,8 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 import java.nio.charset.StandardCharsets;
 import javax.validation.constraints.NotNull;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -30,10 +33,14 @@ public class CurrencyBot extends TelegramLongPollingBot {
 
     public long messageCounter = 0;
 
-    private BotHandler standartMessageHandler;
-    private BotHandler calcMessageHandler;
-    private BotHandler startCitySetHandler;
+    private UpdateHandler standartMessageHandler;
+    private UpdateHandler calcMessageHandler;
+    private UpdateHandler startCitySetHandler;
 
+    private static final int TIMEOUT_60MIN = 1000 * 60 * 60;
+
+    private static final java.io.File DATA_STORE_DIR = new java.io.File(
+            System.getProperty("user.home"), "currency-telegram-bot");
 
 
     public static void main(String[] args) {
@@ -63,6 +70,8 @@ public class CurrencyBot extends TelegramLongPollingBot {
     private CurrencyBot() {
         loadProperties();
         this.userCity = new HashMap<>();
+        loadFromFile();
+        saver();
     }
 
     /**
@@ -149,15 +158,15 @@ public class CurrencyBot extends TelegramLongPollingBot {
         }
     }
 
-    private void setStandartMessageHandler(BotHandler standartMessageHandler) {
+    private void setStandartMessageHandler(UpdateHandler standartMessageHandler) {
         this.standartMessageHandler = standartMessageHandler;
     }
 
-    private void setCalcMessageHandler(BotHandler calcMessageHandler) {
+    private void setCalcMessageHandler(UpdateHandler calcMessageHandler) {
         this.calcMessageHandler = calcMessageHandler;
     }
 
-    private void setStartCitySetHandler(BotHandler startCitySetHandler) {
+    private void setStartCitySetHandler(UpdateHandler startCitySetHandler) {
         this.startCitySetHandler = startCitySetHandler;
     }
 
@@ -167,7 +176,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
     }
 
     public void putCityOfUserInMap(long id, City city) {
-        userCity.put(id, new User(city));
+        userCity.put(id, new User(id, city));
     }
 
     public int getUserCount() {
@@ -190,12 +199,68 @@ public class CurrencyBot extends TelegramLongPollingBot {
         this.userCity.get(getID(update)).setCalcOn(true);
     }
 
-    public void setCalcOff(Update update) {this.userCity.get(getID(update)).setCalcOn(false);}
+    public void setCalcOff(Update update) {
+        this.userCity.get(getID(update)).setCalcOn(false);
+    }
 
     private long getID(Update update) {
         long id;
         if (update.hasCallbackQuery()) id = update.getCallbackQuery().getMessage().getChatId();
         else id = update.getMessage().getChatId();
         return id;
+    }
+
+    private void saver() {
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(TIMEOUT_60MIN);
+                    saveToFile();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    private void saveToFile() {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream(DATA_STORE_DIR + "/users.json"), "UTF8"))) {
+            JSONObject tmp;
+            JSONArray array = new JSONArray();
+            for (long id : userCity.keySet()) {
+                tmp = new JSONObject();
+                tmp.put("id", id);
+                tmp.put("city", userCity.get(id).getCity().getName());
+                tmp.put("isCalcOn", userCity.get(id).isCalcOn());
+                array.put(tmp);
+                System.out.println(tmp);
+            }
+            writer.write(array.toString());
+            writer.flush();
+            System.out.println("File are saved");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadFromFile() {
+        try {
+            String text = new String(Files.readAllBytes(Paths.get(DATA_STORE_DIR + "/users.json")), "UTF-8");
+            JSONArray array = new JSONArray(text);
+            array.forEach(user -> parseAndAddUser((JSONObject) user));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void parseAndAddUser(JSONObject jUser) {
+        User user = new User();
+        user.setId(jUser.getLong("id"));
+        System.out.println(jUser.getString("city"));
+        user.setCity(City.getCity(jUser.getString("city")));
+        user.setCalcOn(jUser.getBoolean("isCalcOn"));
+        System.out.println(user);
+        userCity.put(user.getId(), user);
     }
 }

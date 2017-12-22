@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Properties;
 
-public class CalculatorHandler implements BotHandler {
+public class CalculatorHandler implements UpdateHandler {
     private CurrencyBot bot;
     private DataTransformerUtil dtu;
     private CalcCommands command = CalcCommands.DEF;

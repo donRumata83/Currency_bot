@@ -5,7 +5,7 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import java.io.IOException;
 
-public interface BotHandler {
+public interface UpdateHandler {
 
     void handle(Update update) throws TelegramApiException;
 
