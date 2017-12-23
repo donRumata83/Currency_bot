@@ -12,5 +12,5 @@ public enum Commands {
     CALC,
     START, HELP,
     STAT, MSTAT,
-    NEW,
+    NEW, DONATE
 }

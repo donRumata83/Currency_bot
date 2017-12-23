@@ -22,6 +22,7 @@ public class StandartHandler implements UpdateHandler {
     private static String helpCommand;
     private static String users;
     private static String requests;
+    private static String donate;
 
     public StandartHandler(CurrencyBot bot, DataTransformerUtil util) {
         this.bot = bot;
@@ -89,6 +90,8 @@ public class StandartHandler implements UpdateHandler {
                     bot.execute(KeyboardSupplier.getCalcKeyboard(update));
                     break;
                 }
+                case DONATE:
+                    bot.sendMsg(update, donate);
                 default: {
                     bot.sendMsg(update, KeyboardSupplier.noCurrency);
                     break;
@@ -106,5 +109,6 @@ public class StandartHandler implements UpdateHandler {
         helpCommand = propsMessage.getProperty("help");
         users = propsMessage.getProperty("users");
         requests = propsMessage.getProperty("requests");
+        donate = propsMessage.getProperty("donate");
     }
 }
