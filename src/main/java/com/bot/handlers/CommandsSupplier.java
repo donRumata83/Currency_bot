@@ -12,7 +12,7 @@ public class CommandsSupplier {
     private static Map<String, CalcCommands> calcMap;
 
     public void create() {
-        this.map = new HashMap<>();
+        map = new HashMap<>();
         map.put(KeyboardSupplier.usd, Commands.USD);
         map.put(KeyboardSupplier.eur, Commands.EURO);
         map.put(KeyboardSupplier.btc, Commands.BTC);
@@ -24,7 +24,7 @@ public class CommandsSupplier {
         map.put("/users", Commands.STAT);
         map.put("/help", Commands.HELP);
         map.put("/mstat", Commands.MSTAT);
-        this.calcMap = new HashMap<>();
+        calcMap = new HashMap<>();
         calcMap.put(KeyboardSupplier.sellUsd, CalcCommands.SELL_USD);
         calcMap.put(KeyboardSupplier.buyUsd, CalcCommands.BUY_USD);
         calcMap.put(KeyboardSupplier.sellEur, CalcCommands.SELL_EUR);
