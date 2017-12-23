@@ -60,7 +60,7 @@ public class CalculatorHandler implements UpdateHandler {
                     switch (message_text) {
                         case "/new": {
                             bot.setCalcOff(update);
-                            KeyboardSupplier.getStandartKeyboard(update);
+                            bot.execute(KeyboardSupplier.getStandartKeyboard(update));
                             break;
                         }
                         case "/mstat": {
@@ -73,12 +73,13 @@ public class CalculatorHandler implements UpdateHandler {
                             bot.removeCity(update);
                             break;
                         default: {
-                            if (message_text.equals(KeyboardSupplier.exit) || message_text.equals("/new")) {
-                                bot.setCalcOff(update);
-                                bot.execute(KeyboardSupplier.getStandartKeyboard(update));
+                            if (message_text.equals(KeyboardSupplier.exit)) {
+                                    bot.setCalcOff(update);
+                                    bot.execute(KeyboardSupplier.getStandartKeyboard(update));
                             } else {
-                                bot.sendMsg(update, enterSum);
                                 command = CommandsSupplier.getCalcCommand(message_text);
+                                if (command == CalcCommands.NOT_NUMBER)bot.sendMsg(update, notNumber);
+                                bot.sendMsg(update, enterSum);
                             }
                             break;
                         }

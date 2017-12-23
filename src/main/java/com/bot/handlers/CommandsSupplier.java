@@ -39,6 +39,6 @@ public class CommandsSupplier {
     }
 
     public static CalcCommands getCalcCommand(String message) {
-        return calcMap.get(message);
+        return calcMap.getOrDefault(message, CalcCommands.NOT_NUMBER);
     }
 }
