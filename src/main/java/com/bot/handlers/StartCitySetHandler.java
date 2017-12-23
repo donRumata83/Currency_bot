@@ -17,7 +17,6 @@ public class StartCitySetHandler implements UpdateHandler {
     private CurrencyBot bot;
 
     private static String greetingCommand;
-    private static String newSearch;
     private static String citySet;
 
     public StartCitySetHandler(CurrencyBot bot) {
@@ -36,14 +35,14 @@ public class StartCitySetHandler implements UpdateHandler {
             String message_text = update.getMessage().getText();
             switch (message_text) {
                 case "/start": {
-                    bot.sendMsg(message, String.format(greetingCommand, message.getFrom().getFirstName()));
+                    bot.sendMsg(update, String.format(greetingCommand, message.getFrom().getFirstName()));
                     bot.execute(KeyboardSupplier.getCityKeyboard(update));
                     break;
                 }
                 default: {
                     bot.putCityOfUserInMap(update.getMessage().getChatId(), City.getCity(message_text));
-                    bot.sendMsg(update.getMessage(), String.format(citySet, message_text));
-                    bot.sendMsg(update.getMessage(), newSearch);
+                    bot.sendMsg(update, String.format(citySet, message_text));
+                    bot.execute(KeyboardSupplier.getStandartKeyboard(update));
                 }
             }
         }
@@ -56,7 +55,6 @@ public class StartCitySetHandler implements UpdateHandler {
         BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8.name()));
         propsMessage.load(reader);
         greetingCommand = propsMessage.getProperty("greeting");
-        newSearch = propsMessage.getProperty("new");
         citySet = propsMessage.getProperty("citySet");
     }
 }

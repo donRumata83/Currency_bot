@@ -53,6 +53,8 @@ public class CurrencyBot extends TelegramLongPollingBot {
         CalculatorHandler ch = new CalculatorHandler(bot, dtu);
         StartCitySetHandler sch = new StartCitySetHandler(bot);
         KeyboardSupplier ks = new KeyboardSupplier();
+        CommandsSupplier cs = new CommandsSupplier();
+        cs.create();
         bot.setStandartMessageHandler(sh);
         bot.setCalcMessageHandler(ch);
         bot.setStartCitySetHandler(sch);
@@ -97,30 +99,17 @@ public class CurrencyBot extends TelegramLongPollingBot {
     /**
      * Sends message to user chat
      *
-     * @param message from user
+     * @param
      * @param text
      */
-    public void sendMsg(@NotNull Message message, String text) {
+    public void sendMsg(@NotNull Update update, String text) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true)
-                .setChatId(message.getChatId().toString())
+                .setChatId(update.getMessage().getChatId().toString())
                 .setText(text);
 
         try {
             execute(sendMessage);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void sendMessageWithQuery(Update update, String text) {
-        long chat_id = update.getCallbackQuery().getMessage().getChatId();
-        SendMessage new_message = new SendMessage()
-                .setChatId(chat_id)
-                .setText(text)
-                .enableMarkdown(true);
-        try {
-            execute(new_message);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
@@ -257,10 +246,8 @@ public class CurrencyBot extends TelegramLongPollingBot {
     private void parseAndAddUser(JSONObject jUser) {
         User user = new User();
         user.setId(jUser.getLong("id"));
-        System.out.println(jUser.getString("city"));
         user.setCity(City.getCity(jUser.getString("city")));
         user.setCalcOn(jUser.getBoolean("isCalcOn"));
-        System.out.println(user);
         userCity.put(user.getId(), user);
     }
 }

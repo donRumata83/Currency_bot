@@ -34,11 +34,13 @@ public class CalculatorHandler implements UpdateHandler {
         this.dtu = dtu;
         try {
             loadProperties();
-        } catch (IOException e) {e.printStackTrace();}
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void handle(Update update) throws TelegramApiException{
+    public void handle(Update update) throws TelegramApiException {
         Message message = update.getMessage();
         int sum;
         if (update.hasMessage() && message.hasText()) {
@@ -46,81 +48,46 @@ public class CalculatorHandler implements UpdateHandler {
             try {
                 sum = Integer.parseInt(message_text);
                 if (sum < 1000) {
-                    bot.sendMsg(message, getSum(sum, command, update));
-                    bot.sendMsg(message, newSearch);
+                    bot.sendMsg(update, getSum(sum, command, update));
+                    bot.sendMsg(update, newSearch);
                 } else {
-                    bot.sendMsg(message, getSum(sum, command, update));
-                    bot.sendMsg(message, newSearch);
-                    bot.sendMsg(message, betterCurse);
+                    bot.sendMsg(update, getSum(sum, command, update));
+                    bot.sendMsg(update, newSearch);
+                    //bot.sendMsg(message, betterCurse);
                 }
             } catch (NumberFormatException e) {
                 try {
                     switch (message_text) {
                         case "/new": {
                             bot.setCalcOff(update);
-                            KeyboardSupplier.getStandartKeyboard(message);
+                            KeyboardSupplier.getStandartKeyboard(update);
                             break;
                         }
                         case "/mstat": {
-                            bot.sendMessageWithQuery(update, requests + bot.messageCounter);
-                            bot.sendMessageWithQuery(update, newSearch);
+                            bot.sendMsg(update, requests + bot.messageCounter);
+                            bot.sendMsg(update, newSearch);
                             break;
                         }
-                        case "/start" :
+                        case "/start":
                             bot.execute(KeyboardSupplier.getCityKeyboard(update));
                             bot.removeCity(update);
                             break;
                         default: {
-                            bot.sendMessageWithQuery(update, notNumber);
+                            if (message_text.equals(KeyboardSupplier.exit) || message_text.equals("/new")) {
+                                bot.setCalcOff(update);
+                                bot.execute(KeyboardSupplier.getStandartKeyboard(update));
+                            } else {
+                                bot.sendMsg(update, enterSum);
+                                command = CommandsSupplier.getCalcCommand(message_text);
+                            }
                             break;
                         }
                     }
                 } catch (NullPointerException ex) {
                     ex.printStackTrace();
-                    bot.sendMsg(message, newSearch);
+                    bot.sendMsg(update, newSearch);
                 }
 
-            }
-        } else {
-            if (update.hasCallbackQuery()) {
-                String data = update.getCallbackQuery().getData();
-                switch (data) {
-                    case "sellUsd": {
-                        bot.sendMessageWithQuery(update, enterSum);
-                        command = CalcCommands.SELL_USD;
-                        break;
-                    }
-                    case "buyUsd": {
-                        bot.sendMessageWithQuery(update, enterSum);
-                        command = CalcCommands.BUY_USD;
-                        break;
-                    }
-                    case "sellEur": {
-                        bot.sendMessageWithQuery(update, enterSum);
-                        command = CalcCommands.SELL_EUR;
-                        break;
-                    }
-                    case "buyEur": {
-                        bot.sendMessageWithQuery(update, enterSum);
-                        command = CalcCommands.BUY_EUR;
-                        break;
-                    }
-                    case "sellRub": {
-                        bot.sendMessageWithQuery(update, enterSum);
-                        command = CalcCommands.SELL_RUB;
-                        break;
-                    }
-                    case "buyRub": {
-                        bot.sendMessageWithQuery(update, enterSum);
-                        command = CalcCommands.BUY_RUB;
-                        break;
-                    }
-                    case "exit": {
-                        bot.setCalcOff(update);
-                        bot.sendMessageWithQuery(update, newSearch);
-                        break;
-                    }
-                }
             }
         }
     }
@@ -138,7 +105,6 @@ public class CalculatorHandler implements UpdateHandler {
         notNumber = propsMessage.getProperty("notNumber");
         betterCurse = propsMessage.getProperty("betterCurse");
         sumLayout = propsMessage.getProperty("sumLayout");
-
     }
 
     private String getSum(int count, CalcCommands command, Update update) {

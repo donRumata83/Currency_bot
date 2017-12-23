@@ -31,7 +31,7 @@ public enum City {
     }
 
     public static City getCity(String message) {
-        for (City city: City.values()) {
+        for (City city : City.values()) {
             if (message.equals(city.getName())) return city;
         }
         return City.DEFAULT;

@@ -3,6 +3,7 @@ package com.bot.handlers;
 import com.bot.CurrencyBot;
 import com.bot.DataTransformerUtil;
 
+import com.bot.enums.Commands;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
@@ -19,12 +20,8 @@ public class StandartHandler implements UpdateHandler {
     private DataTransformerUtil dtu;
 
     private static String helpCommand;
-
-    private static String newSearch;
     private static String users;
     private static String requests;
-    private static String noCurrency;
-
 
     public StandartHandler(CurrencyBot bot, DataTransformerUtil util) {
         this.bot = bot;
@@ -42,75 +39,62 @@ public class StandartHandler implements UpdateHandler {
         Message message = update.getMessage();
         if (update.hasMessage() && message.hasText()) {
             String message_text = update.getMessage().getText();
-            switch (message_text) {
-                case "/help": {
-                    bot.sendMsg(message, helpCommand);
-                    bot.sendMsg(message, newSearch);
+            Commands command = CommandsSupplier.getComand(message_text);
+            switch (command) {
+                case HELP: {
+                    bot.sendMsg(update, helpCommand);
                     break;
                 }
-                case "/users": {
-                    bot.sendMsg(message, users + bot.getUserCount());
+                case STAT: {
+                    bot.sendMsg(update, users + bot.getUserCount());
                     break;
                 }
-                case "/new": {
+                case NEW: {
                     bot.messageCounter++;
                     bot.setCalcOff(update);
-                    bot.execute(KeyboardSupplier.getStandartKeyboard(message));
+                    bot.execute(KeyboardSupplier.getStandartKeyboard(update));
                     break;
                 }
-                case "/mstat": {
-                    bot.sendMsg(message, requests + bot.messageCounter);
+                case MSTAT: {
+                    bot.sendMsg(update, requests + bot.messageCounter);
                     break;
                 }
-                case "/start" :
+                case START:
                     bot.execute(KeyboardSupplier.getCityKeyboard(update));
                     bot.removeCity(update);
                     break;
+                case USD: {
+                    bot.sendMsg(update, dtu.getUSD(bot.getCityForUserFromUpdate(update)));
+                    break;
+                }
+                case EURO: {
+                    bot.sendMsg(update, dtu.getEuro(bot.getCityForUserFromUpdate(update)));
+                    break;
+                }
+                case RUB: {
+                    bot.sendMsg(update, dtu.getRub(bot.getCityForUserFromUpdate(update)));
+                    break;
+                }
+                case BTC: {
+                    bot.sendMsg(update, dtu.getBTC());
+                    break;
+                }
+                case OTHER: {
+                    bot.sendMsg(update, dtu.getOtherCurrencyFirstHalf());
+                    bot.sendMsg(update, dtu.getOtherCurrencySecondHalf());
+                    break;
+                }
+                case CALC: {
+                    bot.setCalcOn(update);
+                    bot.execute(KeyboardSupplier.getCalcKeyboard(update));
+                    break;
+                }
                 default: {
-                    bot.sendMsg(message, noCurrency);
-                    bot.sendMsg(message, newSearch);
+                    bot.sendMsg(update, KeyboardSupplier.noCurrency);
                     break;
                 }
             }
-        } else {
-            if (update.hasCallbackQuery()) {
-                String data = update.getCallbackQuery().getData();
-                switch (data) {
-                    case "usd": {
-                        bot.sendMessageWithQuery(update, dtu.getUSD(bot.getCityForUserFromUpdate(update)));
-                        bot.sendMessageWithQuery(update, newSearch);
-                        break;
-                    }
-                    case "eur": {
-                        bot.sendMessageWithQuery(update, dtu.getEuro(bot.getCityForUserFromUpdate(update)));
-                        bot.sendMessageWithQuery(update, newSearch);
-                        break;
-                    }
-                    case "rub": {
-                        bot.sendMessageWithQuery(update, dtu.getRub(bot.getCityForUserFromUpdate(update)));
-                        bot.sendMessageWithQuery(update, newSearch);
-                        break;
-                    }
-                    case "btc": {
-                        bot.sendMessageWithQuery(update, dtu.getBTC());
-                        bot.sendMessageWithQuery(update, newSearch);
-                        break;
-                    }
-                    case "other": {
-                        bot.sendMessageWithQuery(update, dtu.getOtherCurrencyFirstHalf());
-                        bot.sendMessageWithQuery(update, dtu.getOtherCurrencySecondHalf());
-                        bot.sendMessageWithQuery(update, newSearch);
-                        break;
-                    }
-                    case "calc": {
-                        bot.setCalcOn(update);
-                        bot.execute(KeyboardSupplier.getCalcKeyboard(update));
-                        break;
-                    }
-                }
-            }
         }
-
     }
 
     @Override
@@ -122,7 +106,5 @@ public class StandartHandler implements UpdateHandler {
         helpCommand = propsMessage.getProperty("help");
         users = propsMessage.getProperty("users");
         requests = propsMessage.getProperty("requests");
-        noCurrency = propsMessage.getProperty("nocurrency");
-        newSearch = propsMessage.getProperty("new");
     }
 }

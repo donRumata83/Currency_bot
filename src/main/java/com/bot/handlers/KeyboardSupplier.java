@@ -19,23 +19,25 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class KeyboardSupplier {
-    private static String newCurrencyRequestMessage;
-    private static String other;
-    private static String usd;
-    private static String eur;
-    private static String rub;
-    private static String btc;
+    public static String newCurrencyRequestMessage;
+    public static String other;
+    public static String usd;
+    public static String eur;
+    public static String rub;
+    public static String btc;
 
-    private static String calc;
+    public static String calc;
     private static String cities;
 
-    private static String sellUsd;
-    private static String buyUsd;
-    private static String sellEur;
-    private static String buyEur;
-    private static String sellRub;
-    private static String buyRub;
-    private static String exit;
+    public static String sellUsd;
+    public static String buyUsd;
+    public static String sellEur;
+    public static String buyEur;
+    public static String sellRub;
+    public static String buyRub;
+    public static String exit;
+    public static String noCurrency;
+
 
     public KeyboardSupplier() {
         try {
@@ -43,15 +45,27 @@ public class KeyboardSupplier {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
-    public static SendMessage getStandartKeyboard(Message message) {
+    public static SendMessage getStandartKeyboard(Update update) {
+
         SendMessage keybordMessage = new SendMessage()
-                .setChatId(message.getChatId())
+                .setChatId(update.getMessage().getChatId())
                 .setText(newCurrencyRequestMessage);
 
-        InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        KeyboardRow first = new KeyboardRow();
+        first.add(usd);
+        first.add(eur);
+        KeyboardRow second = new KeyboardRow();
+        second.add(rub);
+        second.add(btc);
+        KeyboardRow third = new KeyboardRow();
+        third.add(other);
+        KeyboardRow fourth = new KeyboardRow();
+        fourth.add(calc);
+        List<KeyboardRow> rows = new ArrayList<>(Arrays.asList(first, second, third, fourth));
+        /*InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
 
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         List<InlineKeyboardButton> firstLine = new ArrayList<>();
@@ -64,18 +78,35 @@ public class KeyboardSupplier {
         rows.add(secondLine);
         rows.add(Collections.singletonList(new InlineKeyboardButton().setText(other).setCallbackData("other")));
         rows.add(Collections.singletonList(new InlineKeyboardButton().setText(calc).setCallbackData("calc")));
-        markupInline.setKeyboard(rows);
-        keybordMessage.setReplyMarkup(markupInline);
+        markupInline.setKeyboard(rows);*/
+        keyboardMarkup.setKeyboard(rows);
+        keybordMessage.setReplyMarkup(keyboardMarkup);
         return keybordMessage;
     }
 
     public static SendMessage getCalcKeyboard(Update update) {
         SendMessage keybordMessage = new SendMessage()
-                .setChatId(update.getCallbackQuery().getMessage().getChatId())
+                .setChatId(update.getMessage().getChatId())
                 .setText(calc);
 
-        InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        keyboardMarkup.setOneTimeKeyboard(true);
+        KeyboardRow first = new KeyboardRow();
+        first.add(sellUsd);
+        first.add(buyUsd);
+        KeyboardRow second = new KeyboardRow();
+        second.add(sellEur);
+        second.add(buyEur);
+        KeyboardRow third = new KeyboardRow();
+        third.add(sellRub);
+        third.add(buyRub);
+        KeyboardRow fourth = new KeyboardRow();
+        fourth.add(exit);
+        List<KeyboardRow> rows = new ArrayList<>(Arrays.asList(first, second, third, fourth));
+        keyboardMarkup.setKeyboard(rows);
+        keybordMessage.setReplyMarkup(keyboardMarkup);
 
+        /*InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         List<InlineKeyboardButton> firstLine = new ArrayList<>();
         firstLine.add(new InlineKeyboardButton().setText(sellUsd).setCallbackData("sellUsd"));
@@ -91,7 +122,7 @@ public class KeyboardSupplier {
         rows.add(thirdLine);
         rows.add(Collections.singletonList(new InlineKeyboardButton().setText(exit).setCallbackData("exit")));
         markupInline.setKeyboard(rows);
-        keybordMessage.setReplyMarkup(markupInline);
+        keybordMessage.setReplyMarkup(markupInline);*/
         return keybordMessage;
     }
 
@@ -150,5 +181,8 @@ public class KeyboardSupplier {
         buyRub = propsMessage.getProperty("buyRub");
         exit = propsMessage.getProperty("exit");
         cities = propsMessage.getProperty("cities");
+        noCurrency = propsMessage.getProperty("nocurrency");
     }
+
+
 }
