@@ -26,6 +26,7 @@ public class KeyboardSupplier {
     public static String rub;
     public static String btc;
 
+
     public static String calc;
     private static String cities;
 

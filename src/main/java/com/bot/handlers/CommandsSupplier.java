@@ -19,6 +19,7 @@ public class CommandsSupplier {
         map.put(KeyboardSupplier.rub, Commands.RUB);
         map.put(KeyboardSupplier.other, Commands.OTHER);
         map.put(KeyboardSupplier.calc, Commands.CALC);
+        map.put("/donate", Commands.DONATE);
         map.put("/new", Commands.NEW);
         map.put("/start", Commands.START);
         map.put("/users", Commands.STAT);
