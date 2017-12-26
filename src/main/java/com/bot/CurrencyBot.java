@@ -1,12 +1,12 @@
 package com.bot;
 
-import com.bot.handlers.BotHandler;
-import com.bot.handlers.CalculatorHandler;
-import com.bot.handlers.KeyboardSupplier;
-import com.bot.handlers.StandartHandler;
-import com.bot.updaters.BitcoinUpdater;
-import com.bot.updaters.MinfinUpdater;
-import com.bot.updaters.NBUUpdater;
+import com.bot.enums.City;
+import com.bot.handlers.*;
+import com.bot.users.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -19,6 +19,8 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 import java.nio.charset.StandardCharsets;
 import javax.validation.constraints.NotNull;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -27,27 +29,35 @@ import java.util.*;
 public class CurrencyBot extends TelegramLongPollingBot {
     private String token;
     private String botName;
+    private Map<Long, User> userCity;
 
-    public long counter = 0;
     public long messageCounter = 0;
 
+    private UpdateHandler standartMessageHandler;
+    private UpdateHandler calcMessageHandler;
+    private UpdateHandler startCitySetHandler;
 
-    private BotHandler standartMessageHandler;
-    private BotHandler calcMessageHandler;
-    public boolean isCalcOn = false;
+    private static final int TIMEOUT_60MIN = 1000 * 60 * 60;
+
+    private static final java.io.File DATA_STORE_DIR = new java.io.File(
+            System.getProperty("user.home"), "currency-telegram-bot");
 
 
     public static void main(String[] args) {
         ApiContextInitializer.init();
         TelegramBotsApi botsApi = new TelegramBotsApi();
-        CurrencyDB currency_db = new CurrencyDB(new MinfinUpdater(), new BitcoinUpdater(), new NBUUpdater());
+        CurrencyDB currency_db = new CurrencyDB();
         DataTransformerUtil dtu = new DataTransformerUtil(currency_db);
         CurrencyBot bot = new CurrencyBot();
         StandartHandler sh = new StandartHandler(bot, dtu);
         CalculatorHandler ch = new CalculatorHandler(bot, dtu);
+        StartCitySetHandler sch = new StartCitySetHandler(bot);
         KeyboardSupplier ks = new KeyboardSupplier();
+        CommandsSupplier cs = new CommandsSupplier();
+        cs.create();
         bot.setStandartMessageHandler(sh);
         bot.setCalcMessageHandler(ch);
+        bot.setStartCitySetHandler(sch);
         try {
             botsApi.registerBot(bot);
         } catch (TelegramApiException e) {
@@ -61,6 +71,9 @@ public class CurrencyBot extends TelegramLongPollingBot {
      */
     private CurrencyBot() {
         loadProperties();
+        this.userCity = new HashMap<>();
+        loadFromFile();
+        saver();
     }
 
     /**
@@ -86,30 +99,17 @@ public class CurrencyBot extends TelegramLongPollingBot {
     /**
      * Sends message to user chat
      *
-     * @param message from user
+     * @param
      * @param text
      */
-    public void sendMsg(@NotNull Message message, String text) {
+    public void sendMsg(@NotNull Update update, String text) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true)
-                .setChatId(message.getChatId().toString())
+                .setChatId(update.getMessage().getChatId().toString())
                 .setText(text);
 
         try {
             execute(sendMessage);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void sendMessageWithQuery(Update update, String text) {
-        long chat_id = update.getCallbackQuery().getMessage().getChatId();
-        SendMessage new_message = new SendMessage()
-                .setChatId(chat_id)
-                .setText(text)
-                .enableMarkdown(true);
-        try {
-            execute(new_message);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
@@ -123,8 +123,11 @@ public class CurrencyBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         try {
-            if (!isCalcOn) standartMessageHandler.handle(update);
-            else calcMessageHandler.handle(update);
+            if (!isCitySet(update)) startCitySetHandler.handle(update);
+            else {
+                if (!isCalcOn(update)) standartMessageHandler.handle(update);
+                else calcMessageHandler.handle(update);
+            }
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
@@ -144,11 +147,107 @@ public class CurrencyBot extends TelegramLongPollingBot {
         }
     }
 
-    private void setStandartMessageHandler(BotHandler standartMessageHandler) {
+    private void setStandartMessageHandler(UpdateHandler standartMessageHandler) {
         this.standartMessageHandler = standartMessageHandler;
     }
 
-    private void setCalcMessageHandler(BotHandler calcMessageHandler) {
+    private void setCalcMessageHandler(UpdateHandler calcMessageHandler) {
         this.calcMessageHandler = calcMessageHandler;
+    }
+
+    private void setStartCitySetHandler(UpdateHandler startCitySetHandler) {
+        this.startCitySetHandler = startCitySetHandler;
+    }
+
+    public City getCityForUserFromUpdate(Update update) {
+        if (update.hasCallbackQuery()) return this.userCity.get(getID(update)).getCity();
+        else return this.userCity.get(getID(update)).getCity();
+    }
+
+    public void putCityOfUserInMap(long id, City city) {
+        userCity.put(id, new User(id, city));
+    }
+
+    public int getUserCount() {
+        return userCity.size();
+    }
+
+    private boolean isCitySet(Update update) {
+        return this.userCity.containsKey(getID(update));
+    }
+
+    public void removeCity(Update update) {
+        this.userCity.remove(getID(update));
+    }
+
+    private boolean isCalcOn(Update update) {
+        return this.userCity.get(getID(update)).isCalcOn();
+    }
+
+    public void setCalcOn(Update update) {
+        this.userCity.get(getID(update)).setCalcOn(true);
+    }
+
+    public void setCalcOff(Update update) {
+        this.userCity.get(getID(update)).setCalcOn(false);
+    }
+
+    private long getID(Update update) {
+        long id;
+        if (update.hasCallbackQuery()) id = update.getCallbackQuery().getMessage().getChatId();
+        else id = update.getMessage().getChatId();
+        return id;
+    }
+
+    private void saver() {
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(TIMEOUT_60MIN);
+                    saveToFile();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    private void saveToFile() {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream(DATA_STORE_DIR + "/users.json"), "UTF8"))) {
+            JSONObject tmp;
+            JSONArray array = new JSONArray();
+            for (long id : userCity.keySet()) {
+                tmp = new JSONObject();
+                tmp.put("id", id);
+                tmp.put("city", userCity.get(id).getCity().getName());
+                tmp.put("isCalcOn", userCity.get(id).isCalcOn());
+                array.put(tmp);
+                System.out.println(tmp);
+            }
+            writer.write(array.toString());
+            writer.flush();
+            System.out.println("File are saved");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadFromFile() {
+        try {
+            String text = new String(Files.readAllBytes(Paths.get(DATA_STORE_DIR + "/users.json")), "UTF-8");
+            JSONArray array = new JSONArray(text);
+            array.forEach(user -> parseAndAddUser((JSONObject) user));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void parseAndAddUser(JSONObject jUser) {
+        User user = new User();
+        user.setId(jUser.getLong("id"));
+        user.setCity(City.getCity(jUser.getString("city")));
+        user.setCalcOn(jUser.getBoolean("isCalcOn"));
+        userCity.put(user.getId(), user);
     }
 }

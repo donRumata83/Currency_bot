@@ -29,4 +29,12 @@ public class Market {
     public MarketType getMarketType() {
         return marketType;
     }
+
+    @Override
+    public String toString() {
+        return "Market{" +
+                "ask=" + ask +
+                ", bid=" + bid +
+                '}';
+    }
 }

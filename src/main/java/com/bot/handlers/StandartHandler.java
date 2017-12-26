@@ -3,6 +3,7 @@ package com.bot.handlers;
 import com.bot.CurrencyBot;
 import com.bot.DataTransformerUtil;
 
+import com.bot.enums.Commands;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
@@ -14,17 +15,14 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
-public class StandartHandler implements BotHandler {
+public class StandartHandler implements UpdateHandler {
     private CurrencyBot bot;
     private DataTransformerUtil dtu;
 
     private static String helpCommand;
-    private static String greetingCommand;
-    private static String newSearch;
     private static String users;
     private static String requests;
-    private static String noCurrency;
-
+    private static String donate;
 
     public StandartHandler(CurrencyBot bot, DataTransformerUtil util) {
         this.bot = bot;
@@ -42,92 +40,76 @@ public class StandartHandler implements BotHandler {
         Message message = update.getMessage();
         if (update.hasMessage() && message.hasText()) {
             String message_text = update.getMessage().getText();
-            switch (message_text) {
-                case "/start": {
-                    bot.counter++;
-                    bot.sendMsg(message, String.format(greetingCommand, message.getFrom().getFirstName()));
-                    bot.execute(KeyboardSupplier.getStandartKeyboard(message));
+            Commands command = CommandsSupplier.getComand(message_text);
+            switch (command) {
+                case HELP: {
+                    bot.sendMsg(update, helpCommand);
                     break;
                 }
-                case "/help": {
-                    bot.sendMsg(message, helpCommand);
-                    bot.sendMsg(message, newSearch);
+                case STAT: {
+                    bot.sendMsg(update, users + bot.getUserCount());
                     break;
                 }
-                case "users": {
-                    bot.sendMsg(message, users + bot.counter);
-                    bot.sendMsg(message, newSearch);
-                    break;
-                }
-                case "/new": {
+                case NEW: {
                     bot.messageCounter++;
-                    bot.isCalcOn = false;
-                    bot.execute(KeyboardSupplier.getStandartKeyboard(message));
+                    bot.setCalcOff(update);
+                    bot.execute(KeyboardSupplier.getStandartKeyboard(update));
                     break;
                 }
-                case "/mstat": {
-                    bot.sendMsg(message, requests + bot.messageCounter);
-                    bot.sendMsg(message, newSearch);
+                case MSTAT: {
+                    bot.sendMsg(update, requests + bot.messageCounter);
                     break;
                 }
+                case START:
+                    bot.execute(KeyboardSupplier.getCityKeyboard(update));
+                    bot.removeCity(update);
+                    break;
+                case USD: {
+                    bot.sendMsg(update, dtu.getUSD(bot.getCityForUserFromUpdate(update)));
+                    break;
+                }
+                case EURO: {
+                    bot.sendMsg(update, dtu.getEuro(bot.getCityForUserFromUpdate(update)));
+                    break;
+                }
+                case RUB: {
+                    bot.sendMsg(update, dtu.getRub(bot.getCityForUserFromUpdate(update)));
+                    break;
+                }
+                case BTC: {
+                    bot.sendMsg(update, dtu.getBTC());
+                    break;
+                }
+                case OTHER: {
+                    bot.sendMsg(update, dtu.getOtherCurrencyFirstHalf());
+                    bot.sendMsg(update, dtu.getOtherCurrencySecondHalf());
+                    break;
+                }
+                case CALC: {
+                    bot.setCalcOn(update);
+                    bot.execute(KeyboardSupplier.getCalcKeyboard(update));
+                    break;
+                }
+                case DONATE:
+                    bot.sendMsg(update, donate);
+                    break;
                 default: {
-                    bot.sendMsg(message, noCurrency);
-                    bot.sendMsg(message, newSearch);
+                    bot.sendMsg(update, KeyboardSupplier.noCurrency);
                     break;
-                }
-            }
-        } else {
-            if (update.hasCallbackQuery()) {
-                String data = update.getCallbackQuery().getData();
-                switch (data) {
-                    case "usd": {
-                        bot.sendMessageWithQuery(update, dtu.getUSD());
-                        bot.sendMessageWithQuery(update, newSearch);
-                        break;
-                    }
-                    case "eur": {
-                        bot.sendMessageWithQuery(update, dtu.getEuro());
-                        bot.sendMessageWithQuery(update, newSearch);
-                        break;
-                    }
-                    case "rub": {
-                        bot.sendMessageWithQuery(update, dtu.getRub());
-                        bot.sendMessageWithQuery(update, newSearch);
-                        break;
-                    }
-                    case "btc": {
-                        bot.sendMessageWithQuery(update, dtu.getBTC());
-                        bot.sendMessageWithQuery(update, newSearch);
-                        break;
-                    }
-                    case "other": {
-                        bot.sendMessageWithQuery(update, dtu.getOtherCurrencyFirstHalf());
-                        bot.sendMessageWithQuery(update, dtu.getOtherCurrencySecondHalf());
-                        bot.sendMessageWithQuery(update, newSearch);
-                        break;
-                    }
-                    case "calc": {
-                        bot.isCalcOn = true;
-                        bot.execute(KeyboardSupplier.getCalcKeybord(update));
-                        break;
-                    }
                 }
             }
         }
-
     }
 
     @Override
     public void loadProperties() throws IOException {
         Properties propsMessage = new Properties();
-        InputStream in = getClass().getResourceAsStream("/message.properties");
+        InputStream in = getClass().getResourceAsStream("/ru_message.properties");
         BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8.name()));
         propsMessage.load(reader);
         helpCommand = propsMessage.getProperty("help");
-        greetingCommand = propsMessage.getProperty("greeting");
         users = propsMessage.getProperty("users");
         requests = propsMessage.getProperty("requests");
-        noCurrency = propsMessage.getProperty("nocurrency");
-        newSearch = propsMessage.getProperty("new");
+        donate = propsMessage.getProperty("donate");
     }
 }

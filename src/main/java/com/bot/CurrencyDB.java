@@ -3,10 +3,10 @@ package com.bot;
 import com.bot.currencies.Currency;
 import com.bot.currencies.Market;
 import com.bot.currencies.SimpleCurrency;
+import com.bot.enums.City;
 import com.bot.enums.Commands;
 import com.bot.enums.MarketType;
-import com.bot.updaters.NBUUpdater;
-import com.bot.updaters.Updater;
+import com.bot.updaters.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.nio.charset.StandardCharsets;
@@ -19,8 +19,10 @@ public class CurrencyDB {
     private ConcurrentHashMap<Commands, Currency> actualCurrencyStorage;
     private List<SimpleCurrency> simpleCurrencyList;
     private Updater updater;
+
     private Updater bitCoinUpdater;
     private NBUUpdater nbuUpdater;
+    private AuctionUpdater aucUpdater;
 
     private static final int TIMEOUT_5MIN = 1000 * 60 * 5;
     private static final int TIMEOUT_1MIN = 1000 * 60;
@@ -31,7 +33,7 @@ public class CurrencyDB {
     private static String bc;
 
 
-    CurrencyDB(Updater updater, Updater bitCoinUpdater, NBUUpdater nbu) {
+    CurrencyDB() {
         loadProperties();
         this.actualCurrencyStorage = new ConcurrentHashMap<>() {{
             put(Commands.USD, new Currency(usd, "usd"));
@@ -39,9 +41,10 @@ public class CurrencyDB {
             put(Commands.RUB, new Currency(rub, "rub"));
             put(Commands.BTC, new Currency(bc, "btc"));
         }};
-        this.updater = updater;
-        this.bitCoinUpdater = bitCoinUpdater;
-        this.nbuUpdater = nbu;
+        this.updater = new MinfinUpdater();
+        this.bitCoinUpdater = new BitcoinUpdater();
+        this.nbuUpdater = new NBUUpdater();
+        this.aucUpdater = new AuctionUpdater();
         this.simpleCurrencyList = new ArrayList<>();
         fiveMinuteUpdateTimer();
         thirtySecondsUpdateTimer();
@@ -49,7 +52,7 @@ public class CurrencyDB {
 
     private void loadProperties() {
         Properties props = new Properties();
-        InputStream in = getClass().getResourceAsStream("/message.properties");
+        InputStream in = getClass().getResourceAsStream("/ru_message.properties");
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8.name()));
             props.load(reader);
@@ -73,11 +76,15 @@ public class CurrencyDB {
     private void fiveMinuteUpdateTimer() {
         Thread run = new Thread(() -> {
             Deque<MarketType> request_queue = new ArrayDeque<>
-                    (Arrays.asList(MarketType.MB_MARKET, MarketType.BANKS, MarketType.AUCTION));
+                    (Arrays.asList(MarketType.MB_MARKET, MarketType.BANKS));
+            Deque<Commands> queueForAuc = new ArrayDeque<>(Arrays.asList(Commands.USD, Commands.EURO, Commands.RUB));
             while (true) {
                 try {
                     updateNBU(nbuUpdater.sendRequest(MarketType.NBU));
                     Thread.sleep(1000);
+                    Commands tmp = queueForAuc.pollFirst();
+                    queueForAuc.addLast(tmp);
+                    updateAuc(tmp, aucUpdater.update(tmp));
                     MarketType request = request_queue.pollFirst();
                     request_queue.addLast(request);
                     Map<Commands, Market> response = updater.sendRequest(request);
@@ -139,6 +146,11 @@ public class CurrencyDB {
         actualCurrencyStorage.get(Commands.RUB).update(response.get(Commands.RUB));
     }
 
+    private void updateAuc(Commands currency, Map<City, Market> map) {
+        setNewDate();
+        actualCurrencyStorage.get(currency).setAuctionMap(map);
+    }
+
     private void setNewDate() {
         for (Commands c : actualCurrencyStorage.keySet()) {
             actualCurrencyStorage.get(c).updateDate();
@@ -186,4 +198,6 @@ public class CurrencyDB {
             e.printStackTrace();
         }
     }
+
+
 }

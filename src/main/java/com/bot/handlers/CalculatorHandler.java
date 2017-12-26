@@ -7,6 +7,7 @@ import com.bot.enums.CalcCommands;
 import com.bot.enums.Commands;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Properties;
 
-public class CalculatorHandler implements BotHandler {
+public class CalculatorHandler implements UpdateHandler {
     private CurrencyBot bot;
     private DataTransformerUtil dtu;
     private CalcCommands command = CalcCommands.DEF;
@@ -33,11 +34,13 @@ public class CalculatorHandler implements BotHandler {
         this.dtu = dtu;
         try {
             loadProperties();
-        } catch (IOException e) {e.printStackTrace();}
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void handle(Update update) {
+    public void handle(Update update) throws TelegramApiException {
         Message message = update.getMessage();
         int sum;
         if (update.hasMessage() && message.hasText()) {
@@ -45,77 +48,47 @@ public class CalculatorHandler implements BotHandler {
             try {
                 sum = Integer.parseInt(message_text);
                 if (sum < 1000) {
-                    bot.sendMsg(message, getSum(sum, command));
-                    bot.sendMsg(message, newSearch);
+                    bot.sendMsg(update, getSum(sum, command, update));
+                    bot.sendMsg(update, newSearch);
                 } else {
-                    bot.sendMsg(message, getSum(sum, command));
-                    bot.sendMsg(message, newSearch);
-                    bot.sendMsg(message, betterCurse);
+                    bot.sendMsg(update, getSum(sum, command, update));
+                    bot.sendMsg(update, newSearch);
+                    //bot.sendMsg(message, betterCurse);
                 }
             } catch (NumberFormatException e) {
                 try {
                     switch (message_text) {
                         case "/new": {
-                            bot.isCalcOn = false;
-                            KeyboardSupplier.getStandartKeyboard(message);
+                            bot.setCalcOff(update);
+                            bot.execute(KeyboardSupplier.getStandartKeyboard(update));
                             break;
                         }
                         case "/mstat": {
-                            bot.sendMessageWithQuery(update, requests + bot.messageCounter);
-                            bot.sendMessageWithQuery(update, newSearch);
+                            bot.sendMsg(update, requests + bot.messageCounter);
+                            bot.sendMsg(update, newSearch);
                             break;
                         }
+                        case "/start":
+                            bot.execute(KeyboardSupplier.getCityKeyboard(update));
+                            bot.removeCity(update);
+                            break;
                         default: {
-                            bot.sendMessageWithQuery(update, notNumber);
+                            if (message_text.equals(KeyboardSupplier.exit)) {
+                                    bot.setCalcOff(update);
+                                    bot.execute(KeyboardSupplier.getStandartKeyboard(update));
+                            } else {
+                                command = CommandsSupplier.getCalcCommand(message_text);
+                                if (command == CalcCommands.NOT_NUMBER)bot.sendMsg(update, notNumber);
+                                bot.sendMsg(update, enterSum);
+                            }
                             break;
                         }
                     }
                 } catch (NullPointerException ex) {
                     ex.printStackTrace();
-                    bot.sendMsg(message, newSearch);
+                    bot.sendMsg(update, newSearch);
                 }
 
-            }
-        } else {
-            if (update.hasCallbackQuery()) {
-                String data = update.getCallbackQuery().getData();
-                switch (data) {
-                    case "sellUsd": {
-                        bot.sendMessageWithQuery(update, enterSum);
-                        command = CalcCommands.SELL_USD;
-                        break;
-                    }
-                    case "buyUsd": {
-                        bot.sendMessageWithQuery(update, enterSum);
-                        command = CalcCommands.BUY_USD;
-                        break;
-                    }
-                    case "sellEur": {
-                        bot.sendMessageWithQuery(update, enterSum);
-                        command = CalcCommands.SELL_EUR;
-                        break;
-                    }
-                    case "buyEur": {
-                        bot.sendMessageWithQuery(update, enterSum);
-                        command = CalcCommands.BUY_EUR;
-                        break;
-                    }
-                    case "sellRub": {
-                        bot.sendMessageWithQuery(update, enterSum);
-                        command = CalcCommands.SELL_RUB;
-                        break;
-                    }
-                    case "buyRub": {
-                        bot.sendMessageWithQuery(update, enterSum);
-                        command = CalcCommands.BUY_RUB;
-                        break;
-                    }
-                    case "exit": {
-                        bot.isCalcOn = false;
-                        bot.sendMessageWithQuery(update, newSearch);
-                        break;
-                    }
-                }
             }
         }
     }
@@ -123,7 +96,7 @@ public class CalculatorHandler implements BotHandler {
     @Override
     public void loadProperties() throws IOException {
         Properties propsMessage = new Properties();
-        InputStream in = getClass().getResourceAsStream("/message.properties");
+        InputStream in = getClass().getResourceAsStream("/ru_message.properties");
         BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8.name()));
         propsMessage.load(reader);
         newSearch = propsMessage.getProperty("new");
@@ -133,33 +106,34 @@ public class CalculatorHandler implements BotHandler {
         notNumber = propsMessage.getProperty("notNumber");
         betterCurse = propsMessage.getProperty("betterCurse");
         sumLayout = propsMessage.getProperty("sumLayout");
-
     }
 
-    private String getSum(int count, CalcCommands command) {
+    private String getSum(int count, CalcCommands command, Update update) {
         Float result = 0.0f;
         Map<Commands, Currency> map = dtu.getMap();
         switch (command) {
             case SELL_USD:
-                result = count * map.get(Commands.USD).getAuc_ask();
+                result = count * map.get(Commands.USD).getAuc_ask(bot.getCityForUserFromUpdate(update));
                 break;
             case BUY_USD:
-                result = count * map.get(Commands.USD).getAuc_bid();
+                result = count * map.get(Commands.USD).getAuc_bid(bot.getCityForUserFromUpdate(update));
                 break;
             case SELL_EUR:
-                result = count * map.get(Commands.EURO).getAuc_ask();
+                result = count * map.get(Commands.EURO).getAuc_ask(bot.getCityForUserFromUpdate(update));
                 break;
             case BUY_EUR:
-                result = count * map.get(Commands.EURO).getAuc_bid();
+                result = count * map.get(Commands.EURO).getAuc_bid(bot.getCityForUserFromUpdate(update));
                 break;
             case SELL_RUB:
-                result = count * map.get(Commands.RUB).getAuc_ask();
+                result = count * map.get(Commands.RUB).getAuc_ask(bot.getCityForUserFromUpdate(update));
                 break;
             case BUY_RUB:
-                result = count * map.get(Commands.RUB).getAuc_bid();
+                result = count * map.get(Commands.RUB).getAuc_bid(bot.getCityForUserFromUpdate(update));
                 break;
         }
         return String.format(sumLayout, result);
     }
+
+
 }
 
