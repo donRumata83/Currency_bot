@@ -51,7 +51,7 @@ public class StartCitySetHandler implements UpdateHandler {
     @Override
     public void loadProperties() throws IOException {
         Properties propsMessage = new Properties();
-        InputStream in = getClass().getResourceAsStream("/message.properties");
+        InputStream in = getClass().getResourceAsStream("/ru_message.properties");
         BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8.name()));
         propsMessage.load(reader);
         greetingCommand = propsMessage.getProperty("greeting");

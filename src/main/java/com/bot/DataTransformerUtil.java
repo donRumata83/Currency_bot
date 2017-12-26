@@ -136,7 +136,7 @@ public class DataTransformerUtil {
 
     private void loadProperties() {
         Properties props = new Properties();
-        InputStream in = getClass().getResourceAsStream("/message.properties");
+        InputStream in = getClass().getResourceAsStream("/ru_message.properties");
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8.name()));
             props.load(reader);

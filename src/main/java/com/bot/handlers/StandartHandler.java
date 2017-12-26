@@ -92,6 +92,7 @@ public class StandartHandler implements UpdateHandler {
                 }
                 case DONATE:
                     bot.sendMsg(update, donate);
+                    break;
                 default: {
                     bot.sendMsg(update, KeyboardSupplier.noCurrency);
                     break;
@@ -103,7 +104,7 @@ public class StandartHandler implements UpdateHandler {
     @Override
     public void loadProperties() throws IOException {
         Properties propsMessage = new Properties();
-        InputStream in = getClass().getResourceAsStream("/message.properties");
+        InputStream in = getClass().getResourceAsStream("/ru_message.properties");
         BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8.name()));
         propsMessage.load(reader);
         helpCommand = propsMessage.getProperty("help");
