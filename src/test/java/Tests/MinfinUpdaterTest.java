@@ -34,6 +34,5 @@ public class MinfinUpdaterTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }
